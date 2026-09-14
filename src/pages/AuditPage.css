@@ -1,0 +1,198 @@
+/* AuditPage.css */
+
+.al-page {
+  padding: 28px;
+}
+
+.al-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.al-title { margin: 0; font-size: 24px; font-weight: 700; color: #111827; }
+.al-subtitle { margin: 4px 0 0; font-size: 14px; color: #6B7280; }
+
+/* Filter bar */
+.al-filter-bar {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  border: 1px solid #E5E7EB;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.al-filter-group { display: flex; flex-direction: column; gap: 8px; }
+.al-filter-group label,
+.al-filter-field label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6B7280;
+}
+.al-category-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.al-pill {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid #E5E7EB;
+  background: white;
+  color: #6B7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.al-pill:hover { background: #F3F4F6; }
+.al-pill.active {
+  background: #1D4ED8;
+  color: white;
+  border-color: #1D4ED8;
+}
+.al-filter-inputs { display: flex; gap: 16px; }
+.al-filter-field { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.al-input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  transition: border 0.2s;
+}
+.al-input:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+/* Event list */
+.al-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.al-empty { text-align: center; color: #9CA3AF; padding: 48px; font-size: 14px; }
+
+.al-event-card {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.al-event-card:hover { border-color: #D1D5DB; }
+
+.al-event-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.al-event-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+.al-action-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.al-event-action {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 4px;
+}
+.al-event-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6B7280;
+  flex-wrap: wrap;
+}
+.al-sep { color: #D1D5DB; }
+.al-resource-type {
+  background: #F3F4F6;
+  color: #374151;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.al-resource-id {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #6B7280;
+}
+
+.al-event-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.al-outcome-badge {
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.al-timestamp { font-size: 12px; color: #9CA3AF; white-space: nowrap; }
+.al-ip { font-size: 11px; font-family: 'Courier New', monospace; color: #D1D5DB; white-space: nowrap; }
+
+.al-chevron {
+  color: #9CA3AF;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.al-chevron.open { transform: rotate(180deg); }
+
+/* Expanded content */
+.al-event-expanded {
+  border-top: 1px solid #F3F4F6;
+  padding: 16px 18px 18px;
+  background: #FAFAFA;
+}
+.al-note {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 6px;
+}
+.al-note-label { font-weight: 600; color: #1D4ED8; }
+.al-payload-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9CA3AF;
+  margin-bottom: 8px;
+}
+.al-payload-json {
+  background: #1F2937;
+  color: #A7F3D0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  overflow-x: auto;
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+.al-expanded-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  color: #6B7280;
+}
+.al-expanded-meta strong { color: #374151; }
