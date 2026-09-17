@@ -12,6 +12,11 @@ export default defineConfig({
         target: process.env.VITE_API_BASE_URL || 'http://localhost:4000',
         changeOrigin: true,
       },
+      '/ws': {
+        target: process.env.VITE_WS_URL || 'ws://localhost:3000',
+        ws: true,
+        rewrite: (path) => path.replace(/^\/ws/, '/api/ws'),
+      },
     },
   },
   preview: {

@@ -101,6 +101,9 @@ export default function AdminLayout() {
                   <NavLink to="/markets/overview" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Overview
                   </NavLink>
+                  <NavLink to="/markets/orderbook" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Orderbook
+                  </NavLink>
                   <NavLink to="/tokens" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Tokens & Contracts
                   </NavLink>
