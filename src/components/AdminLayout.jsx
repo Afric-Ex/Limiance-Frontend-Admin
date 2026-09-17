@@ -84,11 +84,11 @@ export default function AdminLayout() {
           )}
 
           {/* 3. MARKETS (Dropdown) */}
-          {(hasRole('config_admin') || hasRole('superadmin')) && (
+          {(hasRole('config_admin') || hasRole('support') || hasRole('superadmin')) && (
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/tokens') || location.pathname.startsWith('/pairs') || location.pathname.startsWith('/networks') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/markets') || location.pathname.startsWith('/tokens') || location.pathname.startsWith('/pairs') || location.pathname.startsWith('/networks') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('markets')}
               >
                 <div className="nav-group-title">
@@ -98,6 +98,9 @@ export default function AdminLayout() {
               </button>
               {openDropdowns.markets && (
                 <div className="nav-sub-items">
+                  <NavLink to="/markets/overview" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Overview
+                  </NavLink>
                   <NavLink to="/tokens" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Tokens & Contracts
                   </NavLink>

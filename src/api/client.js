@@ -2,8 +2,17 @@ const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function api(path, options = {}) {
   const token = localStorage.getItem('admin_token');
+  const method = (options.method || 'GET').toUpperCase();
+
+  let requestBody = options.body;
+  const isMutation = ['POST', 'PUT', 'PATCH'].includes(method);
+  if (isMutation && (requestBody === undefined || requestBody === null || requestBody === '')) {
+    requestBody = JSON.stringify({});
+  }
+
+  const isFormData = typeof FormData !== 'undefined' && requestBody instanceof FormData;
   const headers = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {}),
   };
@@ -14,7 +23,9 @@ export async function api(path, options = {}) {
 
   const response = await fetch(url, {
     ...options,
+    method,
     headers,
+    body: requestBody,
   });
 
   if (response.status === 401) {

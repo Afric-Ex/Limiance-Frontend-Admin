@@ -30,6 +30,7 @@ import DerivativesPage from './pages/DerivativesPage';
 import OrdersPage from './pages/OrdersPage';
 import ReportsPage from './pages/ReportsPage';
 import AuditPage from './pages/AuditPage';
+import MarketOverviewPage from './pages/MarketOverviewPage';
 
 function App() {
   return (
@@ -158,6 +159,18 @@ function App() {
             />
 
             {/* Markets & Listings */}
+            <Route
+              path="markets/overview"
+              element={
+                <ProtectedRoute requiredRoles={['config_admin', 'support', 'superadmin']}>
+                  <MarketOverviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="markets"
+              element={<Navigate to="/markets/overview" replace />}
+            />
             <Route
               path="tokens"
               element={
