@@ -31,6 +31,7 @@ import OrdersPage from './pages/OrdersPage';
 import ReportsPage from './pages/ReportsPage';
 import AuditPage from './pages/AuditPage';
 import MarketOverviewPage from './pages/MarketOverviewPage';
+import OrderbookPage from './pages/OrderbookPage';
 
 function App() {
   return (
@@ -164,6 +165,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRoles={['config_admin', 'support', 'superadmin']}>
                   <MarketOverviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="markets/orderbook"
+              element={
+                <ProtectedRoute requiredRoles={['config_admin', 'support', 'superadmin']}>
+                  <OrderbookPage />
                 </ProtectedRoute>
               }
             />
