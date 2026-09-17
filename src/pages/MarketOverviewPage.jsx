@@ -33,6 +33,7 @@ export default function MarketOverviewPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [timeframe, setTimeframe] = useState('24h');
+  const [selectedMarket, setSelectedMarket] = useState('all'); // 'all', 'spot', 'margin', 'futures'
   const [activeTab, setActiveTab] = useState('pairs');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('volume');
@@ -290,22 +291,64 @@ export default function MarketOverviewPage() {
         {/* Chart 1: Volume & Trading Activity Timeline */}
         <ChartCard
           title="Market Volume Timeline"
-          subtitle={`Aggregated spot trading volume over the last ${timeframe.toUpperCase()}`}
+          subtitle={`Trading volume breakdown over the last ${timeframe.toUpperCase()}`}
           icon={BarChart3}
-          badge={`${formatCurrency(summary.total_volume_quote)}`}
+          badge={
+            selectedMarket === 'all'
+              ? formatCurrency(summary.total_volume_quote)
+              : selectedMarket === 'spot'
+              ? formatCurrency(summary.total_spot_volume || summary.total_volume_quote)
+              : selectedMarket === 'margin'
+              ? formatCurrency(summary.total_margin_volume || 0)
+              : formatCurrency(summary.total_futures_volume || 0)
+          }
           badgeColor="#818cf8"
         >
+          {/* Market Type Selector Controls */}
+          <div className="mo-chart-tabs-bar">
+            {[
+              { id: 'all', label: 'All Markets' },
+              { id: 'spot', label: 'Spot' },
+              { id: 'margin', label: 'Margin' },
+              { id: 'futures', label: 'Futures' },
+            ].map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                className={`mo-chart-tab-btn ${selectedMarket === m.id ? 'active' : ''}`}
+                onClick={() => setSelectedMarket(m.id)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+
           <AreaSplineChart
             data={timeline.map((p) => ({
               label: p.label,
               volume: parseFloat(p.volume) || 0,
+              spot: parseFloat(p.spot_volume || (selectedMarket === 'spot' ? p.volume : 0)) || 0,
+              margin: parseFloat(p.margin_volume || 0) || 0,
+              futures: parseFloat(p.futures_volume || 0) || 0,
               trades: p.trades_count || 0,
             }))}
-            series={[
-              { key: 'volume', name: 'Volume (USDT)', color: '#6366f1' },
-            ]}
+            series={
+              selectedMarket === 'all'
+                ? [
+                    { key: 'spot', name: 'Spot Volume', color: '#6366f1' },
+                    { key: 'margin', name: 'Margin Volume', color: '#f59e0b' },
+                    { key: 'futures', name: 'Futures Volume', color: '#10b981' },
+                  ]
+                : selectedMarket === 'spot'
+                ? [{ key: 'spot', name: 'Spot Volume', color: '#6366f1' }]
+                : selectedMarket === 'margin'
+                ? [{ key: 'margin', name: 'Margin Volume', color: '#f59e0b' }]
+                : [{ key: 'futures', name: 'Futures Volume', color: '#10b981' }]
+            }
             height={280}
             valueFormatter={(v) => formatCurrency(v)}
+            showLegend={true}
+            legendToggleable={selectedMarket === 'all'}
           />
         </ChartCard>
 
