@@ -50,6 +50,14 @@ export default function OrderbookPage() {
 
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const activePairRef = useRef(selectedPair);
+  const activeMarketRef = useRef(marketType);
+
+  // Keep refs in sync with current state
+  useEffect(() => {
+    activePairRef.current = selectedPair;
+    activeMarketRef.current = marketType;
+  }, [selectedPair, marketType]);
 
   // 1. Load pairs from API
   useEffect(() => {
@@ -72,7 +80,57 @@ export default function OrderbookPage() {
     loadPairs();
   }, []);
 
-  // 2. WebSocket Connection and Stream Management
+  // 2. When selectedPair or marketType changes:
+  // - Immediately clear orderbook state so old data disappears
+  // - Send subscription frame to gateway
+  useEffect(() => {
+    // Clear previous view immediately
+    setBids([]);
+    setAsks([]);
+    setLastPrice(null);
+    setPrevPrice(null);
+    setMarkPrice(null);
+    setBuyVol(0);
+    setSellVol(0);
+    setBuyPct(50);
+    setSellPct(50);
+
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      sendSubscription(wsRef.current, selectedPair, marketType);
+    }
+  }, [selectedPair, marketType]);
+
+  const sendSubscription = (socket, pair = activePairRef.current, mode = activeMarketRef.current) => {
+    const formattedPair = pair.includes('/')
+      ? pair
+      : `${pair.slice(0, 3)}/${pair.slice(3)}`;
+
+    let payload;
+    if (mode === 'futures') {
+      payload = {
+        type: 'get_futures_order_books',
+        data: { pair: formattedPair },
+      };
+    } else if (mode === 'margin') {
+      payload = {
+        type: 'get_margin_order_books',
+        data: { pair: formattedPair },
+      };
+    } else {
+      payload = {
+        type: 'get_spot_order_books',
+        data: { pair: formattedPair },
+      };
+    }
+
+    try {
+      socket.send(JSON.stringify(payload));
+    } catch (err) {
+      console.warn('Failed to send WS subscription:', err);
+    }
+  };
+
+  // 3. WebSocket Connection
   useEffect(() => {
     let isMounted = true;
 
@@ -86,8 +144,6 @@ export default function OrderbookPage() {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const token = localStorage.getItem('admin_token') || '';
 
-      // Determine WS URL:
-      // In dev with Vite proxy: /ws -> ws://localhost:3000/api/ws
       let wsUrl = import.meta.env.VITE_WS_URL;
       if (!wsUrl) {
         wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -109,7 +165,7 @@ export default function OrderbookPage() {
       socket.onopen = () => {
         if (!isMounted) return;
         setWsStatus('connected');
-        sendSubscription(socket);
+        sendSubscription(socket, activePairRef.current, activeMarketRef.current);
       };
 
       socket.onmessage = (event) => {
@@ -126,10 +182,9 @@ export default function OrderbookPage() {
         console.warn('WebSocket error:', err);
       };
 
-      socket.onclose = (event) => {
+      socket.onclose = () => {
         if (!isMounted) return;
         setWsStatus('disconnected');
-        // Reconnect after 3 seconds if unmounted
         reconnectTimeoutRef.current = setTimeout(() => {
           if (isMounted) connectWs();
         }, 3000);
@@ -149,50 +204,18 @@ export default function OrderbookPage() {
     };
   }, []);
 
-  // When selectedPair or marketType changes, send new subscription on existing WS
-  useEffect(() => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      sendSubscription(wsRef.current);
-    }
-  }, [selectedPair, marketType]);
-
-  const sendSubscription = (socket) => {
-    const rawSymbol = selectedPair.replace('/', '');
-    let payload;
-
-    if (marketType === 'futures') {
-      payload = {
-        type: 'get_futures_order_books',
-        data: { pair: selectedPair },
-      };
-    } else if (marketType === 'margin') {
-      payload = {
-        type: 'get_margin_order_books',
-        data: { pair: rawSymbol },
-      };
-    } else {
-      payload = {
-        type: 'get_spot_order_books',
-        data: { pair: rawSymbol },
-      };
-    }
-
-    try {
-      socket.send(JSON.stringify(payload));
-    } catch (err) {
-      console.warn('Failed to send WS subscription:', err);
-    }
-  };
-
   const handleIncomingMessage = (msg) => {
     setLastUpdateTs(Date.now());
 
     if (msg.type === 'order_book_update') {
+      // In spot/margin, verify the update is for spot/margin
+      if (activeMarketRef.current === 'futures') return;
+
       const book = msg.data?.orderBook || msg.data;
       if (!book) return;
 
-      const rawBuys = Array.isArray(book.buyOrders) ? book.buyOrders : [];
-      const rawSells = Array.isArray(book.sellOrders) ? book.sellOrders : [];
+      const rawBuys = Array.isArray(book.buyOrders) ? book.buyOrders : (Array.isArray(book.buy) ? book.buy : (Array.isArray(book.bids) ? book.bids : []));
+      const rawSells = Array.isArray(book.sellOrders) ? book.sellOrders : (Array.isArray(book.sell) ? book.sell : (Array.isArray(book.asks) ? book.asks : []));
 
       processOrders(rawBuys, rawSells);
 
@@ -211,9 +234,12 @@ export default function OrderbookPage() {
         setSellPct(Math.round(book.sellPercentage));
       }
     } else if (msg.type === 'futures_order_book_update') {
+      // Only process futures messages when active mode is futures
+      if (activeMarketRef.current !== 'futures') return;
+
       const data = msg.data || {};
-      const rawBuys = Array.isArray(data.buy) ? data.buy : [];
-      const rawSells = Array.isArray(data.sell) ? data.sell : [];
+      const rawBuys = Array.isArray(data.buy) ? data.buy : (Array.isArray(data.buyOrders) ? data.buyOrders : (Array.isArray(data.bids) ? data.bids : []));
+      const rawSells = Array.isArray(data.sell) ? data.sell : (Array.isArray(data.sellOrders) ? data.sellOrders : (Array.isArray(data.asks) ? data.asks : []));
 
       processOrders(rawBuys, rawSells);
 
@@ -228,12 +254,23 @@ export default function OrderbookPage() {
   };
 
   const processOrders = (rawBuys, rawSells) => {
+    const parseOrder = (o) => {
+      // Handle array format [price, quantity] or object format {price, quantity} / {Price, Quantity}
+      if (Array.isArray(o)) {
+        return {
+          price: parseFloat(o[0] || 0),
+          quantity: parseFloat(o[1] || 0),
+        };
+      }
+      return {
+        price: parseFloat(o.price ?? o.Price ?? 0),
+        quantity: parseFloat(o.quantity ?? o.Quantity ?? o.amount ?? o.Amount ?? 0),
+      };
+    };
+
     // Process Bids (Sorted descending: highest buy price first)
     const sortedBids = [...rawBuys]
-      .map((o) => ({
-        price: parseFloat(o.price || 0),
-        quantity: parseFloat(o.quantity || 0),
-      }))
+      .map(parseOrder)
       .filter((o) => o.price > 0 && o.quantity > 0)
       .sort((a, b) => b.price - a.price);
 
@@ -312,6 +349,44 @@ export default function OrderbookPage() {
   const midPrice = bestAsk && bestBid ? (bestAsk + bestBid) / 2 : lastPrice || 0;
 
   const priceDirection = lastPrice && prevPrice ? (lastPrice >= prevPrice ? 'up' : 'down') : 'neutral';
+
+  // Dynamic SVG Depth Chart Calculation
+  const depthChartData = useMemo(() => {
+    if (bids.length === 0 && asks.length === 0) {
+      return { bidPath: '', askPath: '' };
+    }
+
+    const maxBidTotal = bids[bids.length - 1]?.total || 1;
+    const maxAskTotal = asks[asks.length - 1]?.total || 1;
+    const maxCumulative = Math.max(maxBidTotal, maxAskTotal, 1);
+
+    // SVG coordinate space: x: 0 to 400 (mid: 200), y: 0 to 200 (bottom: 200, top: 40)
+    // Bids go from x: 20 to x: 200
+    let bidPath = '';
+    if (bids.length > 0) {
+      const bidPoints = bids.map((b, idx) => {
+        const x = 200 - (idx / Math.max(bids.length - 1, 1)) * 180;
+        const height = Math.min(160, (b.total / maxCumulative) * 150);
+        const y = 200 - height;
+        return `${x.toFixed(1)} ${y.toFixed(1)}`;
+      });
+      bidPath = `L ${bidPoints.join(' L ')}`;
+    }
+
+    // Asks go from x: 200 to x: 380
+    let askPath = '';
+    if (asks.length > 0) {
+      const askPoints = asks.map((a, idx) => {
+        const x = 200 + (idx / Math.max(asks.length - 1, 1)) * 180;
+        const height = Math.min(160, (a.total / maxCumulative) * 150);
+        const y = 200 - height;
+        return `${x.toFixed(1)} ${y.toFixed(1)}`;
+      });
+      askPath = `L ${askPoints.join(' L ')}`;
+    }
+
+    return { bidPath, askPath };
+  }, [bids, asks]);
 
   const formatPrice = (p) => {
     if (p === null || p === undefined) return '--';
@@ -601,53 +676,76 @@ export default function OrderbookPage() {
 
             {/* SVG Cumulative Depth Chart */}
             <div style={{ width: '100%', height: '220px', position: 'relative' }}>
-              <svg width="100%" height="220" viewBox="0 0 400 220" style={{ overflow: 'visible' }}>
-                <defs>
-                  <linearGradient id="bidGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.02" />
-                  </linearGradient>
-                  <linearGradient id="askGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity="0.02" />
-                  </linearGradient>
-                </defs>
+              {bids.length === 0 && asks.length === 0 ? (
+                <div
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#64748b',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  Awaiting order book depth to plot liquidity curve...
+                </div>
+              ) : (
+                <svg width="100%" height="220" viewBox="0 0 400 220" style={{ overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="bidGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.02" />
+                    </linearGradient>
+                    <linearGradient id="askGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#ef4444" stopOpacity="0.02" />
+                    </linearGradient>
+                  </defs>
 
-                {/* Grid lines */}
-                <line x1="0" y1="200" x2="400" y2="200" stroke="rgba(255,255,255,0.06)" />
-                <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-                <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                  {/* Grid lines */}
+                  <line x1="0" y1="200" x2="400" y2="200" stroke="rgba(255,255,255,0.06)" />
+                  <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+                  <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
 
-                {/* Left Bid Liquidity Curve (Green) */}
-                <path
-                  d="M 20 200 L 20 80 Q 110 90 200 195 L 200 200 Z"
-                  fill="url(#bidGradient)"
-                />
-                <path
-                  d="M 20 80 Q 110 90 200 195"
-                  fill="none"
-                  stroke="#10b981"
-                  strokeWidth="2"
-                />
+                  {/* Dynamic Bid Liquidity Curve (Green) */}
+                  {depthChartData.bidPath && (
+                    <>
+                      <path
+                        d={`M 20 200 ${depthChartData.bidPath} L 200 200 Z`}
+                        fill="url(#bidGradient)"
+                      />
+                      <path
+                        d={`M 20 200 ${depthChartData.bidPath}`}
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="2"
+                      />
+                    </>
+                  )}
 
-                {/* Right Ask Liquidity Curve (Red) */}
-                <path
-                  d="M 200 200 L 200 195 Q 290 90 380 60 L 380 200 Z"
-                  fill="url(#askGradient)"
-                />
-                <path
-                  d="M 200 195 Q 290 90 380 60"
-                  fill="none"
-                  stroke="#ef4444"
-                  strokeWidth="2"
-                />
+                  {/* Dynamic Ask Liquidity Curve (Red) */}
+                  {depthChartData.askPath && (
+                    <>
+                      <path
+                        d={`M 200 200 ${depthChartData.askPath} L 380 200 Z`}
+                        fill="url(#askGradient)"
+                      />
+                      <path
+                        d={`M 200 200 ${depthChartData.askPath}`}
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="2"
+                      />
+                    </>
+                  )}
 
-                {/* Center Mid Price Tag */}
-                <circle cx="200" cy="195" r="4" fill="#818cf8" />
-                <text x="200" y="215" fill="#94a3b8" fontSize="10" textAnchor="middle">
-                  Mid: {formatPrice(midPrice)}
-                </text>
-              </svg>
+                  {/* Center Mid Price Marker */}
+                  <circle cx="200" cy="195" r="4" fill="#818cf8" />
+                  <text x="200" y="215" fill="#94a3b8" fontSize="10" textAnchor="middle">
+                    Mid: {formatPrice(midPrice)}
+                  </text>
+                </svg>
+              )}
             </div>
 
             <div className="ob-stats-grid">
