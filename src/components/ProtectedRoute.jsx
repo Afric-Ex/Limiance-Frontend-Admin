@@ -22,9 +22,14 @@ export default function ProtectedRoute({ children, requiredRoles = [] }) {
     const isAuthorized = requiredRoles.some(role => hasRole(role));
     if (!isAuthorized) {
       return (
-        <div style={{ padding: '2rem', textAlign: 'center', color: '#ff4444', background: '#0a0a0a', height: '100vh' }}>
+        <div style={{ padding: '3rem', textAlign: 'center', color: '#ff4444', background: '#0a0a0a', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <h2>Access Denied</h2>
-          <p>You do not have the required role to view this page.</p>
+          <p style={{ color: '#888', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
+            Your role ({user?.role}) does not have permission to view this section.
+          </p>
+          <a href="/" style={{ padding: '0.6rem 1.2rem', background: '#1e293b', color: '#f8fafc', borderRadius: '6px', textDecoration: 'none', fontSize: '0.9rem' }}>
+            Return to Dashboard
+          </a>
         </div>
       );
     }

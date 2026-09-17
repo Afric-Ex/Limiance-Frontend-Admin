@@ -8,56 +8,61 @@ export function AuthProvider({ children }) {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchSession = async () => {
-    try {
-      const session = await api('/v1/auth/session');
-      if (!session || !session.user_id) {
-        setUser(null);
-        setRoles([]);
-        return;
-      }
-      setUser(session);
-      // Fetch roles — API may return [{role: 'name', granted_at: '...'}, ...] or ['name', ...]
-      const rolesData = await api(`/v1/admin/users/${session.user_id}/roles`).catch(() => ({ roles: [] }));
-      const rawRoles = rolesData.roles || [];
-      // Normalise: handle both string[] and {role, granted_at}[] formats
-      const roleStrings = rawRoles.map(r => (typeof r === 'string' ? r : r.role)).filter(Boolean);
-      setRoles(roleStrings);
-    } catch (err) {
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    const role = localStorage.getItem('admin_role');
+    const email = localStorage.getItem('admin_email');
+
+    if (token && role && email) {
+      setUser({ email, role, token });
+      setRoles([role]);
+    } else {
       setUser(null);
       setRoles([]);
-    } finally {
-      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchSession();
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    const res = await api('/v1/auth/login', {
+    const res = await api('/api/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
-    // In case TOTP is required, we return it to the caller to handle
-    if (res.status === 'mfa_required') {
-      return res; 
+
+    if (res && res.token) {
+      localStorage.setItem('admin_token', res.token);
+      localStorage.setItem('admin_role', res.role);
+      localStorage.setItem('admin_email', res.email);
+      setUser({ email: res.email, role: res.role, token: res.token });
+      setRoles([res.role]);
     }
-    await fetchSession();
     return res;
   };
 
   const logout = async () => {
-    await api('/v1/auth/logout', { method: 'POST' }).catch(() => {});
-    setUser(null);
-    setRoles([]);
+    try {
+      await api('/api/admin/logout', { method: 'POST' });
+    } catch {
+      // Ignore errors on logout
+    } finally {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_role');
+      localStorage.removeItem('admin_email');
+      setUser(null);
+      setRoles([]);
+    }
   };
 
-  const hasRole = (role) => roles.includes(role) || roles.includes('platform_administrator');
+  const hasRole = (requiredRoles) => {
+    if (!user || !user.role) return false;
+    if (user.role === 'superadmin' || user.role === 'admin') return true;
+    if (!requiredRoles) return true;
+    const required = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+    return required.includes(user.role);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, roles, loading, login, logout, hasRole, fetchSession }}>
+    <AuthContext.Provider value={{ user, roles, loading, login, logout, hasRole }}>
       {children}
     </AuthContext.Provider>
   );

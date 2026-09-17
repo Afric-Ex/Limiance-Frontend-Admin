@@ -3,17 +3,25 @@ import './AuditReasonModal.css';
 
 export default function AuditReasonModal({ isOpen, onClose, onConfirm, title, actionLabel }) {
   const [reason, setReason] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (reason.trim().length < 8) {
-      alert("Please provide a meaningful reason of at least 8 characters.");
+      setValidationError("Please provide a meaningful reason of at least 8 characters.");
       return;
     }
+    setValidationError('');
     onConfirm(reason.trim());
     setReason('');
+  };
+
+  const handleClose = () => {
+    setValidationError('');
+    setReason('');
+    onClose();
   };
 
   return (
@@ -26,15 +34,25 @@ export default function AuditReasonModal({ isOpen, onClose, onConfirm, title, ac
             <label>Reason for change</label>
             <textarea
               value={reason}
-              onChange={e => setReason(e.target.value)}
+              onChange={e => {
+                setReason(e.target.value);
+                if (validationError && e.target.value.trim().length >= 8) {
+                  setValidationError('');
+                }
+              }}
               placeholder="Enter a descriptive reason..."
               rows={4}
               required
               minLength={8}
             />
+            {validationError && (
+              <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '6px', fontWeight: '500' }}>
+                {validationError}
+              </div>
+            )}
           </div>
           <div className="modal-actions">
-            <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+            <button type="button" className="btn-cancel" onClick={handleClose}>Cancel</button>
             <button type="submit" className="btn-confirm">{actionLabel || "Confirm"}</button>
           </div>
         </form>
