@@ -16,6 +16,10 @@ import {
   ShieldAlert,
   ArrowDownCircle,
   ArrowUpCircle,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 export default function TokensPage() {
@@ -25,16 +29,31 @@ export default function TokensPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChainFilter, setSelectedChainFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingToken, setEditingToken] = useState(null);
   const [toast, setToast] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState(null);
+  const [expandedTokens, setExpandedTokens] = useState(new Set());
+
+  const toggleExpand = (key) => {
+    setExpandedTokens((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
 
   // Form State
   const initialForm = {
     symbol: '',
     name: '',
+    unifier: '',
     blockchain: '',
     contract_address: '',
     decimals: 18,
@@ -65,11 +84,21 @@ export default function TokensPage() {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-  const fetchTokens = async () => {
+  const fetchTokens = async (page = currentPage, limit = pageSize, search = searchQuery, chain = selectedChainFilter) => {
     setLoading(true);
     try {
-      const res = await api('/api/tokens');
-      setTokens(Array.isArray(res) ? res : res.tokens || res.data || []);
+      const params = new URLSearchParams();
+      params.set('page', page);
+      params.set('limit', limit);
+      if (search && search.trim()) params.set('query', search.trim());
+      if (chain && chain.trim()) params.set('blockchain', chain.trim());
+
+      const res = await api(`/api/tokens?${params.toString()}`);
+      const list = res.tokens || res.data || (Array.isArray(res) ? res : []);
+      setTokens(Array.isArray(list) ? list : []);
+      setTotalPages(res.total_pages || res.totalPages || 1);
+      setTotalRecords(res.total_records || res.totalRecords || (Array.isArray(list) ? list.length : 0));
+      setCurrentPage(res.current_page || res.currentPage || page);
     } catch (err) {
       console.error('Failed to load tokens', err);
       showToast(err.message || 'Failed to load tokens', 'error');
@@ -89,9 +118,35 @@ export default function TokensPage() {
   };
 
   useEffect(() => {
-    fetchTokens();
     fetchNetworks();
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchTokens(currentPage, pageSize, searchQuery, selectedChainFilter);
+    }, 250);
+    return () => clearTimeout(handler);
+  }, [currentPage, pageSize, searchQuery, selectedChainFilter]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleChainFilterChange = (e) => {
+    setSelectedChainFilter(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
+    setCurrentPage(newPage);
+  };
+
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
 
   // Force clean redis flush & re-populate canonical token configs
   const handleSyncContracts = async () => {
@@ -136,16 +191,21 @@ export default function TokensPage() {
     setModalOpen(true);
   };
 
-  const openEditModal = (tok) => {
+  const openEditModal = (tok, specificBlockchain = null) => {
     setEditingToken(tok);
+    const targetDeployment = specificBlockchain && tok.deployments
+      ? tok.deployments.find((d) => d.blockchain === specificBlockchain)
+      : null;
+
     setFormData({
       symbol: tok.symbol || '',
       name: tok.name || '',
-      blockchain: tok.blockchain || (tok.chains && tok.chains[0]) || '',
-      contract_address: tok.contract_address || '',
-      decimals: tok.decimals ?? 18,
-      min_deposit: tok.min_deposit || '0',
-      min_withdrawal: tok.min_withdrawal || '0',
+      unifier: tok.unifier || tok.symbol?.toLowerCase() || '',
+      blockchain: targetDeployment?.blockchain || tok.blockchain || (tok.chains && tok.chains[0]) || '',
+      contract_address: targetDeployment?.contract_address || tok.contract_address || '',
+      decimals: targetDeployment?.decimals ?? tok.decimals ?? 18,
+      min_deposit: targetDeployment?.min_deposit || tok.min_deposit || '0',
+      min_withdrawal: targetDeployment?.min_withdrawal || tok.min_withdrawal || '0',
       is_active: tok.is_active !== false,
       is_tradable: tok.is_tradable !== false,
       is_stablecoin: !!tok.is_stablecoin,
@@ -163,11 +223,12 @@ export default function TokensPage() {
     e.preventDefault();
     try {
       if (editingToken) {
-        const blockchainParam = encodeURIComponent(editingToken.blockchain || formData.blockchain);
+        const blockchainParam = encodeURIComponent(formData.blockchain || editingToken.blockchain);
         await api(`/api/tokens/${editingToken.symbol}?blockchain=${blockchainParam}`, {
           method: 'PATCH',
           body: JSON.stringify({
             name: formData.name,
+            unifier: formData.unifier?.trim() || formData.symbol.toLowerCase().trim(),
             contract_address: formData.contract_address,
             decimals: parseInt(formData.decimals, 10),
             min_deposit: formData.min_deposit,
@@ -183,13 +244,14 @@ export default function TokensPage() {
             description: formData.description,
           }),
         });
-        showToast(`Token ${editingToken.symbol} updated and synced to Redis.`);
+        showToast(`Token ${editingToken.symbol} (${formData.blockchain}) updated and synced to Redis.`);
       } else {
         await api('/api/tokens', {
           method: 'POST',
           body: JSON.stringify({
             symbol: formData.symbol.toUpperCase().trim(),
             name: formData.name.trim(),
+            unifier: formData.unifier?.trim() || formData.symbol.toLowerCase().trim(),
             blockchain: formData.blockchain.trim(),
             contract_address: formData.contract_address.trim() || 'N/A',
             decimals: parseInt(formData.decimals, 10),
@@ -215,19 +277,7 @@ export default function TokensPage() {
     }
   };
 
-  const filtered = tokens.filter((t) => {
-    const q = searchQuery.toLowerCase();
-    const matchesChain = !selectedChainFilter ||
-      (t.blockchain && t.blockchain.toLowerCase() === selectedChainFilter.toLowerCase()) ||
-      (t.chains && t.chains.some(c => c.toLowerCase() === selectedChainFilter.toLowerCase()));
 
-    const matchesSearch =
-      (t.symbol && t.symbol.toLowerCase().includes(q)) ||
-      (t.name && t.name.toLowerCase().includes(q)) ||
-      (t.contract_address && t.contract_address.toLowerCase().includes(q));
-
-    return matchesChain && matchesSearch;
-  });
 
   return (
     <div className="tokens-page" style={{ maxWidth: '1440px', margin: '0 auto', fontFamily: 'var(--font-sans)' }}>
@@ -261,9 +311,7 @@ export default function TokensPage() {
           <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Listed Tokens & Smart Contracts
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem' }}>
-            Directly configure token parameters, deposit watcher addresses (<code className="mono">token:&lt;chainId&gt;:&lt;address&gt;</code>), and withdrawal limits.
-          </p>
+         
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
@@ -328,7 +376,7 @@ export default function TokensPage() {
               type="text"
               placeholder="Search by ticker, token name, or contract address..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               style={{
                 width: '100%',
                 padding: '9px 12px 9px 36px',
@@ -344,7 +392,7 @@ export default function TokensPage() {
 
           <select
             value={selectedChainFilter}
-            onChange={(e) => setSelectedChainFilter(e.target.value)}
+            onChange={handleChainFilterChange}
             style={{
               padding: '9px 14px',
               borderRadius: '8px',
@@ -407,152 +455,345 @@ export default function TokensPage() {
                   Loading tokens...
                 </td>
               </tr>
-            ) : filtered.length === 0 ? (
+            ) : tokens.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                   No tokens matching the current search or chain filter.
                 </td>
               </tr>
             ) : (
-              filtered.map((t, idx) => {
+              tokens.map((t, idx) => {
+                const rowKey = `${t.unifier || t.symbol}-${idx}`;
+                const isExpanded = expandedTokens.has(rowKey);
                 const chainName = t.blockchain || (t.chains && t.chains[0]) || '—';
-                const hasContract = t.contract_address && t.contract_address !== 'N/A' && t.contract_address !== '';
+                const hasDeployments = t.deployments && t.deployments.length > 1;
+                const primaryDeployment = (t.deployments && t.deployments[0]) || t;
+                const displayContract = primaryDeployment.contract_address || t.contract_address;
+                const hasContract = displayContract && displayContract !== 'N/A' && displayContract !== '';
+
                 return (
-                  <tr key={`${t.symbol}-${chainName}-${idx}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {t.image ? (
-                          <img
-                            src={t.image}
-                            alt={t.symbol}
-                            style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'contain' }}
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                        ) : (
-                          <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(77,119,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8', fontWeight: 700, fontSize: '10px' }}>
-                            {t.symbol.slice(0, 2)}
-                          </div>
-                        )}
-                        <div>
-                          <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px', letterSpacing: '0.01em' }}>
-                            {t.symbol}
-                          </div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                            {t.name || t.symbol}
+                  <React.Fragment key={rowKey}>
+                    <tr style={{ borderBottom: isExpanded ? 'none' : '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {t.image ? (
+                            <img
+                              src={t.image}
+                              alt={t.symbol}
+                              style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'contain' }}
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(77,119,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8', fontWeight: 700, fontSize: '10px' }}>
+                              {t.symbol.slice(0, 2)}
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px', letterSpacing: '0.01em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span>{t.symbol}</span>
+                              {t.unifier && t.unifier !== t.symbol.toLowerCase() && (
+                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 400 }}>
+                                  ({t.unifier})
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                              {t.name || t.symbol}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td style={{ padding: '14px 18px' }}>
-                      <span
-                        style={{
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          background: 'rgba(99, 102, 241, 0.12)',
-                          border: '1px solid rgba(99, 102, 241, 0.25)',
-                          color: '#a5b4fc',
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {chainName}
-                      </span>
-                    </td>
+                      {/* Multi-Chain Badges in Network Column */}
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', maxWidth: '240px' }}>
+                          {t.chains && t.chains.length > 0 ? (
+                            t.chains.map((chain, cIdx) => (
+                              <span
+                                key={cIdx}
+                                style={{
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  background: 'rgba(99, 102, 241, 0.12)',
+                                  border: '1px solid rgba(99, 102, 241, 0.25)',
+                                  color: '#a5b4fc',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  letterSpacing: '0.02em',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {chain}
+                              </span>
+                            ))
+                          ) : (
+                            <span
+                              style={{
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                background: 'rgba(99, 102, 241, 0.12)',
+                                border: '1px solid rgba(99, 102, 241, 0.25)',
+                                color: '#a5b4fc',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {chainName}
+                            </span>
+                          )}
+                        </div>
+                      </td>
 
-                    <td style={{ padding: '14px 18px' }}>
-                      {hasContract ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span
-                            className="mono"
-                            style={{
-                              fontSize: '11px',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              background: 'rgba(255,255,255,0.06)',
-                              color: '#cbd5e1',
-                            }}
-                            title={t.contract_address}
-                          >
-                            {t.contract_address.length > 16
-                              ? `${t.contract_address.slice(0, 8)}...${t.contract_address.slice(-6)}`
-                              : t.contract_address}
-                          </span>
+                      {/* Contract Address with Multi-Chain Pill */}
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          {hasContract ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span
+                                className="mono"
+                                style={{
+                                  fontSize: '11px',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  background: 'rgba(255,255,255,0.06)',
+                                  color: '#cbd5e1',
+                                }}
+                                title={displayContract}
+                              >
+                                {displayContract.length > 16
+                                  ? `${displayContract.slice(0, 8)}...${displayContract.slice(-6)}`
+                                  : displayContract}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => copyToClipboard(displayContract)}
+                                style={{ background: 'none', border: 'none', color: copiedAddress === displayContract ? '#34d399' : 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px' }}
+                                title="Copy Contract Address"
+                              >
+                                {copiedAddress === displayContract ? <Check size={12} /> : <Copy size={12} />}
+                              </button>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Native / Non-contract</span>
+                          )}
+
+                          {hasDeployments && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpand(rowKey)}
+                              style={{
+                                background: isExpanded ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.12)',
+                                border: '1px solid rgba(99, 102, 241, 0.3)',
+                                borderRadius: '5px',
+                                color: '#818cf8',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                padding: '2px 7px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                              }}
+                              title="Toggle per-chain contract addresses"
+                            >
+                              {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                              {t.deployments.length} chains
+                            </button>
+                          )}
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '14px 18px', color: '#94a3b8', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                        {primaryDeployment.decimals ?? t.decimals ?? 18}
+                      </td>
+
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <span>Min Dep: <strong style={{ color: '#fff' }}>{primaryDeployment.min_deposit || t.min_deposit || '0'}</strong></span>
+                          <span>Min Wd: <strong style={{ color: '#fff' }}>{primaryDeployment.min_withdrawal || t.min_withdrawal || '0'}</strong></span>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          {t.is_stablecoin && (
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+                              STABLE
+                            </span>
+                          )}
+                          {t.is_tradable ? (
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                              TRADE
+                            </span>
+                          ) : (
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+                              OFF
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '14px 18px' }}>
+                        <span style={{ padding: '3px 9px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: t.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: t.is_active !== false ? '#34d399' : '#f87171' }}>
+                          {t.is_active !== false ? 'ACTIVE' : 'DISABLED'}
+                        </span>
+                      </td>
+
+                      <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
                           <button
-                            type="button"
-                            onClick={() => copyToClipboard(t.contract_address)}
-                            style={{ background: 'none', border: 'none', color: copiedAddress === t.contract_address ? '#34d399' : 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px' }}
-                            title="Copy Contract Address"
+                            onClick={() => openEditModal(t)}
+                            style={{ padding: '6px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}
+                            title="Edit Token Details"
                           >
-                            {copiedAddress === t.contract_address ? <Check size={12} /> : <Copy size={12} />}
+                            <Edit size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteToken(t)}
+                            style={{ padding: '6px 10px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '6px', color: '#f87171', cursor: 'pointer' }}
+                            title="Delist Token"
+                          >
+                            <Trash2 size={13} />
                           </button>
                         </div>
-                      ) : (
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Native / Non-contract</span>
-                      )}
-                    </td>
+                      </td>
+                    </tr>
 
-                    <td style={{ padding: '14px 18px', color: '#94a3b8', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
-                      {t.decimals ?? 18}
-                    </td>
-
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <span>Min Dep: <strong style={{ color: '#fff' }}>{t.min_deposit || '0'}</strong></span>
-                        <span>Min Wd: <strong style={{ color: '#fff' }}>{t.min_withdrawal || '0'}</strong></span>
-                      </div>
-                    </td>
-
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                        {t.is_stablecoin && (
-                          <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
-                            STABLE
-                          </span>
-                        )}
-                        {t.is_tradable ? (
-                          <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-                            TRADE
-                          </span>
-                        ) : (
-                          <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
-                            OFF
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    <td style={{ padding: '14px 18px' }}>
-                      <span style={{ padding: '3px 9px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: t.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: t.is_active !== false ? '#34d399' : '#f87171' }}>
-                        {t.is_active !== false ? 'ACTIVE' : 'DISABLED'}
-                      </span>
-                    </td>
-
-                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
-                        <button
-                          onClick={() => openEditModal(t)}
-                          style={{ padding: '6px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}
-                          title="Edit Token Details"
-                        >
-                          <Edit size={13} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteToken(t)}
-                          style={{ padding: '6px 10px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '6px', color: '#f87171', cursor: 'pointer' }}
-                          title="Delist Token"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                    {/* Expandable Per-Chain Deployments Sub-Panel */}
+                    {isExpanded && t.deployments && t.deployments.length > 0 && (
+                      <tr style={{ background: 'rgba(99, 102, 241, 0.03)', borderBottom: '1px solid var(--border)' }}>
+                        <td colSpan="8" style={{ padding: '12px 20px 16px 20px' }}>
+                          <div style={{ background: 'rgba(15, 17, 23, 0.85)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: '10px', padding: '14px 18px' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#a5b4fc', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Coins size={14} />
+                              <span>Chain Deployments for {t.name || t.symbol} ({t.unifier || t.symbol.toLowerCase()})</span>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '10px' }}>
+                              {t.deployments.map((d, dIdx) => (
+                                <div key={dIdx} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 14px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{d.blockchain}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => openEditModal(t, d.blockchain)}
+                                      style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '4px', color: '#818cf8', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                    >
+                                      <Edit size={11} /> Edit Chain
+                                    </button>
+                                  </div>
+                                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                                    <span>{d.contract_address && d.contract_address !== 'N/A' ? `${d.contract_address.slice(0, 10)}...${d.contract_address.slice(-6)}` : 'Native'}</span>
+                                    {d.contract_address && d.contract_address !== 'N/A' && (
+                                      <button type="button" onClick={() => copyToClipboard(d.contract_address)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedAddress === d.contract_address ? '#34d399' : 'rgba(255,255,255,0.4)', padding: 0 }}>
+                                        {copiedAddress === d.contract_address ? <Check size={11} /> : <Copy size={11} />}
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '12px' }}>
+                                    <span>Decimals: <strong style={{ color: '#fff' }}>{d.decimals}</strong></span>
+                                    <span>Min Dep: <strong style={{ color: '#fff' }}>{d.min_deposit || '0'}</strong></span>
+                                    <span>Min Wd: <strong style={{ color: '#fff' }}>{d.min_withdrawal || '0'}</strong></span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })
             )}
           </tbody>
         </table>
+
+        {/* Pagination Bar */}
+        <div
+          style={{
+            padding: '14px 20px',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: 'var(--bg-surface)',
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+              Showing {totalRecords === 0 ? 0 : (currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalRecords)} of {totalRecords.toLocaleString()} listed contracts
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                  color: '#fff',
+                  fontSize: '12px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginRight: '4px' }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage <= 1 || loading}
+              onClick={() => handlePageChange(currentPage - 1)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                background: currentPage <= 1 ? 'rgba(255,255,255,0.02)' : 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                color: currentPage <= 1 ? 'var(--text-muted)' : '#fff',
+                cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              <ChevronLeft size={14} /> Previous
+            </button>
+            <button
+              disabled={currentPage >= totalPages || loading}
+              onClick={() => handlePageChange(currentPage + 1)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                background: currentPage >= totalPages ? 'rgba(255,255,255,0.02)' : 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                color: currentPage >= totalPages ? 'var(--text-muted)' : '#fff',
+                cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              Next <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Modal: Add/Edit Token */}
@@ -614,6 +855,22 @@ export default function TokensPage() {
                     style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
+                  Unifier (Multi-Chain Group Slug)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. tether, usd-coin, bitcoin (defaults to ticker)"
+                  value={formData.unifier}
+                  onChange={(e) => setFormData({ ...formData, unifier: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                />
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px', display: 'block' }}>
+                  Tokens sharing the same unifier are grouped together under one asset across all blockchains.
+                </span>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
