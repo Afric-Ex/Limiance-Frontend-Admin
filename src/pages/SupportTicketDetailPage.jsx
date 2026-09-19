@@ -52,9 +52,9 @@ export default function SupportTicketDetailPage() {
 
     setReplying(true);
     try {
-      await api("/api/support/tickets/" + id + "/messages", {
+      await api("/api/support/tickets/" + id + "/replies", {
         method: "POST",
-        body: JSON.stringify({ message: replyText.trim() }),
+        body: JSON.stringify({ body: replyText.trim() }),
       });
       setReplyText("");
       showToast("Reply sent to customer.");
@@ -69,7 +69,7 @@ export default function SupportTicketDetailPage() {
   const handleUpdateStatus = async (newStatus) => {
     try {
       await api("/api/support/tickets/" + id + "/status", {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify({ status: newStatus }),
       });
       setSelectedTicket((prev) => (prev ? { ...prev, status: newStatus } : null));
