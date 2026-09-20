@@ -249,7 +249,6 @@ export default function TokensPage() {
             decimals: parseInt(formData.decimals, 10),
             min_deposit: formData.min_deposit,
             min_withdrawal: formData.min_withdrawal,
-            is_active: formData.is_active,
             is_tradable: formData.is_tradable,
             is_stablecoin: formData.is_stablecoin,
             is_fiat_pairable: formData.is_fiat_pairable,
@@ -269,7 +268,6 @@ export default function TokensPage() {
             decimals: parseInt(formData.decimals, 10),
             min_deposit: formData.min_deposit,
             min_withdrawal: formData.min_withdrawal,
-            is_active: formData.is_active,
             is_tradable: formData.is_tradable,
             is_stablecoin: formData.is_stablecoin,
             is_fiat_pairable: formData.is_fiat_pairable,
@@ -1090,15 +1088,6 @@ export default function TokensPage() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '4px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  />
-                  Active / Enabled
-                </label>
-
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
