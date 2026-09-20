@@ -38,7 +38,16 @@ export default function KycQueuePage() {
     try {
       const statusParam = statusFilter === 'ALL' ? '' : statusFilter;
       const res = await api(`/api/kyc?status=${statusParam}&page=${currentPage}&limit=20`);
-      setCases(res.submissions || []);
+      setCases(
+        (res.submissions || []).map((c) => ({
+          id: c.id || c.submission_id || c.SubmissionID || c.ID || '—',
+          user_id: c.user_id || c.userId || c.UserID || '—',
+          applicant_id: c.applicant_id || c.applicantId || c.ApplicantID || '—',
+          status: c.status || c.Status || '',
+          submitted_at: c.submitted_at || c.SubmittedAt || c.created_at || c.CreatedAt || null,
+          reviewed_at: c.reviewed_at || c.ReviewedAt || null,
+        }))
+      );
       setTotalPages(res.total_pages || 1);
     } catch (err) {
       console.error('Failed to fetch KYC submissions', err);
