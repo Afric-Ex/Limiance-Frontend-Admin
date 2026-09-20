@@ -182,6 +182,24 @@ export default function TokensPage() {
     }
   };
 
+  const handleDeleteChain = async (token, blockchain) => {
+    const ok = await confirm({
+      title: 'Remove Chain Deployment',
+      message: `Remove ${token.symbol} from ${blockchain}? This deletes the on-chain record and purges its Redis watcher key.`,
+      confirmText: 'Remove Chain',
+      variant: 'danger',
+    });
+    if (!ok) return;
+
+    try {
+      await api(`/api/tokens/${token.symbol}?blockchain=${encodeURIComponent(blockchain)}`, { method: 'DELETE' });
+      showToast(`${token.symbol} removed from ${blockchain}.`);
+      fetchTokens();
+    } catch (err) {
+      showToast(err.message || 'Failed to remove chain deployment', 'error');
+    }
+  };
+
   const openAddModal = () => {
     setEditingToken(null);
     setFormData({
@@ -229,9 +247,16 @@ export default function TokensPage() {
           body: JSON.stringify({
             contract_address: formData.contract_address.trim() || 'N/A',
             decimals: parseInt(formData.decimals, 10),
+            min_deposit: formData.min_deposit,
+            min_withdrawal: formData.min_withdrawal,
+            is_active: formData.is_active,
+            is_tradable: formData.is_tradable,
+            is_stablecoin: formData.is_stablecoin,
+            is_fiat_pairable: formData.is_fiat_pairable,
+            image: formData.image,
           }),
         });
-        showToast(`Token ${editingToken.symbol} (${formData.blockchain}) address and decimals updated.`);
+        showToast(`Token ${editingToken.symbol} (${formData.blockchain}) updated.`);
       } else {
         await api('/api/tokens', {
           method: 'POST',
@@ -661,13 +686,22 @@ export default function TokensPage() {
                                 <div key={dIdx} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 14px' }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                                     <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{d.blockchain}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => openEditModal(t, d.blockchain)}
-                                      style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '4px', color: '#818cf8', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                                    >
-                                      <Edit size={11} /> Edit Chain
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '6px' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openEditModal(t, d.blockchain)}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '4px', color: '#818cf8', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                      >
+                                        <Edit size={11} /> Edit
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteChain(t, d.blockchain)}
+                                        style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: '4px', color: '#f87171', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                      >
+                                        <Trash2 size={11} /> Delete
+                                      </button>
+                                    </div>
                                   </div>
                                   <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                                     <span>{d.contract_address && d.contract_address !== 'N/A' ? `${d.contract_address.slice(0, 10)}...${d.contract_address.slice(-6)}` : 'Native'}</span>
@@ -830,7 +864,7 @@ export default function TokensPage() {
               >
                 <ShieldAlert size={16} />
                 <span>
-                  Select the blockchain to edit its <strong>Contract Address</strong> and <strong>Decimals</strong>. All other properties are locked.
+                  Select the blockchain from the dropdown to switch which chain deployment you are editing. All fields are editable.
                 </span>
               </div>
             )}
@@ -844,7 +878,6 @@ export default function TokensPage() {
                   <input
                     type="text"
                     required
-                    disabled={true}
                     placeholder="e.g. USDT, BTC"
                     value={formData.symbol}
                     onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
@@ -856,7 +889,6 @@ export default function TokensPage() {
                       borderRadius: '6px',
                       color: '#fff',
                       fontSize: '13px',
-                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                     }}
                   />
                 </div>
@@ -868,7 +900,6 @@ export default function TokensPage() {
                   <input
                     type="text"
                     required
-                    disabled={!!editingToken}
                     placeholder="e.g. Tether USD"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -880,7 +911,6 @@ export default function TokensPage() {
                       borderRadius: '6px',
                       color: '#fff',
                       fontSize: '13px',
-                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                     }}
                   />
                 </div>
@@ -892,7 +922,6 @@ export default function TokensPage() {
                 </label>
                 <input
                   type="text"
-                  disabled={!!editingToken}
                   placeholder="e.g. tether, usd-coin, bitcoin (defaults to ticker)"
                   value={formData.unifier}
                   onChange={(e) => setFormData({ ...formData, unifier: e.target.value })}
@@ -904,7 +933,6 @@ export default function TokensPage() {
                     borderRadius: '6px',
                     color: '#fff',
                     fontSize: '13px',
-                    ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                   }}
                 />
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px', display: 'block' }}>
@@ -970,7 +998,7 @@ export default function TokensPage() {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                    Decimals <span style={{ color: '#818cf8', fontWeight: 400 }}>(Editable)</span>
+                    Decimals
                   </label>
                   <input
                     type="number"
@@ -985,7 +1013,7 @@ export default function TokensPage() {
 
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                  Smart Contract Address <span style={{ color: '#818cf8', fontWeight: 400 }}>(Editable — leave N/A for native coins)</span>
+                  Smart Contract Address <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave N/A for native coins)</span>
                 </label>
                 <input
                   type="text"
@@ -1003,7 +1031,6 @@ export default function TokensPage() {
                   </label>
                   <input
                     type="text"
-                    disabled={!!editingToken}
                     placeholder="0"
                     value={formData.min_deposit}
                     onChange={(e) => setFormData({ ...formData, min_deposit: e.target.value })}
@@ -1015,7 +1042,6 @@ export default function TokensPage() {
                       borderRadius: '6px',
                       color: '#fff',
                       fontSize: '13px',
-                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                     }}
                   />
                 </div>
@@ -1026,7 +1052,6 @@ export default function TokensPage() {
                   </label>
                   <input
                     type="text"
-                    disabled={!!editingToken}
                     placeholder="0"
                     value={formData.min_withdrawal}
                     onChange={(e) => setFormData({ ...formData, min_withdrawal: e.target.value })}
@@ -1038,7 +1063,6 @@ export default function TokensPage() {
                       borderRadius: '6px',
                       color: '#fff',
                       fontSize: '13px',
-                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                     }}
                   />
                 </div>
@@ -1050,7 +1074,6 @@ export default function TokensPage() {
                 </label>
                 <input
                   type="url"
-                  disabled={!!editingToken}
                   placeholder="https://coin-images.coingecko.com/..."
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -1062,46 +1085,41 @@ export default function TokensPage() {
                     borderRadius: '6px',
                     color: '#fff',
                     fontSize: '13px',
-                    ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
                   }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '4px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
-                    disabled={!!editingToken}
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                   />
                   Active / Enabled
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
-                    disabled={!!editingToken}
                     checked={formData.is_tradable}
                     onChange={(e) => setFormData({ ...formData, is_tradable: e.target.checked })}
                   />
                   Tradable on Exchange
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
-                    disabled={!!editingToken}
                     checked={formData.is_stablecoin}
                     onChange={(e) => setFormData({ ...formData, is_stablecoin: e.target.checked })}
                   />
                   Is Stablecoin (USD Pegged)
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
-                    disabled={!!editingToken}
                     checked={formData.is_fiat_pairable}
                     onChange={(e) => setFormData({ ...formData, is_fiat_pairable: e.target.checked })}
                   />
