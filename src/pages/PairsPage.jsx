@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
-import { Layers, Plus, RefreshCw, Trash2, Zap, Search } from 'lucide-react';
+import { Plus, RefreshCw, Trash2, Search } from 'lucide-react';
 
 export default function PairsPage() {
   const confirm = useConfirm();
   const [pairs, setPairs] = useState([]);
+  const [futuresPairs, setFuturesPairs] = useState([]);
+  const [marketType, setMarketType] = useState('spot');
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [genModalOpen, setGenModalOpen] = useState(false);
-  const [genSymbol, setGenSymbol] = useState('');
   const [toast, setToast] = useState(null);
 
   const [pairForm, setPairForm] = useState({
@@ -33,7 +32,17 @@ export default function PairsPage() {
     setLoading(true);
     try {
       const res = await api('/api/pairs');
-      setPairs(Array.isArray(res) ? res : res.pairs || res.data || []);
+      const rows = Array.isArray(res) ? res : res.pairs || res.data || [];
+      setPairs(rows.map((pair) => {
+        const base = pair.base || pair.base_asset || '';
+        const quote = pair.quote || pair.quote_asset || '';
+        return {
+          ...pair,
+          base_asset: base,
+          quote_asset: quote,
+          symbol: pair.symbol || `${base}/${quote}`,
+        };
+      }));
     } catch (err) {
       console.error('Failed to load pairs', err);
       showToast(err.message || 'Failed to load trading pairs', 'error');
@@ -42,8 +51,18 @@ export default function PairsPage() {
     }
   };
 
+  const fetchFuturesPairs = async () => {
+    try {
+      const res = await api('/api/futures-configs');
+      setFuturesPairs(res.futures_configs || res.data || []);
+    } catch (err) {
+      showToast(err.message || 'Failed to load futures pairs', 'error');
+    }
+  };
+
   useEffect(() => {
     fetchPairs();
+    fetchFuturesPairs();
   }, []);
 
   const handleCreatePair = async (e) => {
@@ -53,13 +72,8 @@ export default function PairsPage() {
       await api('/api/pairs', {
         method: 'POST',
         body: JSON.stringify({
-          symbol,
-          base_asset: pairForm.base_asset.toUpperCase(),
-          quote_asset: pairForm.quote_asset.toUpperCase(),
-          price_decimals: parseInt(pairForm.price_decimals, 10),
-          quantity_decimals: parseInt(pairForm.quantity_decimals, 10),
-          min_order_qty: pairForm.min_order_qty,
-          is_active: pairForm.is_active,
+          base: pairForm.base_asset.toUpperCase(),
+          quote: pairForm.quote_asset.toUpperCase(),
         }),
       });
       showToast(`Trading pair ${symbol} created.`);
@@ -70,43 +84,31 @@ export default function PairsPage() {
     }
   };
 
-  const handleGenerateAll = async () => {
+  const handleDeletePair = async (pair) => {
     const ok = await confirm({
-      title: 'Auto-Generate Trading Pairs',
-      message: 'Automatically generate and register trading pairs across all active tokens and quote currencies? Existing pairs will be preserved.',
-      confirmText: 'Generate Pairs',
-      variant: 'primary',
+      title: 'Delete Trading Pair',
+      message: `Delete ${pair.symbol}? This removes the pair from spot and margin markets.`,
+      confirmText: 'Delete Pair',
+      variant: 'danger',
     });
     if (!ok) return;
-    setGenerating(true);
     try {
-      await api('/api/pairs/generate', { method: 'POST' });
-      showToast('Trading pairs generated successfully!');
+      await api(`/api/pairs?base=${encodeURIComponent(pair.base_asset)}&quote=${encodeURIComponent(pair.quote_asset)}`, { method: 'DELETE' });
+      showToast(`${pair.symbol} deleted.`);
       fetchPairs();
     } catch (err) {
-      showToast(err.message || 'Failed to auto-generate pairs', 'error');
-    } finally {
-      setGenerating(false);
+      showToast(err.message || 'Failed to delete pair', 'error');
     }
   };
 
-  const handleGenerateSymbol = async (e) => {
-    e.preventDefault();
-    if (!genSymbol.trim()) return;
-    setGenerating(true);
-    try {
-      await api(`/api/pairs/generate/${genSymbol.trim().toUpperCase()}`, { method: 'POST' });
-      showToast(`Pairs for ${genSymbol.toUpperCase()} generated!`);
-      setGenModalOpen(false);
-      fetchPairs();
-    } catch (err) {
-      showToast(err.message || 'Failed to generate pairs for token', 'error');
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const filtered = pairs.filter((p) => {
+  const visiblePairs = marketType === 'futures'
+    ? futuresPairs.map((p) => ({
+      ...p,
+      base_asset: p.symbol?.split('/')[0] || p.symbol,
+      quote_asset: p.symbol?.split('/')[1] || 'PERP',
+    }))
+    : pairs;
+  const filtered = visiblePairs.filter((p) => {
     const q = searchQuery.toLowerCase();
     return (p.symbol && p.symbol.toLowerCase().includes(q)) ||
            (p.base_asset && p.base_asset.toLowerCase().includes(q)) ||
@@ -139,30 +141,12 @@ export default function PairsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700 }}>Spot & Derivatives Trading Pairs</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700 }}>Trading Pairs</h1>
           <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
-            Configure active order book pairs, price precision, minimum ticket sizes, and automated pair generation.
+            Manage shared spot and margin pairs, plus configured futures markets.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            onClick={() => setGenModalOpen(true)}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              background: 'rgba(99, 102, 241, 0.15)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              color: '#818cf8',
-              fontWeight: 600,
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-            }}
-          >
-            <Zap size={14} /> Auto-Generate
-          </button>
           <button
             onClick={() => setModalOpen(true)}
             style={{
@@ -182,6 +166,14 @@ export default function PairsPage() {
             <Plus size={14} /> Add Trading Pair
           </button>
         </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+        {['spot', 'margin', 'futures'].map((type) => (
+          <button key={type} onClick={() => setMarketType(type)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: marketType === type ? '#4d77f0' : '#1c1e28', color: '#fff', textTransform: 'capitalize', cursor: 'pointer' }}>
+            {type}
+          </button>
+        ))}
       </div>
 
       {/* Search Bar */}
@@ -223,19 +215,20 @@ export default function PairsPage() {
               <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Price Precision</th>
               <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Min Order Qty</th>
               <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Status</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
                   Loading trading pairs...
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  No trading pairs configured yet. Click "Auto-Generate" or "Add Trading Pair".
+                <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  No trading pairs configured yet. Click "Add Trading Pair".
                 </td>
               </tr>
             ) : (
@@ -259,6 +252,13 @@ export default function PairsPage() {
                     <span style={{ padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: p.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: p.is_active !== false ? '#34d399' : '#f87171' }}>
                       {p.is_active !== false ? 'ONLINE' : 'HALTED'}
                     </span>
+                  </td>
+                  <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                    {marketType !== 'futures' && (
+                      <button type="button" title="Delete pair" onClick={() => handleDeletePair(p)} style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -330,55 +330,6 @@ export default function PairsPage() {
         </div>
       )}
 
-      {/* Modal: Auto-Generate Pairs */}
-      {genModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', width: '100%', maxWidth: '440px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', color: '#fff' }}>Auto-Generate Trading Pairs</h2>
-            <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
-              Generate spot markets against supported quote currencies (USDT, USDC, BTC, USD).
-            </p>
-
-            <form onSubmit={handleGenerateSymbol} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Target Token Symbol (e.g. ETH, SOL)</label>
-                <input
-                  type="text"
-                  placeholder="Leave empty or enter symbol..."
-                  value={genSymbol}
-                  onChange={(e) => setGenSymbol(e.target.value)}
-                  style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                <button
-                  type="submit"
-                  disabled={generating || !genSymbol.trim()}
-                  style={{ padding: '10px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
-                >
-                  Generate Pairs for {genSymbol ? genSymbol.toUpperCase() : 'Token'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGenerateAll}
-                  disabled={generating}
-                  style={{ padding: '10px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: '6px', color: '#818cf8', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
-                >
-                  {generating ? 'Generating...' : 'Batch Generate All Markets'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGenModalOpen(false)}
-                  style={{ padding: '8px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '12px' }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -69,6 +69,14 @@ function App() {
               }
             />
             <Route
+              path="onchain-transactions"
+              element={
+                <ProtectedRoute requiredRoles={['support', 'superadmin']}>
+                  <TransactionsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="kyc-queue"
               element={
                 <ProtectedRoute requiredRoles={['support', 'superadmin']}>
