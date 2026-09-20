@@ -227,24 +227,11 @@ export default function TokensPage() {
         await api(`/api/tokens/${editingToken.symbol}?blockchain=${blockchainParam}`, {
           method: 'PATCH',
           body: JSON.stringify({
-            name: formData.name,
-            unifier: formData.unifier?.trim() || formData.symbol.toLowerCase().trim(),
-            contract_address: formData.contract_address,
+            contract_address: formData.contract_address.trim() || 'N/A',
             decimals: parseInt(formData.decimals, 10),
-            min_deposit: formData.min_deposit,
-            min_withdrawal: formData.min_withdrawal,
-            is_active: formData.is_active,
-            is_tradable: formData.is_tradable,
-            is_stablecoin: formData.is_stablecoin,
-            is_fiat_pairable: formData.is_fiat_pairable,
-            image: formData.image,
-            website: formData.website,
-            whitepaper_url: formData.whitepaper_url,
-            explorer_url: formData.explorer_url,
-            description: formData.description,
           }),
         });
-        showToast(`Token ${editingToken.symbol} (${formData.blockchain}) updated and synced to Redis.`);
+        showToast(`Token ${editingToken.symbol} (${formData.blockchain}) address and decimals updated.`);
       } else {
         await api('/api/tokens', {
           method: 'POST',
@@ -822,9 +809,32 @@ export default function TokensPage() {
               boxShadow: '0 24px 70px rgba(0,0,0,0.9)',
             }}
           >
-            <h2 style={{ margin: '0 0 18px', fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>
+            <h2 style={{ margin: '0 0 14px', fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>
               {editingToken ? `Edit Token ${editingToken.symbol}` : 'List New Token'}
             </h2>
+
+            {editingToken && (
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(99, 102, 241, 0.12)',
+                  border: '1px solid rgba(99, 102, 241, 0.25)',
+                  color: '#a5b4fc',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '14px',
+                }}
+              >
+                <ShieldAlert size={16} />
+                <span>
+                  Select the blockchain to edit its <strong>Contract Address</strong> and <strong>Decimals</strong>. All other properties are locked.
+                </span>
+              </div>
+            )}
+
             <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
@@ -834,11 +844,20 @@ export default function TokensPage() {
                   <input
                     type="text"
                     required
-                    disabled={!!editingToken}
+                    disabled={true}
                     placeholder="e.g. USDT, BTC"
                     value={formData.symbol}
                     onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                    }}
                   />
                 </div>
 
@@ -849,10 +868,20 @@ export default function TokensPage() {
                   <input
                     type="text"
                     required
+                    disabled={!!editingToken}
                     placeholder="e.g. Tether USD"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                    }}
                   />
                 </div>
               </div>
@@ -863,10 +892,20 @@ export default function TokensPage() {
                 </label>
                 <input
                   type="text"
+                  disabled={!!editingToken}
                   placeholder="e.g. tether, usd-coin, bitcoin (defaults to ticker)"
                   value={formData.unifier}
                   onChange={(e) => setFormData({ ...formData, unifier: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    fontSize: '13px',
+                    ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                  }}
                 />
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px', display: 'block' }}>
                   Tokens sharing the same unifier are grouped together under one asset across all blockchains.
@@ -876,28 +915,62 @@ export default function TokensPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                    Blockchain Network
+                    {editingToken ? 'Select Blockchain to Edit' : 'Blockchain Network'}
                   </label>
                   <select
-                    disabled={!!editingToken}
                     value={formData.blockchain}
-                    onChange={(e) => setFormData({ ...formData, blockchain: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    onChange={(e) => {
+                      const chosenChain = e.target.value;
+                      if (editingToken) {
+                        const targetDep = editingToken.deployments?.find(
+                          (d) => d.blockchain.toLowerCase() === chosenChain.toLowerCase()
+                        );
+                        setFormData((prev) => ({
+                          ...prev,
+                          blockchain: chosenChain,
+                          contract_address: targetDep?.contract_address || (chosenChain === editingToken.blockchain ? editingToken.contract_address : ''),
+                          decimals: targetDep?.decimals ?? (chosenChain === editingToken.blockchain ? editingToken.decimals : 18),
+                        }));
+                      } else {
+                        setFormData({ ...formData, blockchain: chosenChain });
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                    }}
                   >
-                    {availableNetworks.map((net, nIdx) => {
-                      const val = net.name || net.blockchain || net.symbol;
-                      return (
-                        <option key={nIdx} value={val}>
-                          {val}
+                    {editingToken ? (
+                      (editingToken.deployments && editingToken.deployments.length > 0
+                        ? editingToken.deployments.map((d) => d.blockchain)
+                        : (editingToken.chains && editingToken.chains.length > 0 ? editingToken.chains : [editingToken.blockchain || 'Ethereum'])
+                      ).map((chain, cIdx) => (
+                        <option key={cIdx} value={chain}>
+                          {chain}
                         </option>
-                      );
-                    })}
+                      ))
+                    ) : (
+                      availableNetworks.map((net, nIdx) => {
+                        const val = net.name || net.blockchain || net.symbol;
+                        return (
+                          <option key={nIdx} value={val}>
+                            {val}
+                          </option>
+                        );
+                      })
+                    )}
                   </select>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                    Decimals
+                    Decimals <span style={{ color: '#818cf8', fontWeight: 400 }}>(Editable)</span>
                   </label>
                   <input
                     type="number"
@@ -905,21 +978,21 @@ export default function TokensPage() {
                     placeholder="18"
                     value={formData.decimals}
                     onChange={(e) => setFormData({ ...formData, decimals: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
                   />
                 </div>
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                  Smart Contract Address (leave N/A for native coins)
+                  Smart Contract Address <span style={{ color: '#818cf8', fontWeight: 400 }}>(Editable — leave N/A for native coins)</span>
                 </label>
                 <input
                   type="text"
                   placeholder="0x... or mint address or N/A"
                   value={formData.contract_address}
                   onChange={(e) => setFormData({ ...formData, contract_address: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
+                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: '#fff', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
                 />
               </div>
 
@@ -930,10 +1003,20 @@ export default function TokensPage() {
                   </label>
                   <input
                     type="text"
+                    disabled={!!editingToken}
                     placeholder="0"
                     value={formData.min_deposit}
                     onChange={(e) => setFormData({ ...formData, min_deposit: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                    }}
                   />
                 </div>
 
@@ -943,10 +1026,20 @@ export default function TokensPage() {
                   </label>
                   <input
                     type="text"
+                    disabled={!!editingToken}
                     placeholder="0"
                     value={formData.min_withdrawal}
                     onChange={(e) => setFormData({ ...formData, min_withdrawal: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                    }}
                   />
                 </div>
               </div>
@@ -957,44 +1050,58 @@ export default function TokensPage() {
                 </label>
                 <input
                   type="url"
+                  disabled={!!editingToken}
                   placeholder="https://coin-images.coingecko.com/..."
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    fontSize: '13px',
+                    ...(editingToken ? { opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.03)' } : {}),
+                  }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '4px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
                   <input
                     type="checkbox"
+                    disabled={!!editingToken}
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                   />
                   Active / Enabled
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
                   <input
                     type="checkbox"
+                    disabled={!!editingToken}
                     checked={formData.is_tradable}
                     onChange={(e) => setFormData({ ...formData, is_tradable: e.target.checked })}
                   />
                   Tradable on Exchange
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
                   <input
                     type="checkbox"
+                    disabled={!!editingToken}
                     checked={formData.is_stablecoin}
                     onChange={(e) => setFormData({ ...formData, is_stablecoin: e.target.checked })}
                   />
                   Is Stablecoin (USD Pegged)
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: editingToken ? 'not-allowed' : 'pointer', ...(editingToken ? { opacity: 0.5 } : {}) }}>
                   <input
                     type="checkbox"
+                    disabled={!!editingToken}
                     checked={formData.is_fiat_pairable}
                     onChange={(e) => setFormData({ ...formData, is_fiat_pairable: e.target.checked })}
                   />
