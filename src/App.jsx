@@ -32,6 +32,7 @@ import ReportsPage from './pages/ReportsPage';
 import AuditPage from './pages/AuditPage';
 import MarketOverviewPage from './pages/MarketOverviewPage';
 import OrderbookPage from './pages/OrderbookPage';
+import TreasuryPage from './pages/TreasuryPage';
 
 function App() {
   return (
@@ -52,6 +53,14 @@ function App() {
             <Route index element={<DashboardPage />} />
 
             {/* Transactions & Treasury */}
+            <Route
+              path="treasury"
+              element={
+                <ProtectedRoute requiredRoles={['support', 'superadmin']}>
+                  <TreasuryPage />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="transactions"
               element={

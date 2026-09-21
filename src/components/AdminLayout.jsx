@@ -123,7 +123,7 @@ export default function AdminLayout() {
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/transactions') || location.pathname.startsWith('/onchain-transactions') || location.pathname.startsWith('/deposits-queue') || location.pathname.startsWith('/withdrawals-queue') || location.pathname.startsWith('/wallets') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/treasury') || location.pathname.startsWith('/transactions') || location.pathname.startsWith('/onchain-transactions') || location.pathname.startsWith('/deposits-queue') || location.pathname.startsWith('/withdrawals-queue') || location.pathname.startsWith('/wallets') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('transactions')}
               >
                 <div className="nav-group-title">
@@ -133,6 +133,9 @@ export default function AdminLayout() {
               </button>
               {openDropdowns.transactions && (
                 <div className="nav-sub-items">
+                  <NavLink to="/treasury" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Treasury & Reserves
+                  </NavLink>
                   <NavLink to="/transactions" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Transactions Ledger
                   </NavLink>

@@ -35,6 +35,9 @@ export default function FeeTiersPage() {
     min_volume_usd_30d: 0,
     maker_rate: 0.001,
     taker_rate: 0.002,
+    min_lim_balance: 0,
+    lim_discount_display: 0,   // UI percentage (0–100)
+    lim_discount_percent: 0,   // stored as fraction (0–1)
   });
 
   const [feeForm, setFeeForm] = useState({
@@ -98,6 +101,8 @@ export default function FeeTiersPage() {
           min_volume_usd_30d: Number(tierForm.min_volume_usd_30d),
           maker_rate: Number(tierForm.maker_rate),
           taker_rate: Number(tierForm.taker_rate),
+          min_lim_balance: Number(tierForm.min_lim_balance) || 0,
+          lim_discount_percent: Number(tierForm.lim_discount_percent) || 0,
         },
       });
       showToast(`Saved VIP Tier ${tierForm.tier}`);
@@ -391,6 +396,8 @@ export default function FeeTiersPage() {
                 <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>30-Day Min Volume (USD)</th>
                 <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Maker Fee Rate</th>
                 <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Taker Fee Rate</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Min LIM Balance</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>LIM Discount</th>
                 <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
@@ -436,16 +443,26 @@ export default function FeeTiersPage() {
                       <td style={{ padding: '14px 18px', color: '#60a5fa', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                         {(Number(tier.taker_rate) * 100).toFixed(4)}% ({tier.taker_rate})
                       </td>
+                      <td style={{ padding: '14px 18px', color: '#a78bfa', fontFamily: 'var(--font-mono)' }}>
+                        {tier.min_lim_balance ? Number(tier.min_lim_balance).toLocaleString() : '—'}
+                      </td>
+                      <td style={{ padding: '14px 18px', color: '#f59e0b', fontFamily: 'var(--font-mono)' }}>
+                        {tier.lim_discount_percent ? `${(Number(tier.lim_discount_percent) * 100).toFixed(0)}%` : '—'}
+                      </td>
                       <td style={{ padding: '14px 18px', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                           <button
                             onClick={() => {
                               setEditingItem(tier);
+                              const pct = Number(tier.lim_discount_percent) || 0;
                               setTierForm({
                                 tier: tier.tier,
                                 min_volume_usd_30d: tier.min_volume_usd_30d,
                                 maker_rate: tier.maker_rate,
                                 taker_rate: tier.taker_rate,
+                                min_lim_balance: tier.min_lim_balance || 0,
+                                lim_discount_display: (pct * 100).toFixed(0),
+                                lim_discount_percent: pct.toFixed(4),
                               });
                               setTierModalOpen(true);
                             }}
@@ -758,6 +775,38 @@ export default function FeeTiersPage() {
                     onChange={(e) => setTierForm({ ...tierForm, taker_rate: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
                   />
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Min LIM Balance</label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    value={tierForm.min_lim_balance ?? ''}
+                    onChange={(e) => setTierForm({ ...tierForm, min_lim_balance: e.target.value })}
+                    placeholder="e.g. 1000"
+                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  />
+                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>LIM tokens required to unlock discount</span>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>LIM Discount % (0–100)</label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    max="100"
+                    value={tierForm.lim_discount_display ?? ''}
+                    onChange={(e) => {
+                      const pct = parseFloat(e.target.value) || 0;
+                      setTierForm({ ...tierForm, lim_discount_display: e.target.value, lim_discount_percent: (pct / 100).toFixed(4) });
+                    }}
+                    placeholder="e.g. 20"
+                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  />
+                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>% discount off base rate when holding LIM</span>
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
