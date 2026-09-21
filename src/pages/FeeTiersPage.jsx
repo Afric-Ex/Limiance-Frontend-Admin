@@ -68,7 +68,7 @@ export default function FeeTiersPage() {
 
       if (tierRes.status === 'fulfilled') {
         const d = tierRes.value;
-        setFeeTiers(Array.isArray(d) ? d : d?.fee_tiers || d?.data || []);
+        setFeeTiers(Array.isArray(d) ? d : d?.tiers || d?.fee_tiers || d?.data || []);
       }
       if (feeRes.status === 'fulfilled') {
         const d = feeRes.value;

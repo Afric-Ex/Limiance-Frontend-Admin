@@ -8,6 +8,8 @@ export async function api(path, options = {}) {
   const isMutation = ['POST', 'PUT', 'PATCH'].includes(method);
   if (isMutation && (requestBody === undefined || requestBody === null || requestBody === '')) {
     requestBody = JSON.stringify({});
+  } else if (isMutation && typeof requestBody === 'object' && !(requestBody instanceof FormData)) {
+    requestBody = JSON.stringify(requestBody);
   }
 
   const isFormData = typeof FormData !== 'undefined' && requestBody instanceof FormData;
