@@ -164,8 +164,10 @@ export default function PricesPage() {
     }
   };
   const fetchAvailableTokens = async () => {
+    console.log('fetchAvailableTokens: firing');
     try {
       const res = await api('/api/tokens?limit=500');
+      console.log('fetchAvailableTokens: response', res);
       const list = res.tokens || res.data || (Array.isArray(res) ? res : []);
       setAvailableTokens(Array.isArray(list) ? list : []);
     } catch (err) {
@@ -249,14 +251,23 @@ export default function PricesPage() {
     setPageSize(newSize);
     setCurrentPage(1);
   };
+  const handleCoinSelect = (symbol) => {
+    const token = availableTokens.find((t) => t.symbol === symbol);
+    setFormData((prev) => ({
+      ...prev,
+      coin: symbol,
+      unifier: token?.unifier || '',
+      image: token?.image || prev.image,
+    }));
+  };
   const openCreateModal = () => {
     setEditingPrice(null);
     setFormData({
       coin: '',
       currency: 'USD', // was: currencyFilter || 'USD'
       price: '',
-      image: price?.image || '',
-unifier: price?.unifier || '',
+      image: '',
+      unifier: '',
       twenty_four_hour_change: '',
       twenty_four_hour_volume: '',
     });
@@ -268,7 +279,7 @@ unifier: price?.unifier || '',
       coin: price.coin || '',
       currency: 'USD', // was: price.currency || 'USD'
       image: price?.image || '',
-unifier: price?.unifier || '',
+      unifier: price?.unifier || '',
       price:
         price.price !== undefined && price.price !== null
           ? String(price.price)
@@ -316,6 +327,10 @@ unifier: price?.unifier || '',
       showToast('Currency is required', 'error');
       return false;
     }
+    if (!editingPrice && !formData.unifier.trim()) {
+      showToast('Unifier is required', 'error');
+      return false;
+    }
     if (formData.price === '') {
       showToast('Price is required', 'error');
       return false;
@@ -328,26 +343,14 @@ unifier: price?.unifier || '',
       formData.twenty_four_hour_volume !== '' &&
       Number(formData.twenty_four_hour_volume) < 0
     ) {
-      showToast(
-        '24h volume must not be negative',
-        'error'
-      );
+      showToast('24h volume must not be negative', 'error');
       return false;
     }
-    if (!formData.unifier.trim()) {
-  showToast('Unifier is required', 'error');
-  return false;
-}
     if (
       formData.twenty_four_hour_change !== '' &&
-      !Number.isFinite(
-        Number(formData.twenty_four_hour_change)
-      )
+      !Number.isFinite(Number(formData.twenty_four_hour_change))
     ) {
-      showToast(
-        '24h change must be a valid number',
-        'error'
-      );
+      showToast('24h change must be a valid number', 'error');
       return false;
     }
     return true;
@@ -368,6 +371,7 @@ unifier: price?.unifier || '',
         const updates = {
           price: formData.price,
           image: formData.image,
+          unifier: formData.unifier,
           twenty_four_hour_change:
             formData.twenty_four_hour_change,
           twenty_four_hour_volume:
@@ -400,6 +404,7 @@ unifier: price?.unifier || '',
               .toUpperCase(),
             currency: 'USD', // was: formData.currency.trim().toUpperCase()
             price: formData.price,
+            unifier: formData.unifier,
             twenty_four_hour_change:
               formData.twenty_four_hour_change || '0',
             twenty_four_hour_volume:
@@ -956,70 +961,49 @@ unifier: price?.unifier || '',
                     }}
                   >
                     {/* Asset */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems:
-                            'center',
-                          gap: '10px',
-                        }}
-                      >
+                    <td style={{ padding: '14px 18px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {price.image ? (
+                          <img
+                            src={price.image}
+                            alt={price.coin}
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                              border: '1px solid rgba(77,119,240,0.25)',
+                              background: 'rgba(77,119,240,0.15)',
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
                         <div
                           style={{
+                            display: price.image ? 'none' : 'flex',
                             width: '32px',
                             height: '32px',
-                            borderRadius:
-                              '50%',
-                            background:
-                              'rgba(77,119,240,0.15)',
-                            border:
-                              '1px solid rgba(77,119,240,0.25)',
-                            display:
-                              'flex',
-                            alignItems:
-                              'center',
-                            justifyContent:
-                              'center',
-                            color:
-                              '#818cf8',
+                            borderRadius: '50%',
+                            background: 'rgba(77,119,240,0.15)',
+                            border: '1px solid rgba(77,119,240,0.25)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#818cf8',
                             fontWeight: 700,
-                            fontSize:
-                              '11px',
+                            fontSize: '11px',
                           }}
                         >
-                          {(price.coin ||
-                            '?')
-                            .slice(0, 3)
-                            .toUpperCase()}
+                          {(price.coin || '?').slice(0, 3).toUpperCase()}
                         </div>
                         <div>
-                          <div
-                            style={{
-                              fontWeight: 700,
-                              color: '#fff',
-                              fontSize:
-                                '13px',
-                            }}
-                          >
+                          <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px' }}>
                             {price.coin}
                           </div>
-                          <div
-                            style={{
-                              fontSize:
-                                '11px',
-                              color:
-                                'var(--text-secondary)',
-                            }}
-                          >
-                            {price.currency ||
-                              'USD'}{' '}
-                            market price
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                            {price.currency || 'USD'} market price
                           </div>
                         </div>
                       </div>
@@ -1613,12 +1597,8 @@ unifier: price?.unifier || '',
                     required
                     disabled={!!editingPrice}
                     value={formData.coin}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        coin: e.target.value,
-                      })
-                    }
+
+                    onChange={(e) => handleCoinSelect(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '9px 12px',
