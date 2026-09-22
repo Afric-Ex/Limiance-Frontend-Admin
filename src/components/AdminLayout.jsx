@@ -107,6 +107,9 @@ export default function AdminLayout() {
                   <NavLink to="/tokens" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Tokens & Contracts
                   </NavLink>
+                   <NavLink to="/prices" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Tokens Prices
+                  </NavLink>
                   <NavLink to="/pairs" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Trading Pairs
                   </NavLink>
