@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import {
-
   Search,
   RefreshCw,
   ArrowUpRight,
@@ -9,84 +8,341 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-
 } from 'lucide-react';
+
+const PAGE_SIZE = 20;
+
+// If /api/orders expects "BTCUSDT" instead of "BTC/USDT" for `symbol`,
+// change this to: (pair) => pair.replace('/', '')
+const toApiSymbol = (pair) => pair;
+
+/* -------------------------------------------------------------------------- */
+/*  Helpers                                                                   */
+/* -------------------------------------------------------------------------- */
+
+const KNOWN_QUOTES = ['USDT', 'USDC', 'BUSD', 'USD', 'NGN', 'EUR', 'BTC', 'ETH', 'BNB', 'SOL'];
+
+// Accepts "BTC/USDT", "BTC-USDT", "BTCUSDT" or { base, quote } style objects
+// and always returns "BASE/QUOTE" (or null if it can't be understood).
+function normalizePair(raw) {
+  if (!raw) return null;
+
+  if (typeof raw === 'string') {
+    const s = raw.trim().toUpperCase();
+    if (/[/\-_:]/.test(s)) {
+      const [b, q] = s.split(/[/\-_:]/);
+      return b && q ? `${b}/${q}` : null;
+    }
+    const quote = KNOWN_QUOTES.find((q) => s.endsWith(q) && s.length > q.length);
+    return quote ? `${s.slice(0, -quote.length)}/${quote}` : null;
+  }
+
+  if (typeof raw !== 'object') return null;
+
+  const base =
+    raw.base ?? raw.base_asset ?? raw.baseAsset ?? raw.base_currency ?? raw.baseCurrency ?? raw.baseSymbol;
+  const quote =
+    raw.quote ?? raw.quote_asset ?? raw.quoteAsset ?? raw.quote_currency ?? raw.quoteCurrency ?? raw.quoteSymbol;
+
+  if (base && quote) return `${String(base).toUpperCase()}/${String(quote).toUpperCase()}`;
+
+  const combined = raw.symbol ?? raw.pair ?? raw.name ?? raw.ticker;
+  return typeof combined === 'string' ? normalizePair(combined) : null;
+}
+
+// Some API clients return a fetch Response, others return parsed JSON.
+async function unwrapResponse(res) {
+  if (res && typeof res.json === 'function' && typeof res.ok === 'boolean') {
+    if (!res.ok) throw new Error(`Request failed (HTTP ${res.status})`);
+    return res.json();
+  }
+  return res;
+}
+
+// Finds the array of pairs whether the API returns [..], {pairs:[..]},
+// {data:[..]}, {data:{pairs:[..]}}, {result:[..]}, etc.
+function extractPairList(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+  for (const key of ['pairs', 'data', 'result', 'results', 'items', 'markets', 'symbols']) {
+    const v = payload[key];
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') {
+      const nested = extractPairList(v);
+      if (nested.length) return nested;
+    }
+  }
+  return [];
+}
+
+const LIST_KEYS = ['data', 'orders', 'items', 'results', 'rows', 'trades'];
+const TOTAL_KEYS = ['totalRecords', 'total_records', 'total', 'totalCount', 'total_count'];
+
+function findArray(obj) {
+  if (!obj || typeof obj !== 'object') return null;
+  for (const k of LIST_KEYS) {
+    if (Array.isArray(obj[k])) return obj[k];
+  }
+  return null;
+}
+
+function findTotal(obj) {
+  if (!obj || typeof obj !== 'object') return null;
+  for (const k of TOTAL_KEYS) {
+    if (obj[k] != null && Number.isFinite(Number(obj[k]))) return Number(obj[k]);
+  }
+  return null;
+}
+
+// Returns { list, total } where total is null when the API doesn't report one.
+function parseOrdersResponse(payload) {
+  if (Array.isArray(payload)) return { list: payload, total: null };
+
+  const inner =
+    payload?.data && typeof payload.data === 'object' && !Array.isArray(payload.data) ? payload.data : null;
+
+  return {
+    list: findArray(payload) ?? findArray(inner),
+    total:
+      findTotal(payload) ??
+      findTotal(payload?.pagination) ??
+      findTotal(payload?.meta) ??
+      findTotal(inner) ??
+      findTotal(inner?.pagination),
+  };
+}
+
+const pick = (o, ...keys) => {
+  for (const k of keys) {
+    if (o?.[k] != null && o[k] !== '') return o[k];
+  }
+  return undefined;
+};
+
+// Accepts both snake_case and camelCase payloads and never throws on missing fields.
+function normalizeOrder(o) {
+  const base = pick(o, 'base', 'base_asset', 'baseAsset');
+  const quote = pick(o, 'quote', 'quote_asset', 'quoteAsset');
+  const symbol = pick(o, 'symbol', 'pair', 'market') ?? (base && quote ? `${base}/${quote}` : '—');
+
+  const price = Number(pick(o, 'price', 'avg_price', 'avgPrice')) || 0;
+  const quantity = Number(pick(o, 'quantity', 'amount', 'qty')) || 0;
+  const explicitTotal = pick(o, 'quote_amount', 'quoteAmount', 'total', 'quoteTotal');
+
+  return {
+    id: String(pick(o, 'id', 'order_id', 'orderId') ?? ''),
+    userId: String(pick(o, 'user_id', 'userId') ?? ''),
+    symbol: String(symbol),
+    side: String(pick(o, 'side') ?? '').toUpperCase(),
+    price,
+    quantity,
+    total: explicitTotal != null ? Number(explicitTotal) || 0 : price * quantity,
+    fee: pick(o, 'fee', 'fee_paid', 'feePaid') ?? 0,
+    feeAsset: pick(o, 'fee_asset', 'feeAsset') ?? '',
+    status: String(pick(o, 'status') ?? 'FILLED'),
+    createdAt: pick(o, 'created_at', 'createdAt', 'timestamp', 'time'),
+  };
+}
+
+function formatTime(v) {
+  if (v == null) return '—';
+  const asNumber = Number(v);
+  const d =
+    typeof v === 'number' || /^\d+$/.test(String(v))
+      ? new Date(asNumber < 1e12 ? asNumber * 1000 : asNumber) // seconds vs ms
+      : new Date(v);
+  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleString();
+}
+
+const shorten = (s, n) => (s ? `${s.slice(0, n)}...` : 'N/A');
+
+/* -------------------------------------------------------------------------- */
+/*  Styles                                                                    */
+/* -------------------------------------------------------------------------- */
+
+const inputBase = {
+  borderRadius: '8px',
+  background: '#181a22',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: '#fff',
+  fontSize: '13px',
+  outline: 'none',
+};
+
+const thStyle = {
+  padding: '12px 18px',
+  fontSize: '11px',
+  fontWeight: 700,
+  color: 'rgba(255,255,255,0.4)',
+};
+
+const alertStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '12px',
+  padding: '10px 14px',
+  marginBottom: '16px',
+  borderRadius: '10px',
+  background: 'rgba(239, 68, 68, 0.12)',
+  border: '1px solid rgba(239, 68, 68, 0.3)',
+  color: '#fca5a5',
+  fontSize: '13px',
+};
+
+const alertButtonStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '6px',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.12)',
+  color: '#fff',
+  borderRadius: '8px',
+  padding: '5px 10px',
+  fontSize: '12px',
+  fontWeight: 600,
+  cursor: 'pointer',
+};
+
+const COLUMNS = [
+  'Order ID / User',
+  'Market Pair',
+  'Side',
+  'Price',
+  'Quantity',
+  'Quote Total',
+  'Fee',
+  'Status',
+  'Time',
+];
+
+/* -------------------------------------------------------------------------- */
+/*  Component                                                                 */
+/* -------------------------------------------------------------------------- */
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState(null);
+
   const [pairs, setPairs] = useState([]);
   const [pairsLoading, setPairsLoading] = useState(true);
+  const [pairsError, setPairsError] = useState(null);
+  const [pairsReload, setPairsReload] = useState(0);
+
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(null); // null = API didn't report a total
+  const [hasMore, setHasMore] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Filters
   const [symbolFilter, setSymbolFilter] = useState('');
   const [sideFilter, setSideFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [userIdFilter, setUserIdFilter] = useState('');
-  const fetchPairs = async () => {
-    setPairsLoading(true);
-    try {
-      const res = await api('/api/pairs');
-      const list = Array.isArray(res.pairs) ? res.pairs : (Array.isArray(res) ? res : []);
-      const formatted = list.map((p) => `${(p.base || p.base_asset).toUpperCase()}/${(p.quote || p.quote_asset).toUpperCase()}`);
-      setPairs(formatted);
-    } catch (err) {
-      console.error('Failed to load trading pairs', err);
-    } finally {
-      setPairsLoading(false);
-    }
-  };
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.append('page', page);
-      params.append('limit', '20');
-      if (symbolFilter) params.append('symbol', symbolFilter);
-      if (sideFilter) params.append('side', sideFilter);
-      if (statusFilter) params.append('status', statusFilter);
-      if (userIdFilter) params.append('userId', userIdFilter);
+  const [userIdInput, setUserIdInput] = useState(''); // what the user is typing
+  const [userIdFilter, setUserIdFilter] = useState(''); // what has been applied
 
-      const res = await api(`/api/orders?${params.toString()}`);
-      if (res.data) {
-        setOrders(res.data);
-        setTotalRecords(res.totalRecords || 0);
-        setTotalPages(Math.ceil((res.totalRecords || 0) / 20) || 1);
-      } else if (Array.isArray(res)) {
-        setOrders(res);
-        setTotalRecords(res.length);
-        setTotalPages(1);
+  /* ---------------------------- Load trading pairs ---------------------------- */
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPairs() {
+      setPairsLoading(true);
+      setPairsError(null);
+      try {
+        const raw = await api('/api/pairs');
+        const payload = await unwrapResponse(raw);
+        const formatted = [...new Set(extractPairList(payload).map(normalizePair).filter(Boolean))];
+
+        if (cancelled) return;
+
+        if (formatted.length === 0) {
+          console.warn('[orders] /api/pairs returned no usable pairs. Raw response:', payload);
+          setPairsError('No trading pairs were found in the response.');
+        }
+        setPairs(formatted);
+      } catch (err) {
+        console.error('[orders] failed to load trading pairs:', err);
+        if (!cancelled) setPairsError(err?.message || 'Failed to load trading pairs');
+      } finally {
+        if (!cancelled) setPairsLoading(false);
       }
-    } catch (err) {
-      console.error('Failed to load orders', err);
-    } finally {
-      setLoading(false);
     }
-  };
 
-useEffect(() => {
-  fetchOrders();
-}, [page, sideFilter, statusFilter, symbolFilter]);
+    loadPairs();
+    return () => {
+      cancelled = true;
+    };
+  }, [pairsReload]);
 
+  /* ------------------------------- Load orders -------------------------------- */
+  // Re-runs whenever a filter, the page, or refreshKey changes. The `cancelled`
+  // flag drops responses from superseded requests, so a slow old response can
+  // never overwrite a newer one.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadOrders() {
+      setLoading(true);
+      setOrdersError(null);
+      try {
+        const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
+        if (symbolFilter) params.append('symbol', toApiSymbol(symbolFilter));
+        if (sideFilter) params.append('side', sideFilter);
+        if (statusFilter) params.append('status', statusFilter);
+        if (userIdFilter) params.append('userId', userIdFilter);
+
+        const raw = await api(`/api/orders?${params.toString()}`);
+        const payload = await unwrapResponse(raw);
+        const { list, total } = parseOrdersResponse(payload);
+
+        if (cancelled) return;
+
+        if (!list) {
+          console.warn('[orders] unexpected /api/orders response:', payload);
+          throw new Error('Unexpected response format from /api/orders.');
+        }
+
+        setOrders(list.map(normalizeOrder));
+        setTotalRecords(total);
+        setHasMore(list.length === PAGE_SIZE);
+      } catch (err) {
+        console.error('[orders] failed to load orders:', err);
+        if (!cancelled) {
+          setOrders([]);
+          setOrdersError(err?.message || 'Failed to load orders');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadOrders();
+    return () => {
+      cancelled = true;
+    };
+  }, [page, symbolFilter, sideFilter, statusFilter, userIdFilter, refreshKey]);
+
+  /* -------------------------------- Handlers ---------------------------------- */
   const handleSearch = (e) => {
     e.preventDefault();
+    setUserIdFilter(userIdInput.trim());
     setPage(1);
-    fetchOrders();
+    setRefreshKey((k) => k + 1); // refetch even if nothing else changed
   };
 
   const resetFilters = () => {
     setSymbolFilter('');
     setSideFilter('');
     setStatusFilter('');
+    setUserIdInput('');
     setUserIdFilter('');
     setPage(1);
+    setRefreshKey((k) => k + 1);
   };
-  useEffect(() => {
-    fetchPairs();
-  }, []);
+
+  const refresh = () => setRefreshKey((k) => k + 1);
+
   const getStatusBadge = (st) => {
     const status = (st || 'FILLED').toUpperCase();
     if (status === 'FILLED' || status === 'COMPLETED') {
@@ -113,6 +369,13 @@ useEffect(() => {
     };
   };
 
+  /* ------------------------------ Derived values ------------------------------ */
+  const totalKnown = totalRecords !== null;
+  const totalPages = totalKnown ? Math.max(1, Math.ceil(totalRecords / PAGE_SIZE)) : null;
+  const canGoNext = totalKnown ? page < totalPages : hasMore;
+  const anyFilter = symbolFilter || sideFilter || statusFilter || userIdInput || userIdFilter;
+
+  /* ---------------------------------- Render ---------------------------------- */
   return (
     <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
       {/* Header */}
@@ -127,7 +390,8 @@ useEffect(() => {
         </div>
 
         <button
-          onClick={fetchOrders}
+          type="button"
+          onClick={refresh}
           style={{
             padding: '8px 14px',
             background: '#1c1e28',
@@ -144,6 +408,24 @@ useEffect(() => {
           <RefreshCw size={14} /> Refresh Fills
         </button>
       </div>
+
+      {/* Errors */}
+      {pairsError && (
+        <div style={alertStyle} role="alert">
+          <span>Couldn't load markets: {pairsError}</span>
+          <button type="button" style={alertButtonStyle} onClick={() => setPairsReload((n) => n + 1)}>
+            <RefreshCw size={14} /> Retry
+          </button>
+        </div>
+      )}
+      {ordersError && (
+        <div style={alertStyle} role="alert">
+          <span>Couldn't load orders: {ordersError}</span>
+          <button type="button" style={alertButtonStyle} onClick={refresh}>
+            <RefreshCw size={14} /> Retry
+          </button>
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div
@@ -163,44 +445,33 @@ useEffect(() => {
               setPage(1);
             }}
             disabled={pairsLoading}
-            style={{
-              width: '220px',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              background: '#181a22',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              fontSize: '13px',
-              outline: 'none',
-            }}
+            style={{ ...inputBase, width: '220px', padding: '8px 12px' }}
           >
-            <option value="">All Markets</option>
-            {pairsLoading ? (
-              <option value="" disabled>Loading markets…</option>
-            ) : (
-              pairs.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))
-            )}
+            <option value="">{pairsLoading ? 'Loading markets…' : 'All Markets'}</option>
+            {pairs.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
 
           <div style={{ position: 'relative', width: '260px' }}>
-            <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+            <Search
+              size={14}
+              style={{
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'rgba(255,255,255,0.4)',
+              }}
+            />
             <input
               type="text"
               placeholder="Filter by User UUID..."
-              value={userIdFilter}
-              onChange={(e) => setUserIdFilter(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px 8px 34px',
-                borderRadius: '8px',
-                background: '#181a22',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#fff',
-                fontSize: '13px',
-                outline: 'none',
-              }}
+              value={userIdInput}
+              onChange={(e) => setUserIdInput(e.target.value)}
+              style={{ ...inputBase, width: '100%', padding: '8px 12px 8px 34px' }}
             />
           </div>
 
@@ -210,15 +481,7 @@ useEffect(() => {
               setSideFilter(e.target.value);
               setPage(1);
             }}
-            style={{
-              padding: '8px 14px',
-              borderRadius: '8px',
-              background: '#181a22',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              fontSize: '13px',
-              outline: 'none',
-            }}
+            style={{ ...inputBase, padding: '8px 14px' }}
           >
             <option value="">All Sides</option>
             <option value="BUY">BUY</option>
@@ -231,19 +494,12 @@ useEffect(() => {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            style={{
-              padding: '8px 14px',
-              borderRadius: '8px',
-              background: '#181a22',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              fontSize: '13px',
-              outline: 'none',
-            }}
+            style={{ ...inputBase, padding: '8px 14px' }}
           >
             <option value="">All Statuses</option>
             <option value="FILLED">FILLED</option>
             <option value="OPEN">OPEN</option>
+            <option value="PARTIALLY_FILLED">PARTIALLY_FILLED</option>
             <option value="CANCELLED">CANCELLED</option>
             <option value="REJECTED">REJECTED</option>
           </select>
@@ -264,7 +520,7 @@ useEffect(() => {
             Apply Filter
           </button>
 
-          {(symbolFilter || sideFilter || statusFilter || userIdFilter) && (
+          {anyFilter && (
             <button
               type="button"
               onClick={resetFilters}
@@ -282,8 +538,16 @@ useEffect(() => {
             </button>
           )}
 
-          <div style={{ marginLeft: 'auto', fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)' }}>
-            Showing {orders.length} of {totalRecords} orders
+          <div
+            style={{
+              marginLeft: 'auto',
+              fontSize: '12px',
+              color: 'rgba(255,255,255,0.5)',
+              fontFamily: 'var(--font-mono)',
+            }}
+          >
+            Showing {orders.length}
+            {totalKnown ? ` of ${totalRecords}` : ''} orders
           </div>
         </form>
       </div>
@@ -301,46 +565,49 @@ useEffect(() => {
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Order ID / User</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Market Pair</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Side</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Price</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Quantity</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Quote Total</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Fee</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Status</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Time</th>
+              {COLUMNS.map((col, i) => (
+                <th key={col} style={{ ...thStyle, textAlign: i === COLUMNS.length - 1 ? 'right' : 'left' }}>
+                  {col}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
                   Loading order stream...
                 </td>
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan="9" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  No orders match the current filter criteria.
+                <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  {ordersError ? 'Orders could not be loaded.' : 'No orders match the current filter criteria.'}
                 </td>
               </tr>
             ) : (
-              orders.map((ord) => {
+              orders.map((ord, idx) => {
                 const badge = getStatusBadge(ord.status);
-                const isBuy = (ord.side || '').toUpperCase() === 'BUY';
+                const isBuy = ord.side === 'BUY';
+                const isSell = ord.side === 'SELL';
+                const sideColors = isBuy
+                  ? { bg: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: 'rgba(16, 185, 129, 0.25)' }
+                  : isSell
+                  ? { bg: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: 'rgba(239, 68, 68, 0.25)' }
+                  : { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', border: 'rgba(255,255,255,0.12)' };
+
                 return (
-                  <tr key={ord.id || ord.order_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <tr key={ord.id || `row-${idx}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td style={{ padding: '14px 18px' }}>
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: '#fff' }}>
-                        {(ord.id || ord.order_id || 'ORD').slice(0, 10)}...
+                        {ord.id ? shorten(ord.id, 10) : 'ORD...'}
                       </div>
                       <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>
-                        User: {(ord.user_id || 'N/A').slice(0, 8)}...
+                        User: {shorten(ord.userId, 8)}
                       </div>
                     </td>
                     <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
-                      {ord.symbol || `${ord.base}/${ord.quote}`}
+                      {ord.symbol}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
                       <span
@@ -352,26 +619,27 @@ useEffect(() => {
                           borderRadius: '4px',
                           fontSize: '11px',
                           fontWeight: 700,
-                          background: isBuy ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                          color: isBuy ? '#34d399' : '#f87171',
-                          border: `1px solid ${isBuy ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                          background: sideColors.bg,
+                          color: sideColors.color,
+                          border: `1px solid ${sideColors.border}`,
                         }}
                       >
-                        {isBuy ? <ArrowDownRight size={12} /> : <ArrowUpRight size={12} />}
-                        {ord.side}
+                        {isBuy && <ArrowDownRight size={12} />}
+                        {isSell && <ArrowUpRight size={12} />}
+                        {ord.side || '—'}
                       </span>
                     </td>
                     <td style={{ padding: '14px 18px', color: '#fff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                      ${Number(ord.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
+                      ${ord.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
                     </td>
                     <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-mono)' }}>
-                      {ord.quantity || ord.amount || 0}
+                      {ord.quantity}
                     </td>
                     <td style={{ padding: '14px 18px', color: '#818cf8', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
-                      ${Number(ord.quote_amount || ord.total || (Number(ord.price || 0) * Number(ord.quantity || 0))).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ${ord.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '14px 18px', color: '#fbbf24', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
-                      {ord.fee || ord.fee_paid || '0'} {ord.fee_asset || ''}
+                      {ord.fee} {ord.feeAsset}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
                       <span
@@ -389,11 +657,19 @@ useEffect(() => {
                         }}
                       >
                         {badge.icon}
-                        {ord.status || 'FILLED'}
+                        {ord.status}
                       </span>
                     </td>
-                    <td style={{ padding: '14px 18px', textAlign: 'right', fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>
-                      {ord.created_at ? new Date(ord.created_at).toLocaleString() : '—'}
+                    <td
+                      style={{
+                        padding: '14px 18px',
+                        textAlign: 'right',
+                        fontSize: '12px',
+                        color: 'rgba(255,255,255,0.4)',
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      {formatTime(ord.createdAt)}
                     </td>
                   </tr>
                 );
@@ -414,11 +690,13 @@ useEffect(() => {
           }}
         >
           <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-            Page {page} of {totalPages}
+            Page {page}
+            {totalKnown ? ` of ${totalPages}` : ''}
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
-              disabled={page <= 1}
+              type="button"
+              disabled={page <= 1 || loading}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               style={{
                 padding: '6px 14px',
@@ -426,22 +704,23 @@ useEffect(() => {
                 background: page <= 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 color: page <= 1 ? 'rgba(255,255,255,0.2)' : '#fff',
-                cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                cursor: page <= 1 || loading ? 'not-allowed' : 'pointer',
                 fontSize: '12px',
               }}
             >
               Previous
             </button>
             <button
-              disabled={page >= totalPages}
+              type="button"
+              disabled={!canGoNext || loading}
               onClick={() => setPage((p) => p + 1)}
               style={{
                 padding: '6px 14px',
                 borderRadius: '6px',
-                background: page >= totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
+                background: !canGoNext ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.1)',
-                color: page >= totalPages ? 'rgba(255,255,255,0.2)' : '#fff',
-                cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                color: !canGoNext ? 'rgba(255,255,255,0.2)' : '#fff',
+                cursor: !canGoNext || loading ? 'not-allowed' : 'pointer',
                 fontSize: '12px',
               }}
             >
