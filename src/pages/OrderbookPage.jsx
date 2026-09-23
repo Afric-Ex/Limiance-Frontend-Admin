@@ -60,7 +60,9 @@ export default function OrderbookPage() {
       try {
         const res = await api('/api/pairs');
         const list = Array.isArray(res.pairs) ? res.pairs : (Array.isArray(res) ? res : []);
-        const formatted = list.map((p) => `${p.base.toUpperCase()}/${p.quote.toUpperCase()}`);
+        const formatted = list
+  .filter((p) => (p.base || p.base_asset) && (p.quote || p.quote_asset))
+  .map((p) => `${(p.base || p.base_asset).toUpperCase()}/${(p.quote || p.quote_asset).toUpperCase()}`);
         setPairs(formatted);
         if (formatted.length > 0) {
           setSelectedPair(formatted[0]);
