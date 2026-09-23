@@ -16,20 +16,13 @@ import {
 import { api } from '../api/client';
 import './OrderbookPage.css';
 
-const DEFAULT_PAIRS = [
-  'BTC/USDT',
-  'ETH/USDT',
-  'SOL/USDT',
-  'BNB/USDT',
-  'XRP/USDT',
-  'ADA/USDT',
-  'DOGE/USDT',
-  'AVAX/USDT',
-];
+
 
 export default function OrderbookPage() {
-  const [pairs, setPairs] = useState(DEFAULT_PAIRS);
-  const [selectedPair, setSelectedPair] = useState('BTC/USDT');
+  const [pairs, setPairs] = useState([]);
+  const [selectedPair, setSelectedPair] = useState('');
+  const [pairsLoading, setPairsLoading] = useState(true);
+  const [pairsError, setPairsError] = useState(null);
   const [marketType, setMarketType] = useState('spot'); // 'spot' | 'margin' | 'futures'
   const [wsStatus, setWsStatus] = useState('connecting'); // 'connected' | 'connecting' | 'disconnected'
   const [viewMode, setViewMode] = useState('both'); // 'both' | 'bids' | 'asks'
@@ -62,29 +55,30 @@ export default function OrderbookPage() {
   // 1. Load pairs from API
   useEffect(() => {
     async function loadPairs() {
+      setPairsLoading(true);
+      setPairsError(null);
       try {
         const res = await api('/api/pairs');
-        if (res && Array.isArray(res.pairs) && res.pairs.length > 0) {
-          const formatted = res.pairs.map(
-            (p) => `${p.base.toUpperCase()}/${p.quote.toUpperCase()}`
-          );
-          setPairs(formatted);
-          if (!formatted.includes(selectedPair)) {
-            setSelectedPair(formatted[0]);
-          }
+        const list = Array.isArray(res.pairs) ? res.pairs : (Array.isArray(res) ? res : []);
+        const formatted = list.map((p) => `${p.base.toUpperCase()}/${p.quote.toUpperCase()}`);
+        setPairs(formatted);
+        if (formatted.length > 0) {
+          setSelectedPair(formatted[0]);
         }
       } catch (err) {
-        console.warn('Could not load pairs from API, using defaults:', err);
+        console.error('Failed to load pairs from API:', err);
+        setPairsError(err.message || 'Failed to load trading pairs');
+      } finally {
+        setPairsLoading(false);
       }
     }
     loadPairs();
   }, []);
-
   // 2. When selectedPair or marketType changes:
   // - Immediately clear orderbook state so old data disappears
   // - Send subscription frame to gateway
   useEffect(() => {
-    // Clear previous view immediately
+    if (!selectedPair) return;   // ADD THIS LINE
     setBids([]);
     setAsks([]);
     setLastPrice(null);
@@ -133,7 +127,7 @@ export default function OrderbookPage() {
   // 3. WebSocket Connection
   useEffect(() => {
     let isMounted = true;
-
+    if (!selectedPair) return;
     function connectWs() {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.close();
@@ -456,12 +450,17 @@ export default function OrderbookPage() {
             className="ob-pair-selector"
             value={selectedPair}
             onChange={(e) => setSelectedPair(e.target.value)}
+            disabled={pairsLoading || pairs.length === 0}
           >
-            {pairs.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
+            {pairsLoading ? (
+              <option value="">Loading pairs…</option>
+            ) : pairs.length === 0 ? (
+              <option value="">No pairs available</option>
+            ) : (
+              pairs.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))
+            )}
           </select>
 
           {/* WS Status Badge */}
