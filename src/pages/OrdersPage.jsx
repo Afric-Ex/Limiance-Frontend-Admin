@@ -67,9 +67,9 @@ export default function OrdersPage() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [page, sideFilter, statusFilter]);
+useEffect(() => {
+  fetchOrders();
+}, [page, sideFilter, statusFilter, symbolFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
