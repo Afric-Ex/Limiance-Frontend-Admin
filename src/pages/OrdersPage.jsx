@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import {
-  ListFilter,
+
   Search,
   RefreshCw,
   ArrowUpRight,
@@ -9,13 +9,14 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  ExternalLink,
-  Sliders,
+
 } from 'lucide-react';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pairs, setPairs] = useState([]);
+const [pairsLoading, setPairsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -25,7 +26,19 @@ export default function OrdersPage() {
   const [sideFilter, setSideFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [userIdFilter, setUserIdFilter] = useState('');
-
+const fetchPairs = async () => {
+  setPairsLoading(true);
+  try {
+    const res = await api('/api/pairs');
+    const list = Array.isArray(res.pairs) ? res.pairs : (Array.isArray(res) ? res : []);
+    const formatted = list.map((p) => `${(p.base || p.base_asset).toUpperCase()}/${(p.quote || p.quote_asset).toUpperCase()}`);
+    setPairs(formatted);
+  } catch (err) {
+    console.error('Failed to load trading pairs', err);
+  } finally {
+    setPairsLoading(false);
+  }
+};
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -71,7 +84,9 @@ export default function OrdersPage() {
     setUserIdFilter('');
     setPage(1);
   };
-
+useEffect(() => {
+  fetchPairs();
+}, []);
   const getStatusBadge = (st) => {
     const status = (st || 'FILLED').toUpperCase();
     if (status === 'FILLED' || status === 'COMPLETED') {
@@ -141,25 +156,33 @@ export default function OrdersPage() {
         }}
       >
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ position: 'relative', width: '220px' }}>
-            <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
-            <input
-              type="text"
-              placeholder="Market (e.g. BTC/USDT)..."
-              value={symbolFilter}
-              onChange={(e) => setSymbolFilter(e.target.value.toUpperCase())}
-              style={{
-                width: '100%',
-                padding: '8px 12px 8px 34px',
-                borderRadius: '8px',
-                background: '#181a22',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#fff',
-                fontSize: '13px',
-                outline: 'none',
-              }}
-            />
-          </div>
+         <select
+  value={symbolFilter}
+  onChange={(e) => {
+    setSymbolFilter(e.target.value);
+    setPage(1);
+  }}
+  disabled={pairsLoading}
+  style={{
+    width: '220px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    background: '#181a22',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: '#fff',
+    fontSize: '13px',
+    outline: 'none',
+  }}
+>
+  <option value="">All Markets</option>
+  {pairsLoading ? (
+    <option value="" disabled>Loading markets…</option>
+  ) : (
+    pairs.map((p) => (
+      <option key={p} value={p}>{p}</option>
+    ))
+  )}
+</select>
 
           <div style={{ position: 'relative', width: '260px' }}>
             <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
