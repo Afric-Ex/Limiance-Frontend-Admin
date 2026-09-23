@@ -4,25 +4,151 @@ import {
   Activity,
   ArrowUp,
   ArrowDown,
-  TrendingUp,
   RefreshCw,
   SlidersHorizontal,
-  ChevronDown,
-  Wifi,
-  WifiOff,
   BarChart2,
-  PieChart,
 } from 'lucide-react';
 import { api } from '../api/client';
 import './OrderbookPage.css';
 
+/* -------------------------------------------------------------------------- */
+/*  Helpers (module level so they never go stale inside WebSocket callbacks)  */
+/* -------------------------------------------------------------------------- */
 
+const KNOWN_QUOTES = ['USDT', 'USDC', 'BUSD', 'USD', 'NGN', 'EUR', 'BTC', 'ETH', 'BNB', 'SOL'];
+
+// Accepts "BTC/USDT", "BTC-USDT", "BTCUSDT" or { base, quote } style objects
+// and always returns "BASE/QUOTE" (or null if it can't be understood).
+function normalizePair(raw) {
+  if (!raw) return null;
+
+  if (typeof raw === 'string') {
+    const s = raw.trim().toUpperCase();
+    if (/[/\-_:]/.test(s)) {
+      const [b, q] = s.split(/[/\-_:]/);
+      return b && q ? `${b}/${q}` : null;
+    }
+    const quote = KNOWN_QUOTES.find((q) => s.endsWith(q) && s.length > q.length);
+    return quote ? `${s.slice(0, -quote.length)}/${quote}` : null;
+  }
+
+  if (typeof raw !== 'object') return null;
+
+  const base =
+    raw.base ?? raw.base_asset ?? raw.baseAsset ?? raw.base_currency ?? raw.baseCurrency ?? raw.baseSymbol;
+  const quote =
+    raw.quote ?? raw.quote_asset ?? raw.quoteAsset ?? raw.quote_currency ?? raw.quoteCurrency ?? raw.quoteSymbol;
+
+  if (base && quote) return `${String(base).toUpperCase()}/${String(quote).toUpperCase()}`;
+
+  const combined = raw.symbol ?? raw.pair ?? raw.name ?? raw.ticker;
+  return typeof combined === 'string' ? normalizePair(combined) : null;
+}
+
+// Some API clients return a fetch Response, others return parsed JSON.
+async function unwrapResponse(res) {
+  if (res && typeof res.json === 'function' && typeof res.ok === 'boolean') {
+    if (!res.ok) throw new Error(`Request failed (HTTP ${res.status})`);
+    return res.json();
+  }
+  return res;
+}
+
+// Finds the array of pairs whether the API returns [..], {pairs:[..]},
+// {data:[..]}, {data:{pairs:[..]}}, {result:[..]}, etc.
+function extractList(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+  for (const key of ['pairs', 'data', 'result', 'results', 'items', 'markets', 'symbols']) {
+    const v = payload[key];
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') {
+      const nested = extractList(v);
+      if (nested.length) return nested;
+    }
+  }
+  return [];
+}
+
+function parseLevel(o) {
+  if (Array.isArray(o)) {
+    return { price: parseFloat(o[0] || 0), quantity: parseFloat(o[1] || 0) };
+  }
+  return {
+    price: parseFloat(o?.price ?? o?.Price ?? 0),
+    quantity: parseFloat(o?.quantity ?? o?.Quantity ?? o?.amount ?? o?.Amount ?? 0),
+  };
+}
+
+function buildSide(raw, sortDesc) {
+  const levels = (Array.isArray(raw) ? raw : [])
+    .map(parseLevel)
+    .filter((o) => o.price > 0 && o.quantity > 0)
+    .sort((a, b) => (sortDesc ? b.price - a.price : a.price - b.price));
+
+  let cumulative = 0;
+  const rows = levels.map((l) => {
+    cumulative += l.price * l.quantity;
+    return { ...l, total: cumulative };
+  });
+  return { rows, total: cumulative };
+}
+
+function pickSide(book, keys) {
+  for (const k of keys) {
+    if (Array.isArray(book[k])) return book[k];
+  }
+  return [];
+}
+
+const cleanPair = (s) => String(s || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+function buildWsUrl() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  let url = import.meta.env.VITE_WS_URL;
+
+  if (!url) {
+    url = `${protocol}//${window.location.host}/ws`;
+  } else if (url.startsWith('/')) {
+    url = `${protocol}//${window.location.host}${url}`;
+  } else if (url.startsWith('http')) {
+    url = url.replace(/^http/, 'ws'); // http -> ws, https -> wss
+  }
+
+  const token = localStorage.getItem('admin_token') || '';
+  if (token) {
+    url += (url.includes('?') ? '&' : '?') + `auth-token=${encodeURIComponent(token)}`;
+  }
+  return url;
+}
+
+function sendSubscription(socket, pair, mode) {
+  if (!socket || socket.readyState !== WebSocket.OPEN || !pair) return;
+
+  const type =
+    mode === 'futures'
+      ? 'get_futures_order_books'
+      : mode === 'margin'
+      ? 'get_margin_order_books'
+      : 'get_spot_order_books';
+
+  try {
+    socket.send(JSON.stringify({ type, data: { pair } }));
+  } catch (err) {
+    console.warn('[orderbook] failed to send subscription:', err);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Component                                                                 */
+/* -------------------------------------------------------------------------- */
 
 export default function OrderbookPage() {
   const [pairs, setPairs] = useState([]);
   const [selectedPair, setSelectedPair] = useState('');
   const [pairsLoading, setPairsLoading] = useState(true);
   const [pairsError, setPairsError] = useState(null);
+  const [pairsReload, setPairsReload] = useState(0);
   const [marketType, setMarketType] = useState('spot'); // 'spot' | 'margin' | 'futures'
   const [wsStatus, setWsStatus] = useState('connecting'); // 'connected' | 'connecting' | 'disconnected'
   const [viewMode, setViewMode] = useState('both'); // 'both' | 'bids' | 'asks'
@@ -39,48 +165,61 @@ export default function OrderbookPage() {
   const [sellVol, setSellVol] = useState(0);
   const [buyPct, setBuyPct] = useState(50);
   const [sellPct, setSellPct] = useState(50);
-  const [lastUpdateTs, setLastUpdateTs] = useState(null);
 
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
-  const activePairRef = useRef(selectedPair);
+  const reconnectAttemptsRef = useRef(0);
+  const activePairRef = useRef('');
   const activeMarketRef = useRef(marketType);
+  const lastPriceRef = useRef(null);
+  const handlerRef = useRef(() => {});
 
-  // Keep refs in sync with current state
+  /* ---------------------------- 1. Load pairs ----------------------------- */
   useEffect(() => {
-    activePairRef.current = selectedPair;
-    activeMarketRef.current = marketType;
-  }, [selectedPair, marketType]);
+    let cancelled = false;
 
-  // 1. Load pairs from API
-  useEffect(() => {
     async function loadPairs() {
       setPairsLoading(true);
       setPairsError(null);
       try {
-        const res = await api('/api/pairs');
-        const list = Array.isArray(res.pairs) ? res.pairs : (Array.isArray(res) ? res : []);
-        const formatted = list
-  .filter((p) => (p.base || p.base_asset) && (p.quote || p.quote_asset))
-  .map((p) => `${(p.base || p.base_asset).toUpperCase()}/${(p.quote || p.quote_asset).toUpperCase()}`);
-        setPairs(formatted);
-        if (formatted.length > 0) {
-          setSelectedPair(formatted[0]);
+        const raw = await api('/api/pairs');
+        const payload = await unwrapResponse(raw);
+        const list = extractList(payload);
+
+        const formatted = [...new Set(list.map(normalizePair).filter(Boolean))];
+
+        if (cancelled) return;
+
+        if (formatted.length === 0) {
+          console.warn('[orderbook] /api/pairs returned no usable pairs. Raw response:', payload);
+          setPairs([]);
+          setPairsError('The pairs endpoint responded, but no trading pairs were found in the response.');
+          return;
         }
+
+        setPairs(formatted);
+        // Keep the current selection if it is still valid, otherwise pick the first pair.
+        setSelectedPair((current) => (formatted.includes(current) ? current : formatted[0]));
       } catch (err) {
-        console.error('Failed to load pairs from API:', err);
-        setPairsError(err.message || 'Failed to load trading pairs');
+        console.error('[orderbook] failed to load pairs:', err);
+        if (!cancelled) setPairsError(err?.message || 'Failed to load trading pairs');
       } finally {
-        setPairsLoading(false);
+        if (!cancelled) setPairsLoading(false);
       }
     }
+
     loadPairs();
-  }, []);
-  // 2. When selectedPair or marketType changes:
-  // - Immediately clear orderbook state so old data disappears
-  // - Send subscription frame to gateway
+    return () => {
+      cancelled = true;
+    };
+  }, [pairsReload]);
+
+  /* ------------- 2. Pair / market changed: reset + re-subscribe ------------ */
   useEffect(() => {
-    if (!selectedPair) return;   // ADD THIS LINE
+    activePairRef.current = selectedPair;
+    activeMarketRef.current = marketType;
+
+    // Clear old data immediately
     setBids([]);
     setAsks([]);
     setLastPrice(null);
@@ -90,76 +229,40 @@ export default function OrderbookPage() {
     setSellVol(0);
     setBuyPct(50);
     setSellPct(50);
+    lastPriceRef.current = null;
 
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+    if (selectedPair) {
       sendSubscription(wsRef.current, selectedPair, marketType);
     }
   }, [selectedPair, marketType]);
 
-  const sendSubscription = (socket, pair = activePairRef.current, mode = activeMarketRef.current) => {
-    const formattedPair = pair.includes('/')
-      ? pair
-      : `${pair.slice(0, 3)}/${pair.slice(3)}`;
-
-    let payload;
-    if (mode === 'futures') {
-      payload = {
-        type: 'get_futures_order_books',
-        data: { pair: formattedPair },
-      };
-    } else if (mode === 'margin') {
-      payload = {
-        type: 'get_margin_order_books',
-        data: { pair: formattedPair },
-      };
-    } else {
-      payload = {
-        type: 'get_spot_order_books',
-        data: { pair: formattedPair },
-      };
-    }
-
-    try {
-      socket.send(JSON.stringify(payload));
-    } catch (err) {
-      console.warn('Failed to send WS subscription:', err);
-    }
-  };
-
-  // 3. WebSocket Connection
+  /* ------------------------ 3. WebSocket connection ------------------------ */
+  // Connects once on mount. It does NOT wait for pairs; the subscription is
+  // sent on open (if a pair is already selected) or by effect 2 when one is.
   useEffect(() => {
     let isMounted = true;
-    if (!selectedPair) return;
-    function connectWs() {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.close();
-      }
+    let socket = null;
 
+    function connectWs() {
+      if (!isMounted) return;
       setWsStatus('connecting');
 
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const token = localStorage.getItem('admin_token') || '';
+      const wsUrl = buildWsUrl();
+      console.info('[orderbook] connecting to', wsUrl.replace(/(auth-token=)[^&]*/, '$1***'));
 
-      let wsUrl = import.meta.env.VITE_WS_URL;
-      if (!wsUrl) {
-        wsUrl = `${protocol}//${window.location.host}/ws`;
-      }
-      if (token) {
-        wsUrl += (wsUrl.includes('?') ? '&' : '?') + `auth-token=${encodeURIComponent(token)}`;
-      }
-
-      let socket;
       try {
         socket = new WebSocket(wsUrl);
         wsRef.current = socket;
       } catch (err) {
-        console.error('Failed to construct WebSocket:', err);
+        console.error('[orderbook] failed to construct WebSocket:', err);
         setWsStatus('disconnected');
+        scheduleReconnect();
         return;
       }
 
       socket.onopen = () => {
         if (!isMounted) return;
+        reconnectAttemptsRef.current = 0;
         setWsStatus('connected');
         sendSubscription(socket, activePairRef.current, activeMarketRef.current);
       };
@@ -167,223 +270,176 @@ export default function OrderbookPage() {
       socket.onmessage = (event) => {
         if (!isMounted) return;
         try {
-          const msg = JSON.parse(event.data);
-          handleIncomingMessage(msg);
+          handlerRef.current(JSON.parse(event.data));
         } catch (err) {
-          console.error('Error parsing WS message:', err);
+          console.error('[orderbook] error handling WS message:', err);
         }
       };
 
       socket.onerror = (err) => {
-        console.warn('WebSocket error:', err);
+        console.warn('[orderbook] WebSocket error:', err);
       };
 
-      socket.onclose = () => {
+      socket.onclose = (ev) => {
         if (!isMounted) return;
+        console.warn(`[orderbook] WebSocket closed (code ${ev.code}${ev.reason ? `, ${ev.reason}` : ''})`);
         setWsStatus('disconnected');
-        reconnectTimeoutRef.current = setTimeout(() => {
-          if (isMounted) connectWs();
-        }, 3000);
+        scheduleReconnect();
       };
+    }
+
+    function scheduleReconnect() {
+      const attempt = reconnectAttemptsRef.current++;
+      const delay = Math.min(1000 * 2 ** attempt, 15000); // 1s, 2s, 4s ... max 15s
+      reconnectTimeoutRef.current = setTimeout(connectWs, delay);
     }
 
     connectWs();
 
     return () => {
       isMounted = false;
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+      clearTimeout(reconnectTimeoutRef.current);
+      if (socket) {
+        socket.onopen = socket.onmessage = socket.onerror = socket.onclose = null;
+        socket.close();
       }
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      wsRef.current = null;
     };
   }, []);
 
+  /* --------------------------- Message handling --------------------------- */
+  const applyLastPrice = (p) => {
+    const prev = lastPriceRef.current;
+    if (prev !== null && prev !== p) setPrevPrice(prev);
+    lastPriceRef.current = p;
+    setLastPrice(p);
+  };
+
+  const applyBook = (rawBuys, rawSells) => {
+    const buy = buildSide(rawBuys, true); // highest bid first
+    const sell = buildSide(rawSells, false); // lowest ask first
+    const maxTotal = Math.max(buy.total, sell.total, 1);
+
+    const withDepth = (rows) =>
+      rows.map((r) => ({ ...r, depthPct: Math.min(100, Math.round((r.total / maxTotal) * 100)) }));
+
+    setBids(withDepth(buy.rows));
+    setAsks(withDepth(sell.rows));
+
+    const tot = buy.total + sell.total;
+    if (tot > 0) {
+      const bp = Math.round((buy.total / tot) * 100);
+      setBuyPct(bp);
+      setSellPct(100 - bp);
+      setBuyVol(buy.total);
+      setSellVol(sell.total);
+    }
+  };
+
   const handleIncomingMessage = (msg) => {
-    setLastUpdateTs(Date.now());
+    if (!msg || typeof msg !== 'object') return;
 
     if (msg.type === 'order_book_update') {
-      // In spot/margin, verify the update is for spot/margin
       if (activeMarketRef.current === 'futures') return;
 
       const book = msg.data?.orderBook || msg.data;
       if (!book) return;
 
-      const rawBuys = Array.isArray(book.buyOrders) ? book.buyOrders : (Array.isArray(book.buy) ? book.buy : (Array.isArray(book.bids) ? book.bids : []));
-      const rawSells = Array.isArray(book.sellOrders) ? book.sellOrders : (Array.isArray(book.sell) ? book.sell : (Array.isArray(book.asks) ? book.asks : []));
+      // Ignore late updates that belong to a previously selected pair
+      const msgPair = book.pair ?? book.symbol ?? msg.data?.pair ?? msg.pair;
+      if (typeof msgPair === 'string' && cleanPair(msgPair) !== cleanPair(activePairRef.current)) return;
 
-      processOrders(rawBuys, rawSells);
+      applyBook(
+        pickSide(book, ['buyOrders', 'buy', 'bids']),
+        pickSide(book, ['sellOrders', 'sell', 'asks'])
+      );
 
-      if (msg.data?.lastPrice || book.realLastPrice || book.lastTradedPrice) {
-        const p = parseFloat(msg.data?.lastPrice || book.realLastPrice || book.lastTradedPrice);
-        if (p > 0) {
-          setPrevPrice((prev) => (prev !== p ? lastPrice : prev));
-          setLastPrice(p);
-        }
+      const rawPrice = msg.data?.lastPrice || book.realLastPrice || book.lastTradedPrice;
+      if (rawPrice) {
+        const p = parseFloat(rawPrice);
+        if (p > 0) applyLastPrice(p);
       }
 
-      setBuyVol(book.totalBuyVolume || 0);
-      setSellVol(book.totalSellVolume || 0);
-      if (book.buyPercentage !== undefined && book.sellPercentage !== undefined) {
+      // Only override computed volumes when the server actually sends them
+      if (book.totalBuyVolume != null) setBuyVol(Number(book.totalBuyVolume) || 0);
+      if (book.totalSellVolume != null) setSellVol(Number(book.totalSellVolume) || 0);
+      if (book.buyPercentage != null && book.sellPercentage != null) {
         setBuyPct(Math.round(book.buyPercentage));
         setSellPct(Math.round(book.sellPercentage));
       }
     } else if (msg.type === 'futures_order_book_update') {
-      // Only process futures messages when active mode is futures
       if (activeMarketRef.current !== 'futures') return;
 
       const data = msg.data || {};
-      const rawBuys = Array.isArray(data.buy) ? data.buy : (Array.isArray(data.buyOrders) ? data.buyOrders : (Array.isArray(data.bids) ? data.bids : []));
-      const rawSells = Array.isArray(data.sell) ? data.sell : (Array.isArray(data.sellOrders) ? data.sellOrders : (Array.isArray(data.asks) ? data.asks : []));
 
-      processOrders(rawBuys, rawSells);
+      const msgPair = data.pair ?? data.symbol;
+      if (typeof msgPair === 'string' && cleanPair(msgPair) !== cleanPair(activePairRef.current)) return;
+
+      applyBook(
+        pickSide(data, ['buy', 'buyOrders', 'bids']),
+        pickSide(data, ['sell', 'sellOrders', 'asks'])
+      );
 
       if (data.markPrice) {
         const mp = parseFloat(data.markPrice);
-        setMarkPrice(mp);
-        if (!lastPrice) {
-          setLastPrice(mp);
+        if (mp > 0) {
+          setMarkPrice(mp);
+          if (lastPriceRef.current === null) applyLastPrice(mp);
         }
       }
     }
   };
 
-  const processOrders = (rawBuys, rawSells) => {
-    const parseOrder = (o) => {
-      // Handle array format [price, quantity] or object format {price, quantity} / {Price, Quantity}
-      if (Array.isArray(o)) {
-        return {
-          price: parseFloat(o[0] || 0),
-          quantity: parseFloat(o[1] || 0),
-        };
-      }
-      return {
-        price: parseFloat(o.price ?? o.Price ?? 0),
-        quantity: parseFloat(o.quantity ?? o.Quantity ?? o.amount ?? o.Amount ?? 0),
-      };
-    };
+  // Always point the socket at the latest handler (no stale closures)
+  handlerRef.current = handleIncomingMessage;
 
-    // Process Bids (Sorted descending: highest buy price first)
-    const sortedBids = [...rawBuys]
-      .map(parseOrder)
-      .filter((o) => o.price > 0 && o.quantity > 0)
-      .sort((a, b) => b.price - a.price);
-
-    let cumBidTotal = 0;
-    const processedBids = sortedBids.map((b) => {
-      cumBidTotal += b.price * b.quantity;
-      return {
-        ...b,
-        total: cumBidTotal,
-      };
-    });
-
-    // Process Asks (Sorted ascending: lowest sell price first)
-    const sortedAsks = [...rawSells]
-      .map((o) => ({
-        price: parseFloat(o.price || 0),
-        quantity: parseFloat(o.quantity || 0),
-      }))
-      .filter((o) => o.price > 0 && o.quantity > 0)
-      .sort((a, b) => a.price - b.price);
-
-    let cumAskTotal = 0;
-    const processedAsks = sortedAsks.map((a) => {
-      cumAskTotal += a.price * a.quantity;
-      return {
-        ...a,
-        total: cumAskTotal,
-      };
-    });
-
-    // Compute max depth for proportional visual bars
-    const maxTotal = Math.max(
-      cumBidTotal || 1,
-      cumAskTotal || 1
-    );
-
-    setBids(
-      processedBids.map((b) => ({
-        ...b,
-        depthPct: Math.min(100, Math.round((b.total / maxTotal) * 100)),
-      }))
-    );
-
-    setAsks(
-      processedAsks.map((a) => ({
-        ...a,
-        depthPct: Math.min(100, Math.round((a.total / maxTotal) * 100)),
-      }))
-    );
-
-    if (cumBidTotal > 0 || cumAskTotal > 0) {
-      const tot = cumBidTotal + cumAskTotal;
-      setBuyPct(Math.round((cumBidTotal / tot) * 100));
-      setSellPct(100 - Math.round((cumBidTotal / tot) * 100));
-      setBuyVol(cumBidTotal);
-      setSellVol(cumAskTotal);
-    }
-  };
-
-  // Sliced for display
+  /* ------------------------------ Derived data ---------------------------- */
   const displayAsks = useMemo(() => {
-    // Sells are displayed reversed so highest ask is at top and lowest ask is just above the spread
-    const slice = asks.slice(0, depthLimit);
-    return slice.reverse();
+    // Highest ask on top, lowest ask just above the spread
+    return asks.slice(0, depthLimit).reverse();
   }, [asks, depthLimit]);
 
-  const displayBids = useMemo(() => {
-    return bids.slice(0, depthLimit);
-  }, [bids, depthLimit]);
+  const displayBids = useMemo(() => bids.slice(0, depthLimit), [bids, depthLimit]);
 
-  // Spread calculation
   const bestBid = bids[0]?.price || null;
   const bestAsk = asks[0]?.price || null;
   const spread = bestAsk && bestBid ? bestAsk - bestBid : 0;
   const spreadPct = bestAsk && spread > 0 ? (spread / bestAsk) * 100 : 0;
   const midPrice = bestAsk && bestBid ? (bestAsk + bestBid) / 2 : lastPrice || 0;
 
-  const priceDirection = lastPrice && prevPrice ? (lastPrice >= prevPrice ? 'up' : 'down') : 'neutral';
+  const priceDirection =
+    lastPrice && prevPrice ? (lastPrice >= prevPrice ? 'up' : 'down') : 'neutral';
 
-  // Dynamic SVG Depth Chart Calculation
+  // Cumulative depth chart. Centre (x=200) is the spread; bids extend left, asks right.
   const depthChartData = useMemo(() => {
-    if (bids.length === 0 && asks.length === 0) {
-      return { bidPath: '', askPath: '' };
-    }
+    const empty = { bidLine: '', bidArea: '', askLine: '', askArea: '' };
+    if (bids.length === 0 && asks.length === 0) return empty;
 
-    const maxBidTotal = bids[bids.length - 1]?.total || 1;
-    const maxAskTotal = asks[asks.length - 1]?.total || 1;
-    const maxCumulative = Math.max(maxBidTotal, maxAskTotal, 1);
+    const maxCumulative = Math.max(
+      bids[bids.length - 1]?.total || 0,
+      asks[asks.length - 1]?.total || 0,
+      1
+    );
+    const yFor = (total) => 200 - Math.min(160, (total / maxCumulative) * 160);
 
-    // SVG coordinate space: x: 0 to 400 (mid: 200), y: 0 to 200 (bottom: 200, top: 40)
-    // Bids go from x: 20 to x: 200
-    let bidPath = '';
-    if (bids.length > 0) {
-      const bidPoints = bids.map((b, idx) => {
-        const x = 200 - (idx / Math.max(bids.length - 1, 1)) * 180;
-        const height = Math.min(160, (b.total / maxCumulative) * 150);
-        const y = 200 - height;
-        return `${x.toFixed(1)} ${y.toFixed(1)}`;
-      });
-      bidPath = `L ${bidPoints.join(' L ')}`;
-    }
+    const build = (levels, dir) => {
+      if (levels.length === 0) return { line: '', area: '' };
+      const pts = levels.map((l, i) => [200 + dir * ((i + 1) / levels.length) * 180, yFor(l.total)]);
+      const startY = pts[0][1];
+      const endX = pts[pts.length - 1][0];
+      const coords = pts.map(([x, y]) => `L ${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+      return {
+        line: `M 200 ${startY.toFixed(1)} ${coords}`,
+        area: `M 200 200 L 200 ${startY.toFixed(1)} ${coords} L ${endX.toFixed(1)} 200 Z`,
+      };
+    };
 
-    // Asks go from x: 200 to x: 380
-    let askPath = '';
-    if (asks.length > 0) {
-      const askPoints = asks.map((a, idx) => {
-        const x = 200 + (idx / Math.max(asks.length - 1, 1)) * 180;
-        const height = Math.min(160, (a.total / maxCumulative) * 150);
-        const y = 200 - height;
-        return `${x.toFixed(1)} ${y.toFixed(1)}`;
-      });
-      askPath = `L ${askPoints.join(' L ')}`;
-    }
-
-    return { bidPath, askPath };
+    const bid = build(bids, -1);
+    const ask = build(asks, 1);
+    return { bidLine: bid.line, bidArea: bid.area, askLine: ask.line, askArea: ask.area };
   }, [bids, asks]);
 
+  /* ------------------------------- Formatters ------------------------------ */
   const formatPrice = (p) => {
     if (p === null || p === undefined) return '--';
     return Number(p).toLocaleString(undefined, {
@@ -408,6 +464,14 @@ export default function OrderbookPage() {
     });
   };
 
+  const emptyMessage = (side) =>
+    wsStatus !== 'connected'
+      ? 'Waiting for connection…'
+      : !selectedPair
+      ? 'Select a trading pair'
+      : `No active ${side} in ${marketType} order book`;
+
+  /* --------------------------------- Render -------------------------------- */
   return (
     <div className="orderbook-page">
       {/* Header */}
@@ -460,7 +524,9 @@ export default function OrderbookPage() {
               <option value="">No pairs available</option>
             ) : (
               pairs.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))
             )}
           </select>
@@ -468,24 +534,44 @@ export default function OrderbookPage() {
           {/* WS Status Badge */}
           <div className={`ob-ws-status ${wsStatus}`}>
             <span className="ob-ws-dot" />
-            <span>{wsStatus === 'connected' ? 'Live WebSocket' : wsStatus === 'connecting' ? 'Connecting...' : 'Disconnected'}</span>
+            <span>
+              {wsStatus === 'connected'
+                ? 'Live WebSocket'
+                : wsStatus === 'connecting'
+                ? 'Connecting...'
+                : 'Disconnected'}
+            </span>
           </div>
         </div>
       </div>
 
+      {/* Pairs error */}
+      {pairsError && (
+        <div className="ob-alert" role="alert">
+          <span>Couldn't load trading pairs: {pairsError}</span>
+          <button type="button" onClick={() => setPairsReload((n) => n + 1)}>
+            <RefreshCw size={14} /> Retry
+          </button>
+        </div>
+      )}
+
       {/* Top Ticker Stats Bar */}
       <div className="ob-ticker-bar">
         <div className="ob-ticker-main">
-          <div className="ob-ticker-symbol">{selectedPair}</div>
-          <div className={`ob-ticker-price ${priceDirection}`}>
-            {formatPrice(lastPrice || midPrice)}
-          </div>
+          <div className="ob-ticker-symbol">{selectedPair || '--'}</div>
+          <div className={`ob-ticker-price ${priceDirection}`}>{formatPrice(lastPrice || midPrice)}</div>
         </div>
 
         <div className="ob-ticker-stats">
           <div className="ob-stat-item">
             <span className="ob-stat-label">Market Mode</span>
-            <span className="ob-stat-value" style={{ textTransform: 'uppercase', color: marketType === 'futures' ? '#f59e0b' : marketType === 'margin' ? '#a78bfa' : '#818cf8' }}>
+            <span
+              className="ob-stat-value"
+              style={{
+                textTransform: 'uppercase',
+                color: marketType === 'futures' ? '#f59e0b' : marketType === 'margin' ? '#a78bfa' : '#818cf8',
+              }}
+            >
               {marketType}
             </span>
           </div>
@@ -531,7 +617,6 @@ export default function OrderbookPage() {
             </div>
 
             <div className="ob-view-controls">
-              {/* View Mode */}
               <button
                 type="button"
                 className={`ob-view-btn ${viewMode === 'both' ? 'active' : ''}`}
@@ -597,28 +682,29 @@ export default function OrderbookPage() {
             {(viewMode === 'both' || viewMode === 'asks') && (
               <div className="ob-asks-list">
                 {displayAsks.length > 0 ? (
-                  displayAsks.map((ask, idx) => (
-                    <div key={`ask-${idx}`} className="ob-row ask">
-                      <div
-                        className="ob-row-depth-bar"
-                        style={{ width: `${ask.depthPct}%` }}
-                      />
+                  displayAsks.map((ask) => (
+                    <div key={`ask-${ask.price}`} className="ob-row ask">
+                      <div className="ob-row-depth-bar" style={{ width: `${ask.depthPct}%` }} />
                       <div className="ob-col price ask">{formatPrice(ask.price)}</div>
                       <div className="ob-col qty">{formatQuantity(ask.quantity)}</div>
                       <div className="ob-col total">{formatTotal(ask.total)}</div>
                     </div>
                   ))
                 ) : (
-                  <div className="ob-empty-state">
-                    No active asks in {marketType} order book
-                  </div>
+                  <div className="ob-empty-state">{emptyMessage('asks')}</div>
                 )}
               </div>
             )}
 
             {/* SPREAD BANNER */}
             <div className="ob-spread-banner">
-              <div className="ob-spread-price" style={{ color: priceDirection === 'up' ? '#34d399' : priceDirection === 'down' ? '#f87171' : '#f8fafc' }}>
+              <div
+                className="ob-spread-price"
+                style={{
+                  color:
+                    priceDirection === 'up' ? '#34d399' : priceDirection === 'down' ? '#f87171' : '#f8fafc',
+                }}
+              >
                 {formatPrice(lastPrice || midPrice)}
                 {priceDirection === 'up' && <ArrowUp size={16} />}
                 {priceDirection === 'down' && <ArrowDown size={16} />}
@@ -632,21 +718,16 @@ export default function OrderbookPage() {
             {(viewMode === 'both' || viewMode === 'bids') && (
               <div className="ob-bids-list">
                 {displayBids.length > 0 ? (
-                  displayBids.map((bid, idx) => (
-                    <div key={`bid-${idx}`} className="ob-row bid">
-                      <div
-                        className="ob-row-depth-bar"
-                        style={{ width: `${bid.depthPct}%` }}
-                      />
+                  displayBids.map((bid) => (
+                    <div key={`bid-${bid.price}`} className="ob-row bid">
+                      <div className="ob-row-depth-bar" style={{ width: `${bid.depthPct}%` }} />
                       <div className="ob-col price bid">{formatPrice(bid.price)}</div>
                       <div className="ob-col qty">{formatQuantity(bid.quantity)}</div>
                       <div className="ob-col total">{formatTotal(bid.total)}</div>
                     </div>
                   ))
                 ) : (
-                  <div className="ob-empty-state">
-                    No active bids in {marketType} order book
-                  </div>
+                  <div className="ob-empty-state">{emptyMessage('bids')}</div>
                 )}
               </div>
             )}
@@ -666,7 +747,6 @@ export default function OrderbookPage() {
 
         {/* Right Column: Visual Depth Chart & Market Analytics */}
         <div className="ob-analytics-panel">
-          {/* Depth Liquidity Visualization */}
           <div className="ob-depth-card">
             <div className="ob-card-header">
               <div className="ob-card-title">
@@ -675,7 +755,6 @@ export default function OrderbookPage() {
               <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Cumulative Curves</span>
             </div>
 
-            {/* SVG Cumulative Depth Chart */}
             <div style={{ width: '100%', height: '220px', position: 'relative' }}>
               {bids.length === 0 && asks.length === 0 ? (
                 <div
@@ -708,39 +787,23 @@ export default function OrderbookPage() {
                   <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
                   <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
 
-                  {/* Dynamic Bid Liquidity Curve (Green) */}
-                  {depthChartData.bidPath && (
+                  {/* Bid liquidity curve (green, left of centre) */}
+                  {depthChartData.bidLine && (
                     <>
-                      <path
-                        d={`M 20 200 ${depthChartData.bidPath} L 200 200 Z`}
-                        fill="url(#bidGradient)"
-                      />
-                      <path
-                        d={`M 20 200 ${depthChartData.bidPath}`}
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="2"
-                      />
+                      <path d={depthChartData.bidArea} fill="url(#bidGradient)" />
+                      <path d={depthChartData.bidLine} fill="none" stroke="#10b981" strokeWidth="2" />
                     </>
                   )}
 
-                  {/* Dynamic Ask Liquidity Curve (Red) */}
-                  {depthChartData.askPath && (
+                  {/* Ask liquidity curve (red, right of centre) */}
+                  {depthChartData.askLine && (
                     <>
-                      <path
-                        d={`M 200 200 ${depthChartData.askPath} L 380 200 Z`}
-                        fill="url(#askGradient)"
-                      />
-                      <path
-                        d={`M 200 200 ${depthChartData.askPath}`}
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth="2"
-                      />
+                      <path d={depthChartData.askArea} fill="url(#askGradient)" />
+                      <path d={depthChartData.askLine} fill="none" stroke="#ef4444" strokeWidth="2" />
                     </>
                   )}
 
-                  {/* Center Mid Price Marker */}
+                  {/* Centre mid price marker */}
                   <circle cx="200" cy="195" r="4" fill="#818cf8" />
                   <text x="200" y="215" fill="#94a3b8" fontSize="10" textAnchor="middle">
                     Mid: {formatPrice(midPrice)}
@@ -770,20 +833,27 @@ export default function OrderbookPage() {
               </div>
               <div className="ob-stat-box">
                 <div className="ob-stat-box-label">Socket State</div>
-                <div className="ob-stat-box-value" style={{ textTransform: 'capitalize', color: wsStatus === 'connected' ? '#34d399' : '#fbbf24' }}>
+                <div
+                  className="ob-stat-box-value"
+                  style={{
+                    textTransform: 'capitalize',
+                    color: wsStatus === 'connected' ? '#34d399' : '#fbbf24',
+                  }}
+                >
                   {wsStatus}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quick Simulation Help Card (for staging/testing) */}
           <div className="ob-depth-card" style={{ background: 'rgba(15, 23, 42, 0.5)' }}>
             <div className="ob-card-title" style={{ fontSize: '0.88rem', marginBottom: '8px' }}>
               <SlidersHorizontal size={14} color="#818cf8" /> Operator Insights
             </div>
             <p style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-              The order book continuously streams from the matching engine via WebSocket. You can switch between <strong>Spot</strong>, <strong>Margin</strong>, and <strong>Futures</strong> order engines in real time without refreshing.
+              The order book continuously streams from the matching engine via WebSocket. You can switch
+              between <strong>Spot</strong>, <strong>Margin</strong>, and <strong>Futures</strong> order
+              engines in real time without refreshing.
             </p>
           </div>
         </div>
