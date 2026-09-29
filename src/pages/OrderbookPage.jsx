@@ -7,7 +7,11 @@ import {
   RefreshCw,
   SlidersHorizontal,
   BarChart2,
+  TrendingUp,
+  ShieldAlert,
+  Search,
 } from 'lucide-react';
+
 import { api } from '../api/client';
 import './OrderbookPage.css';
 
@@ -101,7 +105,11 @@ function pickSide(book, keys) {
   return [];
 }
 
-const cleanPair = (s) => String(s || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+const cleanPair = (s) =>
+  String(s || '')
+    .replace(/:(spot|margin|futures)$/i, '')
+    .replace(/[^A-Za-z0-9]/g, '')
+    .toUpperCase();
 
 function buildWsUrl() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -165,6 +173,43 @@ export default function OrderbookPage() {
   const [sellVol, setSellVol] = useState(0);
   const [buyPct, setBuyPct] = useState(50);
   const [sellPct, setSellPct] = useState(50);
+
+  // Live open positions state for Futures & Margin
+  const [positions, setPositions] = useState([]);
+  const [positionsLoading, setPositionsLoading] = useState(false);
+  const [positionsSearch, setPositionsSearch] = useState('');
+
+  /* ------------------- Load Futures / Margin Positions -------------------- */
+  useEffect(() => {
+    if (marketType === 'spot') {
+      setPositions([]);
+      return;
+    }
+
+    let isMounted = true;
+    async function loadPositions() {
+      setPositionsLoading(true);
+      try {
+        const endpoint = marketType === 'futures' ? '/api/futures/positions' : '/api/margin/positions';
+        const q = selectedPair ? `?symbol=${encodeURIComponent(selectedPair)}` : '';
+        const res = await api(`${endpoint}${q}`);
+        if (!isMounted) return;
+        setPositions(res.positions || []);
+      } catch (err) {
+        console.warn(`[orderbook] failed to load ${marketType} positions:`, err);
+      } finally {
+        if (isMounted) setPositionsLoading(false);
+      }
+    }
+
+    loadPositions();
+    const interval = setInterval(loadPositions, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [marketType, selectedPair]);
+
 
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
@@ -346,7 +391,7 @@ export default function OrderbookPage() {
       if (!book) return;
 
       // Ignore late updates that belong to a previously selected pair
-      const msgPair = book.pair ?? book.symbol ?? msg.data?.pair ?? msg.pair;
+      const msgPair = book.tradingPair ?? book.pair ?? book.symbol ?? msg.data?.tradingPair ?? msg.data?.pair ?? msg.pair;
       if (typeof msgPair === 'string' && cleanPair(msgPair) !== cleanPair(activePairRef.current)) return;
 
       applyBook(
@@ -858,6 +903,177 @@ export default function OrderbookPage() {
           </div>
         </div>
       </div>
+
+      {/* Scrollable Open Positions Table (Futures & Margin) */}
+      {marketType !== 'spot' && (
+        <div style={{ marginTop: '24px', background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {marketType === 'futures' ? (
+                <TrendingUp size={20} color="#f59e0b" />
+              ) : (
+                <ShieldAlert size={20} color="#a78bfa" />
+              )}
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
+                  {marketType === 'futures' ? 'Open Futures Positions & Live PnL' : 'Active Margin Positions & Borrowing'}
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>
+                  {marketType === 'futures'
+                    ? 'Streaming all active leverage positions, entry prices, mark prices, and unrealized PnL'
+                    : 'Active margin collateral accounts, borrowed balances, and liquidation risk exposure'}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ position: 'relative' }}>
+                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+                <input
+                  type="text"
+                  placeholder="Filter user or symbol..."
+                  value={positionsSearch}
+                  onChange={(e) => setPositionsSearch(e.target.value)}
+                  style={{
+                    background: '#181a22',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '6px',
+                    padding: '6px 10px 6px 30px',
+                    color: '#fff',
+                    fontSize: '0.8rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
+                {positions.length} active position{positions.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, zIndex: 5 }}>
+                  {marketType === 'futures' ? (
+                    <>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Position ID</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Symbol</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Side</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Size</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Entry Price</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Mark Price</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Leverage</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Unrealized PnL</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Liquidation Price</th>
+                    </>
+                  ) : (
+                    <>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Asset</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Borrowed Amount</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Spot Collateral</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Locked Balance</th>
+                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Risk Status</th>
+                    </>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {positionsLoading && positions.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                      Loading active {marketType} positions...
+                    </td>
+                  </tr>
+                ) : positions.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                      No active open {marketType} positions found for {selectedPair || 'all markets'}.
+                    </td>
+                  </tr>
+                ) : (
+                  positions
+                    .filter((pos) => {
+                      if (!positionsSearch) return true;
+                      const term = positionsSearch.toLowerCase();
+                      return (
+                        (pos.id && pos.id.toLowerCase().includes(term)) ||
+                        (pos.user_id && pos.user_id.toLowerCase().includes(term)) ||
+                        (pos.symbol && pos.symbol.toLowerCase().includes(term))
+                      );
+                    })
+                    .map((pos, idx) => {
+                      if (marketType === 'futures') {
+                        const pnl = Number(pos.unrealized_pnl ?? pos.pnl_percent ?? 0);
+                        const isProfitable = pnl >= 0;
+                        return (
+                          <tr key={pos.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                              {pos.id ? `${pos.id.slice(0, 8)}...` : `#${idx + 1}`}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                              {pos.user_id ? `${pos.user_id.slice(0, 8)}...` : 'N/A'}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{pos.symbol}</td>
+                            <td style={{ padding: '10px 14px' }}>
+                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: String(pos.side).toUpperCase() === 'LONG' ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.12)', color: String(pos.side).toUpperCase() === 'LONG' ? '#34d399' : '#f87171' }}>
+                                {pos.side}
+                              </span>
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#fff' }}>
+                              {Number(pos.size).toLocaleString()}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.8)' }}>
+                              ${Number(pos.entry_price).toLocaleString()}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.8)' }}>
+                              ${Number(pos.mark_price).toLocaleString()}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#f59e0b', fontWeight: 700 }}>
+                              {pos.leverage}x
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: isProfitable ? '#34d399' : '#f87171' }}>
+                              {isProfitable ? '+' : ''}${pnl.toFixed(2)}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#f87171' }}>
+                              ${Number(pos.liquidation_price).toLocaleString()}
+                            </td>
+                          </tr>
+                        );
+                      } else {
+                        return (
+                          <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                              {pos.user_id ? `${pos.user_id.slice(0, 8)}...` : 'N/A'}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{pos.symbol}</td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#f87171' }}>
+                              {Number(pos.borrowed_amount).toLocaleString()} {pos.symbol}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#34d399' }}>
+                              {Number(pos.spot_balance).toLocaleString()} {pos.symbol}
+                            </td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.6)' }}>
+                              {Number(pos.locked_balance).toLocaleString()} {pos.symbol}
+                            </td>
+                            <td style={{ padding: '10px 14px' }}>
+                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(167,139,250,0.12)', color: '#a78bfa' }}>
+                                BORROWED
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      }
+                    })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

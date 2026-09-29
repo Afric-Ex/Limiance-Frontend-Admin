@@ -340,6 +340,7 @@ export default function TreasuryPage() {
   const [activeTab, setActiveTab]         = useState('wallets');
   const [selectedChain, setSelectedChain] = useState(null); // null = overview
   const [sweepTarget, setSweepTarget]     = useState(null); // { chainId, chainName, type, asset, address }
+  const [sweepRequestID, setSweepRequestID] = useState(null);
   const [thresholdOpen, setThresholdOpen] = useState(false);
 
   // Live Data States
@@ -433,8 +434,9 @@ export default function TreasuryPage() {
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleSweepConfirm = async (e) => {
     e.preventDefault();
-    const amt = parseFloat(sweepAmount);
-    if (!amt || amt <= 0) { showToast('Enter a valid transfer amount', 'error'); return; }
+    const amountText = sweepAmount.trim();
+    const amt = Number(amountText);
+    if (!Number.isFinite(amt) || amt <= 0) { showToast('Enter a valid transfer amount', 'error'); return; }
 
     const ok = await confirm({
       title: 'Authorise On-Chain Treasury Sweep',
@@ -446,21 +448,25 @@ export default function TreasuryPage() {
 
     setActionLoading(true);
     try {
+      const requestID = sweepRequestID || crypto.randomUUID();
+      if (!sweepRequestID) setSweepRequestID(requestID);
       const res = await api('/api/treasury/sweep', {
         method: 'POST',
+        headers: { 'Idempotency-Key': requestID },
         body: {
           chain_id: sweepTarget.chainId,
           chain_name: sweepTarget.chainName,
           source_type: sweepTarget.type,
           dest_type: sweepDest,
           asset_symbol: sweepTarget.asset.symbol,
-          amount: amt,
+          amount: amountText,
           note: sweepNote || 'Manual rebalance via Admin Panel',
         },
       });
 
       showToast(res.message || `Sweep of ${amt} ${sweepTarget.asset.symbol} dispatched successfully`);
       setSweepTarget(null);
+      setSweepRequestID(null);
       setSweepAmount('');
       setSweepDest('cold');
       setSweepNote('');
@@ -777,7 +783,7 @@ export default function TreasuryPage() {
                     wallet={chainObj[type]}
                     chainId={chainObj.id}
                     chainName={chainObj.name}
-                    onSweep={(t) => { setSweepTarget(t); setSweepAmount(''); setSweepDest('cold'); setSweepNote(''); }}
+                    onSweep={(t) => { setSweepTarget(t); setSweepRequestID(crypto.randomUUID()); setSweepAmount(''); setSweepDest('cold'); setSweepNote(''); }}
                   />
                 ))}
               </div>
@@ -1007,7 +1013,7 @@ export default function TreasuryPage() {
                   <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>{sweepTarget.chainName} · {sweepTarget.type.toUpperCase()} → {sweepDest.toUpperCase()}</div>
                 </div>
               </div>
-              <button type="button" onClick={() => setSweepTarget(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+              <button type="button" onClick={() => { setSweepTarget(null); setSweepRequestID(null); }} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: '18px', cursor: 'pointer' }}>✕</button>
             </div>
 
             {/* Asset summary */}
@@ -1104,7 +1110,7 @@ export default function TreasuryPage() {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
-                  <button type="button" onClick={() => setSweepTarget(null)} style={{ padding: '8px 16px', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
+                  <button type="button" onClick={() => { setSweepTarget(null); setSweepRequestID(null); }} style={{ padding: '8px 16px', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
                   <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, #4d77f0, #38bdf8)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
                     {actionLoading ? 'Dispatching...' : 'Confirm & Dispatch'}
                   </button>

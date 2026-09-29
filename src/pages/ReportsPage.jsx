@@ -45,9 +45,9 @@ export default function ReportsPage() {
   }, [periodDays]);
 
   // Aggregate totals
-  const totalVolumeUsd = volumeData.reduce((acc, row) => acc + (Number(row.volume_usd) || Number(row.volume) || 0), 0);
+  const totalVolumeUsd = volumeData.reduce((acc, row) => acc + (Number(row.volume_usd) || 0), 0);
   const totalTradeCount = volumeData.reduce((acc, row) => acc + (Number(row.trade_count) || Number(row.trades) || 0), 0);
-  const totalRevenueUsd = revenueData.reduce((acc, row) => acc + (Number(row.revenue_usd) || Number(row.fee_revenue) || 0), 0);
+  const totalRevenueUsd = revenueData.reduce((acc, row) => acc + (Number(row.revenue_usd) || 0), 0);
 
   return (
     <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
@@ -226,7 +226,7 @@ export default function ReportsPage() {
                       {row.symbol || row.pair || 'UNKNOWN'}
                     </td>
                     <td style={{ padding: '12px 18px', color: '#818cf8', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
-                      ${Number(row.volume_usd || row.volume || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ${Number(row.volume_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '12px 18px', color: 'rgba(255,255,255,0.7)', textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
                       {(row.trade_count || row.trades || 0).toLocaleString()}
@@ -278,13 +278,13 @@ export default function ReportsPage() {
                 revenueData.map((row, idx) => (
                   <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td style={{ padding: '12px 18px', fontWeight: 700, color: '#34d399', fontFamily: 'var(--font-mono)' }}>
-                      {row.asset || row.currency || 'USDT'}
+                      {row.fee_asset || 'UNKNOWN'}
                     </td>
                     <td style={{ padding: '12px 18px', color: '#fff', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
-                      {row.amount || row.revenue || 0}
+                      {Number(row.total_fee || 0).toLocaleString(undefined, { maximumFractionDigits: 8 })}
                     </td>
                     <td style={{ padding: '12px 18px', color: '#34d399', fontWeight: 600, textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
-                      ${Number(row.revenue_usd || row.usd_value || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ${Number(row.revenue_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                   </tr>
                 ))
