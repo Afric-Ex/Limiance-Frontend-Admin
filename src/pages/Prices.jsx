@@ -371,7 +371,6 @@ export default function PricesPage() {
         const updates = {
           price: formData.price,
           image: formData.image,
-          unifier: formData.unifier,
           twenty_four_hour_change:
             formData.twenty_four_hour_change,
           twenty_four_hour_volume:
