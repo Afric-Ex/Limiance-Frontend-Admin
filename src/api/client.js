@@ -1,6 +1,7 @@
 const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function api(path, options = {}) {
+  console.log('API Request:', path, options);
   const token = localStorage.getItem('admin_token');
   const method = (options.method || 'GET').toUpperCase();
 

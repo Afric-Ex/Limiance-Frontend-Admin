@@ -44,13 +44,14 @@ export default function KycDetailPage() {
     setDetailsLoading(true);
     try {
       const res = await api("/api/kyc/" + id);
-      const sub = res.submission || res;
+      console.log("res:", res.ID);
+      const sub = res || res;
       setSubmission(sub);
-      setSelectedCase(sub.id);
+      setSelectedCase(sub.ID);
 
-      if (sub.user_id) {
+      if (sub.UserId) {
         try {
-          const u = await api("/api/users/" + sub.user_id);
+          const u = await api("/api/users/" + sub.UserId);
           setUserDetails(u.user || u);
           if (u.user?.kyc_tier !== undefined) {
             setApproveTier(Math.max(1, u.user.kyc_tier));
@@ -80,20 +81,22 @@ export default function KycDetailPage() {
   }, [id]);
 
   const handleDecision = async (decision) => {
+    console.log("Decision:", decision, "Reason:", actionReason);
     if (!selectedCase) return;
     if (decision === "REJECT" && !actionReason.trim()) {
       showToast("A rejection reason is strictly required.", "error");
       return;
     }
-
+    console.log("Decision:", decision, "Reason:", actionReason);
     setActionLoading(true);
     try {
+          console.log("Decision:", decision, "Reason:", actionReason);
       const payload = {
         action: decision,
         reason: actionReason.trim() || undefined,
         tier: decision === "APPROVE" ? parseInt(approveTier, 10) : undefined,
       };
-
+    console.log("Decision:", decision, "Reason:", actionReason);
       await api("/api/kyc/" + selectedCase + "/review", {
         method: "POST",
         body: JSON.stringify(payload),

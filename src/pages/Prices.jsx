@@ -335,8 +335,8 @@ export default function PricesPage() {
       showToast('Price is required', 'error');
       return false;
     }
-    if (Number(formData.price) < 0) {
-      showToast('Price must not be negative', 'error');
+    if (Number(formData.price) <= 0) {
+      showToast('Price must be greater than zero', 'error');
       return false;
     }
     if (
