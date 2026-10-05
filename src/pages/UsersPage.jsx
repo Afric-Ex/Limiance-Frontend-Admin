@@ -13,6 +13,7 @@ import {
   Copy,
   UserCheck,
 } from "lucide-react";
+import { ShimmerTableRows } from "../components/Shimmer";
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -227,12 +228,7 @@ export default function UsersPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="5" style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.4)" }}>
-                  <RefreshCw size={24} className="animate-spin" style={{ margin: "0 auto 10px" }} />
-                  <div>Loading user directory...</div>
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={5} colWidths={['65%', '45%', '50%', '40%', '35%']} />
             ) : filteredUsers.length === 0 ? (
               <tr>
                 <td colSpan="5" style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.4)" }}>

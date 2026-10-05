@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import './DepositsQueuePage.css';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function DepositsQueuePage() {
   const navigate = useNavigate();
@@ -138,11 +139,7 @@ export default function DepositsQueuePage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="9" className="dq-empty">
-                  Loading deposit transactions...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={9} colWidths={['20%', '25%', '20%', '25%', '15%', '15%', '20%', '25%', '15%']} />
             ) : deposits.length === 0 ? (
               <tr>
                 <td colSpan="9" className="dq-empty">

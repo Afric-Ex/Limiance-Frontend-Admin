@@ -21,6 +21,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function TokensPage() {
   const confirm = useConfirm();
@@ -460,11 +461,7 @@ export default function TokensPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  Loading tokens...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={7} cols={8} colWidths={['30%', '25%', '40%', '15%', '25%', '20%', '20%', '15%']} />
             ) : tokens.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>

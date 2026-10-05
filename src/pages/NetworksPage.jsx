@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Layers,
 } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function NetworksPage() {
   const confirm = useConfirm();
@@ -544,11 +545,7 @@ export default function NetworksPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading networks...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={6} cols={7} colWidths={['15%', '25%', '20%', '15%', '15%', '25%', '15%']} />
               ) : filteredNetworks.length === 0 ? (
                 <tr>
                   <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
@@ -671,11 +668,7 @@ export default function NetworksPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading currencies...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={5} cols={4} colWidths={['20%', '35%', '25%', '20%']} />
               ) : filteredCurrencies.length === 0 ? (
                 <tr>
                   <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
@@ -777,11 +770,7 @@ export default function NetworksPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading RPC configs...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={6} cols={7} colWidths={['20%', '15%', '15%', '15%', '20%', '15%', '10%']} />
               ) : filteredRpcs.length === 0 ? (
                 <tr>
                   <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

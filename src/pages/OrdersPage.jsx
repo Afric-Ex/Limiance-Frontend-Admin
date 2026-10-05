@@ -9,6 +9,7 @@ import {
   Clock,
   XCircle,
 } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 const PAGE_SIZE = 20;
 
@@ -574,11 +575,7 @@ export default function OrdersPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  Loading order stream...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={7} cols={COLUMNS.length} colWidths={['25%', '35%', '20%', '20%', '25%', '20%', '25%', '15%']} />
             ) : orders.length === 0 ? (
               <tr>
                 <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

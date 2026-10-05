@@ -3,6 +3,7 @@ import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import { getBlockchainNetwork } from '../utils/chain';
 import { Wallet, Search, RefreshCw, Copy, ChevronLeft, ChevronRight, ShieldAlert } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function WalletsPage() {
   const confirm = useConfirm();
@@ -197,11 +198,7 @@ export default function WalletsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  Loading custodial wallets...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={5} colWidths={['35%', '50%', '35%', '25%', '20%']} />
             ) : wallets.length === 0 ? (
               <tr>
                 <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

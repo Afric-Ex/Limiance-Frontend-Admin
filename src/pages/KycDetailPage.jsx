@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ShimmerDetailCard } from "../components/Shimmer";
 import "./KycQueuePage.css";
 
 export default function KycDetailPage() {
@@ -113,9 +114,8 @@ export default function KycDetailPage() {
 
   if (detailsLoading) {
     return (
-      <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-        <RefreshCw size={28} className="animate-spin" style={{ margin: "0 auto 12px" }} />
-        <div>Loading KYC submission details...</div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 0' }}>
+        <ShimmerDetailCard title="Loading KYC submission details..." />
       </div>
     );
   }

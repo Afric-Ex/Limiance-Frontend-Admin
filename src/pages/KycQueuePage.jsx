@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useConfirm } from '../context/ConfirmContext';
 import './KycQueuePage.css';
 import { api } from '../api/client';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function KycQueuePage() {
   const navigate = useNavigate();
@@ -232,11 +233,7 @@ export default function KycQueuePage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
-                  Loading KYC submissions...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={7} colWidths={['25%', '25%', '25%', '15%', '20%', '20%', '15%']} />
             ) : cases.length === 0 ? (
               <tr>
                 <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>

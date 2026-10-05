@@ -18,6 +18,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { getBlockchainNetwork } from '../utils/chain';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function TransactionsPage() {
   const navigate = useNavigate();
@@ -307,11 +308,7 @@ export default function TransactionsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  Loading transactions stream...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={7} cols={8} colWidths={['15%', '25%', '25%', '20%', '35%', '20%', '25%', '15%']} />
             ) : transactions.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

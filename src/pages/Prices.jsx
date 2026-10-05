@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
+import { ShimmerTableRows } from '../components/Shimmer';
 export default function PricesPage() {
   const confirm = useConfirm();
   const [prices, setPrices] = useState([]);
@@ -915,19 +916,7 @@ export default function PricesPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td
-                  colSpan="7"
-                  style={{
-                    padding: '60px 0',
-                    textAlign: 'center',
-                    color:
-                      'var(--text-muted)',
-                  }}
-                >
-                  Loading prices...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={8} cols={7} colWidths={['35%', '25%', '25%', '20%', '20%', '30%', '15%']} />
             ) : prices.length === 0 ? (
               <tr>
                 <td

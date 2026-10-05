@@ -15,6 +15,7 @@ import { api } from '../api/client';
 import ChartCard from '../components/charts/ChartCard';
 import AreaSplineChart from '../components/charts/AreaSplineChart';
 import DonutChart from '../components/charts/DonutChart';
+import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
 import './MarketOverviewPage.css';
 
 const DONUT_COLORS = [
@@ -226,7 +227,7 @@ export default function MarketOverviewPage() {
             </div>
           </div>
           <div className="mo-metric-value">
-            {formatCurrency(summary.total_volume_quote)}
+            {loading ? <Shimmer width="120px" height="26px" /> : formatCurrency(summary.total_volume_quote)}
           </div>
           <div className="mo-metric-sub">
             <span>Trading turnover across all spot markets</span>
@@ -241,7 +242,7 @@ export default function MarketOverviewPage() {
             </div>
           </div>
           <div className="mo-metric-value">
-            {Number(summary.total_trades || 0).toLocaleString()}
+            {loading ? <Shimmer width="90px" height="26px" /> : Number(summary.total_trades || 0).toLocaleString()}
           </div>
           <div className="mo-metric-sub">
             <span>Filled orders in selected window</span>
@@ -256,10 +257,16 @@ export default function MarketOverviewPage() {
             </div>
           </div>
           <div className="mo-metric-value">
-            {summary.active_pairs_count || 0}
-            <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500, marginLeft: '6px' }}>
-              / {pairs.length} Listed
-            </span>
+            {loading ? (
+              <Shimmer width="80px" height="26px" />
+            ) : (
+              <>
+                {summary.active_pairs_count || 0}
+                <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500, marginLeft: '6px' }}>
+                  / {pairs.length} Listed
+                </span>
+              </>
+            )}
           </div>
           <div className="mo-metric-sub">
             <span>
@@ -278,7 +285,7 @@ export default function MarketOverviewPage() {
             </div>
           </div>
           <div className="mo-metric-value">
-            {summary.top_gainer_pair || 'N/A'}
+            {loading ? <Shimmer width="100px" height="26px" /> : (summary.top_gainer_pair || 'N/A')}
           </div>
           <div className="mo-metric-sub" style={{ color: (summary.top_gainer_pct || 0) >= 0 ? '#34d399' : '#f87171', fontWeight: 600 }}>
             {summary.top_gainer_pct !== undefined ? `${summary.top_gainer_pct >= 0 ? '+' : ''}${summary.top_gainer_pct.toFixed(2)}%` : '0.00%'}
@@ -535,10 +542,12 @@ export default function MarketOverviewPage() {
                       </tr>
                     );
                   })
+                ) : loading ? (
+                  <ShimmerTableRows rows={6} cols={8} colWidths={['25%', '20%', '15%', '15%', '20%', '20%', '15%', '15%']} />
                 ) : (
                   <tr>
                     <td colSpan="8" className="mo-empty">
-                      {loading ? 'Loading performance data...' : 'No trading pairs match your search query.'}
+                      No trading pairs match your search query.
                     </td>
                   </tr>
                 )}
@@ -619,10 +628,12 @@ export default function MarketOverviewPage() {
                       </tr>
                     );
                   })
+                ) : loading ? (
+                  <ShimmerTableRows rows={6} cols={6} colWidths={['25%', '25%', '20%', '15%', '15%', '15%']} />
                 ) : (
                   <tr>
                     <td colSpan="6" className="mo-empty">
-                      {loading ? 'Loading token performance data...' : 'No tokens match your search query.'}
+                      No tokens match your search query.
                     </td>
                   </tr>
                 )}

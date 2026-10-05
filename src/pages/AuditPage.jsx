@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../api/client';
 import './AuditPage.css';
+import { Shimmer } from '../components/Shimmer';
 
 const TARGET_TYPES = ['All', 'admin_operator', 'kyc_submission', 'withdrawal_approval', 'SYSTEM', 'USER', 'CONFIG'];
 
@@ -129,7 +130,24 @@ export default function AuditPage() {
       {/* Event list */}
       <div className="al-event-list">
         {loading ? (
-          <div className="al-empty">Loading audit logs...</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="al-event-card"
+                style={{ padding: '16px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '60%' }}>
+                  <Shimmer width="8px" height="8px" borderRadius="50%" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                    <Shimmer width="140px" height="14px" />
+                    <Shimmer width="240px" height="11px" />
+                  </div>
+                </div>
+                <Shimmer width="100px" height="12px" />
+              </div>
+            ))}
+          </div>
         ) : events.length === 0 ? (
           <div className="al-empty">No audit events match the selected filters.</div>
         ) : (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import './WithdrawalsQueuePage.css';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function WithdrawalsQueuePage() {
   const navigate = useNavigate();
@@ -151,11 +152,7 @@ export default function WithdrawalsQueuePage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="7" className="wq-empty">
-                  Loading pending withdrawals...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={5} cols={7} colWidths={['20%', '25%', '25%', '20%', '35%', '25%', '15%']} />
             ) : withdrawals.length === 0 ? (
               <tr>
                 <td colSpan="7" className="wq-empty">

@@ -7,6 +7,7 @@ import {
   Scale, SlidersHorizontal, Clock, Info, ChevronRight,
   TrendingUp, Send, Shield, KeyRound, Cpu
 } from 'lucide-react';
+import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
 
 // ─── Token brand colours ───────────────────────────────────────────────────────
 const TOKEN_COLOR = {
@@ -597,9 +598,11 @@ export default function TreasuryPage() {
         {/* Grand total + global donut */}
         <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1.15rem', display: 'flex', alignItems: 'center', gap: '14px' }}>
           <DonutChart segments={globalSegments} size={70} label={totals.total >= 1e6 ? `${(totals.total / 1e6).toFixed(1)}M` : `${(totals.total / 1e3).toFixed(0)}K`} />
-          <div>
+          <div style={{ flex: 1 }}>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>Total Treasury Assets</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-mono)' }}>{fmtFull(totals.total)}</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+              {loading && !overview ? <Shimmer width="130px" height="24px" /> : fmtFull(totals.total)}
+            </div>
             <div style={{ marginTop: '5px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {[
                 { label: 'Cold', color: '#38bdf8', v: totals.cold },
@@ -608,7 +611,7 @@ export default function TreasuryPage() {
               ].map((x) => (
                 <span key={x.label} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: x.color }}>
                   <div style={{ width: '7px', height: '7px', borderRadius: '2px', background: x.color }} />
-                  {x.label}: {fmt(x.v)}
+                  {x.label}: {loading && !overview ? '…' : fmt(x.v)}
                 </span>
               ))}
             </div>
@@ -625,7 +628,9 @@ export default function TreasuryPage() {
               <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 700 }}>{label}</span>
               <Icon size={15} color={color} />
             </div>
-            <div style={{ fontSize: '18px', fontWeight: 800, color, fontFamily: 'var(--font-mono)' }}>{fmtFull(val)}</div>
+            <div style={{ fontSize: '18px', fontWeight: 800, color, fontFamily: 'var(--font-mono)' }}>
+              {loading && !overview ? <Shimmer width="100px" height="22px" /> : fmtFull(val)}
+            </div>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '5px' }}>{sub}</div>
           </div>
         ))}
@@ -636,7 +641,9 @@ export default function TreasuryPage() {
             <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 700 }}>Reserve Coverage</span>
             <TrendingUp size={15} color="#34d399" />
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)' }}>{totals.ratio}%</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)' }}>
+            {loading && !overview ? <Shimmer width="70px" height="24px" /> : `${totals.ratio}%`}
+          </div>
           <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '5px' }}>vs {fmtFull(totals.liabilities)} user liabilities</div>
         </div>
       </div>
@@ -671,8 +678,12 @@ export default function TreasuryPage() {
 
       {/* Loading state indicator */}
       {loading && !overview && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem 0', color: 'rgba(255,255,255,0.5)', gap: '10px' }}>
-          <RefreshCw size={20} className="animate-spin" /> Fetching live balances from admin service...
+        <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', overflow: 'hidden', padding: '16px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              <ShimmerTableRows rows={5} cols={5} colWidths={['25%', '35%', '20%', '20%', '15%']} />
+            </tbody>
+          </table>
         </div>
       )}
 

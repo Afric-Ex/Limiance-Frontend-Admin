@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function SupportTicketsPage() {
   const navigate = useNavigate();
@@ -185,11 +186,7 @@ export default function SupportTicketsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="8" style={{ padding: '2.5rem', textAlign: 'center', color: '#9ca3af' }}>
-                  Loading support tickets...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={8} colWidths={['15%', '15%', '30%', '15%', '15%', '15%', '20%', '15%']} />
             ) : tickets.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: '2.5rem', textAlign: 'center', color: '#9ca3af' }}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import { Plus, RefreshCw, Trash2, Search, Pencil } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function PairsPage() {
   const confirm = useConfirm();
@@ -258,11 +259,7 @@ export default function PairsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                  Loading trading pairs...
-                </td>
-              </tr>
+              <ShimmerTableRows rows={6} cols={8} colWidths={['25%', '25%', '20%', '20%', '15%', '15%', '20%', '15%']} />
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

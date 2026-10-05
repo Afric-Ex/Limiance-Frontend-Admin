@@ -3,6 +3,7 @@ import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useConfirm } from '../context/ConfirmContext';
 import './RolesPage.css';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 const OPERATOR_ROLES = [
   { id: 'superadmin', name: 'Superadmin', desc: 'Full uncontrolled access to all operations, emergency controls, config, and staff management' },
@@ -210,11 +211,7 @@ export default function RolesPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>
-                    Loading operators...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={5} cols={6} colWidths={['20%', '30%', '15%', '15%', '20%', '15%']} />
               ) : operators.length === 0 ? (
                 <tr>
                   <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>

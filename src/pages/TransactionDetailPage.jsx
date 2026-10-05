@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { getBlockchainNetwork } from "../utils/chain";
 import { ArrowLeft, Copy, RefreshCw, CheckCircle, Clock, XCircle } from "lucide-react";
+import { ShimmerDetailCard } from "../components/Shimmer";
 
 export default function TransactionDetailPage() {
   const { id } = useParams();
@@ -47,9 +48,8 @@ export default function TransactionDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-        <RefreshCw size={28} className="animate-spin" style={{ margin: "0 auto 12px" }} />
-        <div>Loading transaction details...</div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 0' }}>
+        <ShimmerDetailCard title="Loading transaction details..." />
       </div>
     );
   }

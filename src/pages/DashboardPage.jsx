@@ -34,6 +34,7 @@ import ChartCard from '../components/charts/ChartCard';
 import GroupedBarChart from '../components/charts/GroupedBarChart';
 import AreaSplineChart from '../components/charts/AreaSplineChart';
 import DonutChart from '../components/charts/DonutChart';
+import { Shimmer, ShimmerMetricCard } from '../components/Shimmer';
 import {
   formatTreasuryHistory,
   formatTradingVolumeHistory,
@@ -297,37 +298,37 @@ export default function DashboardPage() {
           <div className="stat-pill">
             <div className="stat-pill-label">24h Spot Turnover</div>
             <div className="stat-pill-value" style={{ color: '#818cf8' }}>
-              ${fmtUsd(spotVol24h)}
+              {loading && !metrics ? <Shimmer width="90px" height="22px" style={{ display: 'inline-block' }} /> : `$${fmtUsd(spotVol24h)}`}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
-              {spotTrades24h.toLocaleString()} trades executed
+              {loading && !metrics ? <Shimmer width="110px" height="11px" style={{ display: 'inline-block' }} /> : `${spotTrades24h.toLocaleString()} trades executed`}
             </div>
           </div>
 
           <div className="stat-pill">
             <div className="stat-pill-label">24h Treasury Flow</div>
             <div className="stat-pill-value" style={{ color: '#34d399' }}>
-              ${fmtUsd(depVol24h)}
+              {loading && !metrics ? <Shimmer width="90px" height="22px" style={{ display: 'inline-block' }} /> : `$${fmtUsd(depVol24h)}`}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
-              {depCount24h} on-chain deposits
+              {loading && !metrics ? <Shimmer width="100px" height="11px" style={{ display: 'inline-block' }} /> : `${depCount24h} on-chain deposits`}
             </div>
           </div>
 
           <div className="stat-pill">
             <div className="stat-pill-label">Futures Open Interest</div>
             <div className="stat-pill-value" style={{ color: '#60a5fa' }}>
-              ${fmtUsd(futuresExposure)}
+              {loading && !metrics ? <Shimmer width="90px" height="22px" style={{ display: 'inline-block' }} /> : `$${fmtUsd(futuresExposure)}`}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
-              {futuresOpenPos} open contracts
+              {loading && !metrics ? <Shimmer width="110px" height="11px" style={{ display: 'inline-block' }} /> : `${futuresOpenPos} open contracts`}
             </div>
           </div>
 
           <div className="stat-pill">
             <div className="stat-pill-label">24h Net Revenue</div>
             <div className="stat-pill-value" style={{ color: '#fbbf24' }}>
-              ${fmtUsd(rev24h)}
+              {loading && !metrics ? <Shimmer width="90px" height="22px" style={{ display: 'inline-block' }} /> : `$${fmtUsd(rev24h)}`}
             </div>
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
               Trading & withdrawal fees
@@ -397,14 +398,20 @@ export default function DashboardPage() {
             <CheckCircle2 size={16} color={failedTxs > 0 ? '#f59e0b' : '#34d399'} />
           </div>
           <div className="telemetry-value" style={{ color: failedTxs > 0 ? '#f59e0b' : '#34d399' }}>
-            {txSuccessRate}%
+            {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${txSuccessRate}%`}
           </div>
           <div className="telemetry-footer">
-            <span>{totalTxs.toLocaleString()} total txs</span>
-            <span>·</span>
-            <span style={{ color: failedTxs > 0 ? '#f87171' : 'inherit' }}>
-              {failedTxs} failed
-            </span>
+            {loading && !metrics ? (
+              <Shimmer width="120px" height="12px" />
+            ) : (
+              <>
+                <span>{totalTxs.toLocaleString()} total txs</span>
+                <span>·</span>
+                <span style={{ color: failedTxs > 0 ? '#f87171' : 'inherit' }}>
+                  {failedTxs} failed
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -415,12 +422,18 @@ export default function DashboardPage() {
             <ArrowRightLeft size={16} color="#34d399" />
           </div>
           <div className="telemetry-value" style={{ color: '#34d399' }}>
-            ${fmtUsd(p2pVol24h)}
+            {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `$${fmtUsd(p2pVol24h)}`}
           </div>
           <div className="telemetry-footer">
-            <span>{p2pCompleted24h} trades completed</span>
-            <span>·</span>
-            <span>{p2pDisputes} disputes</span>
+            {loading && !metrics ? (
+              <Shimmer width="140px" height="12px" />
+            ) : (
+              <>
+                <span>{p2pCompleted24h} trades completed</span>
+                <span>·</span>
+                <span>{p2pDisputes} disputes</span>
+              </>
+            )}
           </div>
         </div>
 
@@ -431,12 +444,18 @@ export default function DashboardPage() {
             <ShieldAlert size={16} color={failedLogins > 5 ? '#ef4444' : '#818cf8'} />
           </div>
           <div className="telemetry-value" style={{ color: failedLogins > 5 ? '#ef4444' : '#fff' }}>
-            {authSuccessRate}% Pass
+            {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${authSuccessRate}% Pass`}
           </div>
           <div className="telemetry-footer">
-            <span>{failedLogins} rejected attempts</span>
-            <span>·</span>
-            <span>{frozenUsers} frozen</span>
+            {loading && !metrics ? (
+              <Shimmer width="130px" height="12px" />
+            ) : (
+              <>
+                <span>{failedLogins} rejected attempts</span>
+                <span>·</span>
+                <span>{frozenUsers} frozen</span>
+              </>
+            )}
           </div>
         </div>
 
@@ -447,12 +466,18 @@ export default function DashboardPage() {
             <MessageSquare size={16} color={openTickets > 0 ? '#f59e0b' : '#818cf8'} />
           </div>
           <div className="telemetry-value" style={{ color: openTickets > 0 ? '#fbbf24' : '#fff' }}>
-            {openTickets} Open
+            {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${openTickets} Open`}
           </div>
           <div className="telemetry-footer">
-            <span>{supportAvgResHrs > 0 ? `${supportAvgResHrs.toFixed(1)}h` : '< 2h'} turnaround</span>
-            <span>·</span>
-            <span>Triage queue active</span>
+            {loading && !metrics ? (
+              <Shimmer width="110px" height="12px" />
+            ) : (
+              <>
+                <span>{supportAvgResHrs > 0 ? `${supportAvgResHrs.toFixed(1)}h` : '< 2h'} turnaround</span>
+                <span>·</span>
+                <span>Triage queue active</span>
+              </>
+            )}
           </div>
         </div>
       </div>

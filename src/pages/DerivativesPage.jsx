@@ -14,6 +14,7 @@ import {
   Sliders,
   Zap,
 } from 'lucide-react';
+import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function DerivativesPage() {
   const confirm = useConfirm();
@@ -429,11 +430,7 @@ export default function DerivativesPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading futures configs...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={6} cols={7} colWidths={['20%', '15%', '20%', '15%', '20%', '20%', '15%']} />
               ) : filteredFutures.length === 0 ? (
                 <tr>
                   <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
@@ -550,11 +547,7 @@ export default function DerivativesPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading margin interest specs...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={6} cols={6} colWidths={['20%', '20%', '15%', '15%', '20%', '10%']} />
               ) : filteredMargin.length === 0 ? (
                 <tr>
                   <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>

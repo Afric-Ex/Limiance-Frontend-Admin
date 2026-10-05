@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   PieChart,
 } from 'lucide-react';
+import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
 
 export default function ReportsPage() {
   const [periodDays, setPeriodDays] = useState(7); // 1, 7, 30
@@ -127,7 +128,7 @@ export default function ReportsPage() {
             </div>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
-            ${totalVolumeUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {loading ? <Shimmer width="130px" height="26px" /> : `$${totalVolumeUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           </div>
           <div style={{ fontSize: '11px', color: '#34d399', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <ArrowUpRight size={12} /> Live aggregate from matched trades
@@ -150,7 +151,7 @@ export default function ReportsPage() {
             </div>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 700, color: '#34d399', fontFamily: 'var(--font-mono)' }}>
-            ${totalRevenueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {loading ? <Shimmer width="120px" height="26px" /> : `$${totalRevenueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           </div>
           <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '6px' }}>
             Spot & perpetual execution fees collected
@@ -173,7 +174,7 @@ export default function ReportsPage() {
             </div>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
-            {totalTradeCount.toLocaleString()}
+            {loading ? <Shimmer width="80px" height="26px" /> : totalTradeCount.toLocaleString()}
           </div>
           <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '6px' }}>
             Total order book fills executed
@@ -208,11 +209,7 @@ export default function ReportsPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="3" style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading volume data...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={5} cols={3} colWidths={['35%', '35%', '25%']} />
               ) : volumeData.length === 0 ? (
                 <tr>
                   <td colSpan="3" style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
@@ -263,11 +260,7 @@ export default function ReportsPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="3" style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
-                    Loading revenue data...
-                  </td>
-                </tr>
+                <ShimmerTableRows rows={5} cols={3} colWidths={['35%', '35%', '25%']} />
               ) : revenueData.length === 0 ? (
                 <tr>
                   <td colSpan="3" style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
