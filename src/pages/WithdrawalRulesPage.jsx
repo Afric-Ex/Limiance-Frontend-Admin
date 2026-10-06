@@ -10,6 +10,8 @@ import {
   AlertTriangle,
   Sliders,
   Search,
+  ChevronDown,
+  Coins,
 } from 'lucide-react';
 
 export default function WithdrawalRulesPage() {
@@ -24,6 +26,10 @@ export default function WithdrawalRulesPage() {
   // Whitelist settings
   const [whitelistDelay, setWhitelistDelay] = useState(24);
 
+  // Available tokens fetched from /api/tokens
+  const [tokensList, setTokensList] = useState([]);
+  const [loadingTokens, setLoadingTokens] = useState(false);
+
   // Asset Limits Table / Form
   const [selectedAsset, setSelectedAsset] = useState('BTC');
   const [assetLimits, setAssetLimits] = useState({
@@ -36,9 +42,6 @@ export default function WithdrawalRulesPage() {
     fee: '',
   });
   const [savingAssetLimits, setSavingAssetLimits] = useState(false);
-
-  // Common assets quick selector
-  const commonAssets = ['BTC', 'ETH', 'USDT', 'USDC', 'SOL', 'XRP', 'DOGE', 'BNB'];
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -67,38 +70,76 @@ export default function WithdrawalRulesPage() {
     }
   };
 
-  const fetchAssetLimit = async (asset) => {
+  const fetchAvailableTokens = async () => {
+    setLoadingTokens(true);
     try {
-      const [limitRes, tokenRes, feeRes] = await Promise.allSettled([
+      const res = await api('/api/tokens?limit=500');
+      const list = res.tokens || res.data || (Array.isArray(res) ? res : []);
+      const seen = new Set();
+      const unique = [];
+      for (const t of list) {
+        const sym = (t.symbol || '').toUpperCase();
+        if (sym && !seen.has(sym)) {
+          seen.add(sym);
+          unique.push({
+            symbol: sym,
+            name: t.name || sym,
+            blockchain: t.blockchain || (t.chains && t.chains[0]) || '',
+            min_withdrawal: t.min_withdrawal || '0',
+            min_deposit: t.min_deposit || '0',
+          });
+        }
+      }
+      unique.sort((a, b) => a.symbol.localeCompare(b.symbol));
+      setTokensList(unique);
+      return unique;
+    } catch (err) {
+      console.error('Failed to load tokens', err);
+      return [];
+    } finally {
+      setLoadingTokens(false);
+    }
+  };
+
+  const fetchAssetLimit = async (asset, currentTokens) => {
+    const tokens = currentTokens || tokensList;
+    const tokenData = tokens.find((t) => t.symbol === asset);
+
+    if (tokenData) {
+      setAssetLimits((prev) => ({
+        ...prev,
+        asset,
+        min_withdrawal: tokenData.min_withdrawal || '',
+        min_deposit: tokenData.min_deposit || '',
+      }));
+    }
+
+    try {
+      const [limitRes, feeRes] = await Promise.allSettled([
         api(`/api/withdrawal-limits/${asset}`),
-        api(`/api/tokens?search=${asset}&limit=1`),
         api(`/api/fees/${asset}`),
       ]);
 
       const limitData = limitRes.status === 'fulfilled' ? limitRes.value : {};
-      const tokenData =
-        tokenRes.status === 'fulfilled' && tokenRes.value?.data?.[0]
-          ? tokenRes.value.data[0]
-          : null;
       const feeData = feeRes.status === 'fulfilled' ? feeRes.value : null;
 
-      setAssetLimits({
+      setAssetLimits((prev) => ({
         asset: limitData.asset || asset,
         max_single: limitData.max_single || '',
         daily_limit: limitData.daily_limit || '',
         max_withdrawal: limitData.max_withdrawal || '',
-        min_withdrawal: tokenData?.min_withdrawal || '',
-        min_deposit: tokenData?.min_deposit || '',
+        min_withdrawal: prev.min_withdrawal || tokenData?.min_withdrawal || '',
+        min_deposit: prev.min_deposit || tokenData?.min_deposit || '',
         fee: feeData?.fixed_amount || '',
-      });
+      }));
     } catch (err) {
       setAssetLimits({
         asset,
         max_single: '',
         daily_limit: '',
         max_withdrawal: '',
-        min_withdrawal: '',
-        min_deposit: '',
+        min_withdrawal: tokenData?.min_withdrawal || '',
+        min_deposit: tokenData?.min_deposit || '',
         fee: '',
       });
     }
@@ -106,7 +147,11 @@ export default function WithdrawalRulesPage() {
 
   useEffect(() => {
     fetchGlobalSettings();
-    fetchAssetLimit('BTC');
+    fetchAvailableTokens().then((tokens) => {
+      const initial = tokens.length > 0 ? tokens[0].symbol : 'BTC';
+      setSelectedAsset(initial);
+      fetchAssetLimit(initial, tokens);
+    });
   }, []);
 
   const handleAssetSelect = (asset) => {
@@ -180,17 +225,16 @@ export default function WithdrawalRulesPage() {
       // 2. Save token minimums (min_withdrawal, min_deposit) if updated
       if (assetLimits.min_withdrawal !== '' || assetLimits.min_deposit !== '') {
         try {
-          const tokRes = await api(`/api/tokens?search=${asset}&limit=1`);
-          const tok = tokRes?.data?.[0];
-          if (tok) {
-            await api(`/api/tokens/${tok.id}`, {
-              method: 'PATCH',
-              body: {
-                min_withdrawal: assetLimits.min_withdrawal || tok.min_withdrawal || '0',
-                min_deposit: assetLimits.min_deposit || tok.min_deposit || '0',
-              },
-            });
-          }
+          const tok = tokensList.find((t) => t.symbol === asset);
+          const chain = tok?.blockchain || (tok?.chains && tok?.chains[0]) || '';
+          const query = chain ? `?blockchain=${encodeURIComponent(chain)}` : '';
+          await api(`/api/tokens/${asset}${query}`, {
+            method: 'PATCH',
+            body: {
+              min_withdrawal: assetLimits.min_withdrawal || tok?.min_withdrawal || '0',
+              min_deposit: assetLimits.min_deposit || tok?.min_deposit || '0',
+            },
+          });
         } catch (tErr) {
           console.warn('Could not sync token minimums:', tErr);
         }
@@ -270,6 +314,7 @@ export default function WithdrawalRulesPage() {
         <button
           onClick={() => {
             fetchGlobalSettings();
+            fetchAvailableTokens();
             fetchAssetLimit(selectedAsset);
           }}
           style={{
@@ -482,27 +527,96 @@ export default function WithdrawalRulesPage() {
           </div>
         </div>
 
-        {/* Common Asset Pills */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-          {commonAssets.map((ast) => (
-            <button
-              key={ast}
-              type="button"
-              onClick={() => handleAssetSelect(ast)}
+        {/* Asset Selector Dropdown List */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '24px',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            padding: '16px 20px',
+            borderRadius: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ flex: '1 1 320px', maxWidth: '480px' }}>
+            <label
+              htmlFor="asset-select-dropdown"
               style={{
-                padding: '6px 14px',
-                borderRadius: '6px',
-                background: selectedAsset === ast ? '#4d77f0' : '#181a22',
-                border: `1px solid ${selectedAsset === ast ? '#4d77f0' : 'rgba(255,255,255,0.1)'}`,
-                color: selectedAsset === ast ? '#fff' : 'rgba(255,255,255,0.7)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.7)',
+                marginBottom: '8px',
                 fontWeight: 600,
-                fontSize: '13px',
-                cursor: 'pointer',
               }}
             >
-              {ast}
-            </button>
-          ))}
+              <Coins size={14} color="#818cf8" /> Select Asset / Token
+            </label>
+            <div style={{ position: 'relative' }}>
+              <select
+                id="asset-select-dropdown"
+                value={selectedAsset}
+                onChange={(e) => handleAssetSelect(e.target.value)}
+                disabled={loadingTokens}
+                style={{
+                  width: '100%',
+                  padding: '11px 36px 11px 14px',
+                  background: '#181a22',
+                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  outline: 'none',
+                  cursor: 'pointer',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                }}
+              >
+                {tokensList.length === 0 ? (
+                  <option value={selectedAsset}>{selectedAsset} {loadingTokens ? '(Loading tokens...)' : ''}</option>
+                ) : (
+                  tokensList.map((tok) => (
+                    <option key={tok.symbol} value={tok.symbol} style={{ background: '#181a22', color: '#fff' }}>
+                      {tok.symbol} — {tok.name} {tok.blockchain ? `(${tok.blockchain})` : ''}
+                    </option>
+                  ))
+                )}
+              </select>
+              <ChevronDown
+                size={16}
+                color="rgba(255,255,255,0.5)"
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'flex-end', marginBottom: '2px' }}>
+            <span
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.6)',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                padding: '9px 14px',
+                borderRadius: '8px',
+                fontWeight: 500,
+              }}
+            >
+              {loadingTokens ? 'Loading listed tokens...' : `${tokensList.length} tokens loaded from system`}
+            </span>
+          </div>
         </div>
 
         <form onSubmit={handleSaveAssetLimits}>
@@ -511,30 +625,54 @@ export default function WithdrawalRulesPage() {
               <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
                 Asset Symbol
               </label>
-              <input
-                type="text"
-                required
-                value={assetLimits.asset}
-                onChange={(e) => {
-                  const val = e.target.value.toUpperCase();
-                  setAssetLimits({ ...assetLimits, asset: val });
-                  setSelectedAsset(val);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  outline: 'none',
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <select
+                  required
+                  value={assetLimits.asset}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase();
+                    handleAssetSelect(val);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 32px 10px 12px',
+                    background: '#181a22',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    outline: 'none',
+                    cursor: 'pointer',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                  }}
+                >
+                  {tokensList.length === 0 ? (
+                    <option value={assetLimits.asset}>{assetLimits.asset}</option>
+                  ) : (
+                    tokensList.map((tok) => (
+                      <option key={tok.symbol} value={tok.symbol} style={{ background: '#181a22', color: '#fff' }}>
+                        {tok.symbol} — {tok.name}
+                      </option>
+                    ))
+                  )}
+                </select>
+                <ChevronDown
+                  size={14}
+                  color="rgba(255,255,255,0.4)"
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </div>
               <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
-                Target cryptocurrency asset symbol
+                Selected token from listed assets
               </span>
             </div>
 
