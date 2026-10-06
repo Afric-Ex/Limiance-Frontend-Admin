@@ -75,22 +75,32 @@ export default function WithdrawalRulesPage() {
     try {
       const res = await api('/api/tokens?limit=500');
       const list = res.tokens || res.data || (Array.isArray(res) ? res : []);
-      const seen = new Set();
-      const unique = [];
+      const tokenMap = new Map();
       for (const t of list) {
         const sym = (t.symbol || '').toUpperCase();
-        if (sym && !seen.has(sym)) {
-          seen.add(sym);
-          unique.push({
+        if (!sym) continue;
+        if (!tokenMap.has(sym)) {
+          tokenMap.set(sym, {
             symbol: sym,
             name: t.name || sym,
-            blockchain: t.blockchain || (t.chains && t.chains[0]) || '',
+            blockchain: t.blockchain || '',
+            chains: t.chains && t.chains.length > 0 ? [...t.chains] : (t.blockchain ? [t.blockchain] : []),
             min_withdrawal: t.min_withdrawal || '0',
             min_deposit: t.min_deposit || '0',
           });
+        } else {
+          const existing = tokenMap.get(sym);
+          if (t.blockchain && !existing.chains.includes(t.blockchain)) {
+            existing.chains.push(t.blockchain);
+          }
+          if (t.chains) {
+            for (const c of t.chains) {
+              if (!existing.chains.includes(c)) existing.chains.push(c);
+            }
+          }
         }
       }
-      unique.sort((a, b) => a.symbol.localeCompare(b.symbol));
+      const unique = Array.from(tokenMap.values()).sort((a, b) => a.symbol.localeCompare(b.symbol));
       setTokensList(unique);
       return unique;
     } catch (err) {
@@ -226,15 +236,17 @@ export default function WithdrawalRulesPage() {
       if (assetLimits.min_withdrawal !== '' || assetLimits.min_deposit !== '') {
         try {
           const tok = tokensList.find((t) => t.symbol === asset);
-          const chain = tok?.blockchain || (tok?.chains && tok?.chains[0]) || '';
-          const query = chain ? `?blockchain=${encodeURIComponent(chain)}` : '';
-          await api(`/api/tokens/${asset}${query}`, {
-            method: 'PATCH',
-            body: {
-              min_withdrawal: assetLimits.min_withdrawal || tok?.min_withdrawal || '0',
-              min_deposit: assetLimits.min_deposit || tok?.min_deposit || '0',
-            },
-          });
+          const chains = (tok?.chains && tok.chains.length > 0) ? tok.chains : [tok?.blockchain || ''];
+          for (const chain of chains) {
+            if (!chain) continue;
+            await api(`/api/tokens/${asset}?blockchain=${encodeURIComponent(chain)}`, {
+              method: 'PATCH',
+              body: {
+                min_withdrawal: assetLimits.min_withdrawal || tok?.min_withdrawal || '0',
+                min_deposit: assetLimits.min_deposit || tok?.min_deposit || '0',
+              },
+            });
+          }
         } catch (tErr) {
           console.warn('Could not sync token minimums:', tErr);
         }
