@@ -30,6 +30,10 @@ export default function WithdrawalRulesPage() {
     asset: 'BTC',
     max_single: '',
     daily_limit: '',
+    max_withdrawal: '',
+    min_withdrawal: '',
+    min_deposit: '',
+    fee: '',
   });
   const [savingAssetLimits, setSavingAssetLimits] = useState(false);
 
@@ -65,18 +69,37 @@ export default function WithdrawalRulesPage() {
 
   const fetchAssetLimit = async (asset) => {
     try {
-      const res = await api(`/api/withdrawal-limits/${asset}`);
+      const [limitRes, tokenRes, feeRes] = await Promise.allSettled([
+        api(`/api/withdrawal-limits/${asset}`),
+        api(`/api/tokens?search=${asset}&limit=1`),
+        api(`/api/fees/${asset}`),
+      ]);
+
+      const limitData = limitRes.status === 'fulfilled' ? limitRes.value : {};
+      const tokenData =
+        tokenRes.status === 'fulfilled' && tokenRes.value?.data?.[0]
+          ? tokenRes.value.data[0]
+          : null;
+      const feeData = feeRes.status === 'fulfilled' ? feeRes.value : null;
+
       setAssetLimits({
-        asset: res.asset || asset,
-        max_single: res.max_single || '',
-        daily_limit: res.daily_limit || '',
+        asset: limitData.asset || asset,
+        max_single: limitData.max_single || '',
+        daily_limit: limitData.daily_limit || '',
+        max_withdrawal: limitData.max_withdrawal || '',
+        min_withdrawal: tokenData?.min_withdrawal || '',
+        min_deposit: tokenData?.min_deposit || '',
+        fee: feeData?.fixed_amount || '',
       });
     } catch (err) {
-      // 404 or empty limits means no custom cap set
       setAssetLimits({
         asset,
         max_single: '',
         daily_limit: '',
+        max_withdrawal: '',
+        min_withdrawal: '',
+        min_deposit: '',
+        fee: '',
       });
     }
   };
@@ -126,16 +149,80 @@ export default function WithdrawalRulesPage() {
   const handleSaveAssetLimits = async (e) => {
     e.preventDefault();
     setSavingAssetLimits(true);
+
+    const asset = assetLimits.asset.toUpperCase();
+
+    // Invariant: Max Withdrawal cannot exceed the Manual Approval Threshold (USD)
+    // When price is known or direct comparison applies
+    const maxWithdrawalNum = parseFloat(assetLimits.max_withdrawal);
+    const thresholdNum = parseFloat(threshold);
+    if (!isNaN(maxWithdrawalNum) && !isNaN(thresholdNum) && thresholdNum > 0) {
+      // If asset is USDT/USDC/USD or direct value >= threshold
+      if ((asset === 'USDT' || asset === 'USDC' || asset === 'USD') && maxWithdrawalNum > thresholdNum) {
+        showToast(`Max withdrawal (${maxWithdrawalNum} ${asset}) cannot exceed the manual approval threshold ($${thresholdNum})`, 'error');
+        setSavingAssetLimits(false);
+        return;
+      }
+    }
+
     try {
+      // 1. Save Redis limits (max_single, daily_limit, max_withdrawal)
       await api('/api/withdrawal-limits', {
         method: 'PUT',
         body: {
-          asset: assetLimits.asset.toUpperCase(),
+          asset,
           max_single: assetLimits.max_single,
           daily_limit: assetLimits.daily_limit,
+          max_withdrawal: assetLimits.max_withdrawal,
         },
       });
-      showToast(`Withdrawal caps saved for ${assetLimits.asset.toUpperCase()}`);
+
+      // 2. Save token minimums (min_withdrawal, min_deposit) if updated
+      if (assetLimits.min_withdrawal !== '' || assetLimits.min_deposit !== '') {
+        try {
+          const tokRes = await api(`/api/tokens?search=${asset}&limit=1`);
+          const tok = tokRes?.data?.[0];
+          if (tok) {
+            await api(`/api/tokens/${tok.id}`, {
+              method: 'PATCH',
+              body: {
+                min_withdrawal: assetLimits.min_withdrawal || tok.min_withdrawal || '0',
+                min_deposit: assetLimits.min_deposit || tok.min_deposit || '0',
+              },
+            });
+          }
+        } catch (tErr) {
+          console.warn('Could not sync token minimums:', tErr);
+        }
+      }
+
+      // 3. Save asset withdrawal fee if provided
+      if (assetLimits.fee !== '') {
+        try {
+          await api(`/api/fees/${asset}`, {
+            method: 'PUT',
+            body: {
+              fixed_amount: assetLimits.fee,
+            },
+          });
+        } catch (fErr) {
+          // If fee doesn't exist yet, create it
+          try {
+            await api('/api/fees', {
+              method: 'POST',
+              body: [{
+                name: asset,
+                fixed_amount: assetLimits.fee,
+                percentage: '0',
+              }],
+            });
+          } catch (createErr) {
+            console.warn('Could not sync asset fee:', createErr);
+          }
+        }
+      }
+
+      showToast(`Asset rules and limits saved for ${asset}`);
     } catch (err) {
       showToast(err.message || 'Failed to update asset limits', 'error');
     } finally {
@@ -387,10 +474,10 @@ export default function WithdrawalRulesPage() {
           </div>
           <div>
             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
-              Per-Asset Max-Single & Daily Limits
+              Per-Asset Rules & Limits
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-              Configure native token maximum single transaction and 24-hour rolling velocity caps
+              Configure withdrawal fees, minimum deposit/withdrawal sizes, transaction limits, and 24-hour rolling velocity caps
             </p>
           </div>
         </div>
@@ -419,7 +506,7 @@ export default function WithdrawalRulesPage() {
         </div>
 
         <form onSubmit={handleSaveAssetLimits}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '20px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
                 Asset Symbol
@@ -446,6 +533,87 @@ export default function WithdrawalRulesPage() {
                   outline: 'none',
                 }}
               />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                Target cryptocurrency asset symbol
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+                Withdrawal Fee ({assetLimits.asset})
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 0.0005 (fixed fee)"
+                value={assetLimits.fee}
+                onChange={(e) => setAssetLimits({ ...assetLimits, fee: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#181a22',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+              />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                Fixed fee deducted per withdrawal
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+                Deposit Min ({assetLimits.asset})
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 0.001"
+                value={assetLimits.min_deposit}
+                onChange={(e) => setAssetLimits({ ...assetLimits, min_deposit: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#181a22',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+              />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                Deposits below this will be rejected
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+                Withdrawal Min ({assetLimits.asset})
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 0.002"
+                value={assetLimits.min_withdrawal}
+                onChange={(e) => setAssetLimits({ ...assetLimits, min_withdrawal: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#181a22',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+              />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                Minimum single withdrawal allowed
+              </span>
             </div>
 
             <div>
@@ -469,6 +637,35 @@ export default function WithdrawalRulesPage() {
                   outline: 'none',
                 }}
               />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                Cap per individual transaction
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+                Withdrawal Max ({assetLimits.asset})
+              </label>
+              <input
+                type="text"
+                placeholder={`e.g. ${threshold || '10000'}`}
+                value={assetLimits.max_withdrawal}
+                onChange={(e) => setAssetLimits({ ...assetLimits, max_withdrawal: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#181a22',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+              />
+              <span style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px', display: 'block' }}>
+                Ceiling (≤ Manual Approval Threshold: ${threshold || '0'})
+              </span>
             </div>
 
             <div>
@@ -492,6 +689,9 @@ export default function WithdrawalRulesPage() {
                   outline: 'none',
                 }}
               />
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+                24-hour total rolling withdrawal cap
+              </span>
             </div>
           </div>
 
