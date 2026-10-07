@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -13,13 +13,37 @@ import {
   BarChart3,
   LogOut,
   Shield,
+  Menu,
 } from 'lucide-react';
 import './AdminLayout.css';
+
+const DESKTOP_BREAKPOINT = 1024;
 
 export default function AdminLayout() {
   const { user, roles, logout, hasRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Sidebar open/close (open by default on desktop, closed on small screens)
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => window.innerWidth >= DESKTOP_BREAKPOINT
+  );
+
+  // Close the drawer after navigating on mobile
+  useEffect(() => {
+    if (window.innerWidth < DESKTOP_BREAKPOINT) setSidebarOpen(false);
+  }, [location.pathname]);
+
+  // Close on Escape (mobile drawer)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && window.innerWidth < DESKTOP_BREAKPOINT) {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Collapsible dropdown states
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -54,8 +78,8 @@ export default function AdminLayout() {
   const envBadge = getEnvBadge();
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
+    <div className={`admin-layout ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <aside className="sidebar" aria-hidden={!sidebarOpen}>
         <div className="sidebar-header">
           <img
             src="/logo.png"
@@ -68,7 +92,6 @@ export default function AdminLayout() {
           />
           <h4>Admin</h4>
         </div>
-
 
         <nav className="sidebar-nav">
           {/* 1. DASHBOARD */}
@@ -88,7 +111,7 @@ export default function AdminLayout() {
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/markets') || location.pathname.startsWith('/tokens') || location.pathname.startsWith('/pairs') || location.pathname.startsWith('/networks') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/markets') || location.pathname.startsWith('/tokens') || location.pathname.startsWith('/prices') || location.pathname.startsWith('/pairs') || location.pathname.startsWith('/networks') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('markets')}
               >
                 <div className="nav-group-title">
@@ -107,7 +130,7 @@ export default function AdminLayout() {
                   <NavLink to="/tokens" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Tokens & Contracts
                   </NavLink>
-                   <NavLink to="/prices" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                  <NavLink to="/prices" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Tokens Prices
                   </NavLink>
                   <NavLink to="/pairs" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
@@ -297,14 +320,26 @@ export default function AdminLayout() {
         </button>
       </aside>
 
+      {/* Click-away overlay (mobile only, see CSS) */}
+      <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+
       <main className="main-content">
         <header className="topbar">
-         
-            <div className="user-email">{user?.email}</div>
-            <div className="user-roles">
-              {roles.length > 0 ? roles.join(', ') : 'Operator'}
-            </div>
-        
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={() => setSidebarOpen((o) => !o)}
+            aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+            aria-expanded={sidebarOpen}
+          >
+            <Menu size={20} />
+          </button>
+
+          <div className="user-email">{user?.email}</div>
+          <div className="user-roles">
+            {roles.length > 0 ? roles.join(', ') : 'Operator'}
+          </div>
+
           <div className={envBadge.className}>{envBadge.label}</div>
         </header>
         <div className="page-content">
