@@ -261,11 +261,11 @@ export default function AdminLayout() {
           )}
 
           {/* 8. COMPLIANCE & SUPPORT (Dropdown) */}
-          {(hasRole('support') || hasRole('superadmin')) && (
+          {(hasRole('support') || hasRole('risk') || hasRole('superadmin')) && (
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/kyc-queue') || location.pathname.startsWith('/support-tickets') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/kyc-queue') || location.pathname.startsWith('/support-tickets') || location.pathname.startsWith('/p2p-disputes') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('complianceSupport')}
               >
                 <div className="nav-group-title">
@@ -280,6 +280,9 @@ export default function AdminLayout() {
                   </NavLink>
                   <NavLink to="/support-tickets" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Support Tickets
+                  </NavLink>
+                  <NavLink to="/p2p-disputes" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    P2P Disputes
                   </NavLink>
                 </div>
               )}

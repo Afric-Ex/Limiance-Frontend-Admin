@@ -21,6 +21,7 @@ import TransactionsPage from './pages/TransactionsPage';
 import TransactionDetailPage from './pages/TransactionDetailPage';
 import SupportTicketsPage from './pages/SupportTicketsPage';
 import SupportTicketDetailPage from './pages/SupportTicketDetailPage';
+import P2PDisputesPage from './pages/P2PDisputesPage';
 import TokensPage from './pages/TokensPage';
 import PairsPage from './pages/PairsPage';
 import NetworksPage from './pages/NetworksPage';
@@ -145,7 +146,7 @@ function App() {
               <Route
                 path="support-tickets"
                 element={
-                  <ProtectedRoute requiredRoles={['support', 'superadmin']}>
+                  <ProtectedRoute requiredRoles={['support', 'risk', 'superadmin']}>
                     <SupportTicketsPage />
                   </ProtectedRoute>
                 }
@@ -153,8 +154,16 @@ function App() {
               <Route
                 path="support-tickets/:id"
                 element={
-                  <ProtectedRoute requiredRoles={['support', 'superadmin']}>
+                  <ProtectedRoute requiredRoles={['support', 'risk', 'superadmin']}>
                     <SupportTicketDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="p2p-disputes"
+                element={
+                  <ProtectedRoute requiredRoles={['support', 'risk', 'superadmin']}>
+                    <P2PDisputesPage />
                   </ProtectedRoute>
                 }
               />
