@@ -35,6 +35,7 @@ import MarketOverviewPage from './pages/MarketOverviewPage';
 import OrderbookPage from './pages/OrderbookPage';
 import TreasuryPage from './pages/TreasuryPage';
 import PricesPage from './pages/Prices';
+import PendingApprovalsPage from './pages/PendingApprovalsPage';
 
 function App() {
   return (
@@ -300,6 +301,14 @@ function App() {
                 element={
                   <ProtectedRoute requiredRoles={['superadmin']}>
                     <RolesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="pending-approvals"
+                element={
+                  <ProtectedRoute requiredRoles={['superadmin']}>
+                    <PendingApprovalsPage />
                   </ProtectedRoute>
                 }
               />

@@ -13,6 +13,10 @@ import {
   AlertOctagon,
   Sliders,
   Zap,
+  Shield,
+  DollarSign,
+  AlertTriangle,
+  Layers,
 } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
 
@@ -53,6 +57,24 @@ export default function DerivativesPage() {
     min_borrow_amount: '50',
   });
 
+  // Risk & Insurance Monitoring State
+  const [insuranceFund, setInsuranceFund] = useState(null);
+  const [adlQueue, setAdlQueue] = useState([]);
+  const [adlSymbolFilter, setAdlSymbolFilter] = useState('');
+  const [feeReport, setFeeReport] = useState([]);
+  const [spotRiskLimits, setSpotRiskLimits] = useState({
+    fat_finger_pct: '0.10',
+    max_notional: '500000',
+  });
+  const [marginRiskLimits, setMarginRiskLimits] = useState({
+    warning_threshold: '1.20',
+    call_threshold: '1.10',
+    liquidation_threshold: '1.05',
+    default_cross_leverage: '3',
+  });
+  const [savingSpotRisk, setSavingSpotRisk] = useState(false);
+  const [savingMarginRisk, setSavingMarginRisk] = useState(false);
+
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
@@ -61,9 +83,14 @@ export default function DerivativesPage() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [futRes, marRes] = await Promise.allSettled([
+      const [futRes, marRes, insRes, adlRes, feeRes, spotRkRes, marRkRes] = await Promise.allSettled([
         api('/api/futures-configs'),
         api('/api/margin-interest-configs'),
+        api('/api/risk/insurance-fund'),
+        api(`/api/risk/adl-queue${adlSymbolFilter ? `?symbol=${adlSymbolFilter}` : ''}`),
+        api('/api/trades/fees'),
+        api('/api/risk-limits/spot'),
+        api('/api/risk-limits/margin'),
       ]);
 
       if (futRes.status === 'fulfilled') {
@@ -74,11 +101,70 @@ export default function DerivativesPage() {
         const d = marRes.value;
         setMarginConfigs(Array.isArray(d) ? d : d?.margin_interest_configs || d?.data || []);
       }
+      if (insRes.status === 'fulfilled' && insRes.value?.insurance_fund) {
+        setInsuranceFund(insRes.value.insurance_fund);
+      }
+      if (adlRes.status === 'fulfilled') {
+        const queue = adlRes.value.adl_queue || adlRes.value.queue || [];
+        setAdlQueue(Array.isArray(queue) ? queue : []);
+      }
+      if (feeRes.status === 'fulfilled') {
+        const data = feeRes.value.data || feeRes.value.fees || [];
+        setFeeReport(Array.isArray(data) ? data : []);
+      }
+      if (spotRkRes.status === 'fulfilled' && spotRkRes.value) {
+        setSpotRiskLimits((prev) => ({
+          ...prev,
+          fat_finger_pct: spotRkRes.value.fat_finger_pct || prev.fat_finger_pct,
+          max_notional: spotRkRes.value.max_notional || prev.max_notional,
+        }));
+      }
+      if (marRkRes.status === 'fulfilled' && marRkRes.value) {
+        setMarginRiskLimits((prev) => ({
+          ...prev,
+          warning_threshold: marRkRes.value.warning_threshold || prev.warning_threshold,
+          call_threshold: marRkRes.value.call_threshold || prev.call_threshold,
+          liquidation_threshold: marRkRes.value.liquidation_threshold || prev.liquidation_threshold,
+          default_cross_leverage: marRkRes.value.default_cross_leverage || prev.default_cross_leverage,
+        }));
+      }
     } catch (err) {
       console.error(err);
       showToast('Failed to load derivatives risk configs', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveSpotRisk = async (e) => {
+    e.preventDefault();
+    setSavingSpotRisk(true);
+    try {
+      await api('/api/risk-limits/spot', {
+        method: 'PUT',
+        body: spotRiskLimits,
+      });
+      showToast('Spot risk limits updated successfully');
+    } catch (err) {
+      showToast(err.message || 'Failed to update spot risk limits', 'error');
+    } finally {
+      setSavingSpotRisk(false);
+    }
+  };
+
+  const handleSaveMarginRisk = async (e) => {
+    e.preventDefault();
+    setSavingMarginRisk(true);
+    try {
+      await api('/api/risk-limits/margin', {
+        method: 'PUT',
+        body: marginRiskLimits,
+      });
+      showToast('Margin risk thresholds updated successfully');
+    } catch (err) {
+      showToast(err.message || 'Failed to update margin risk thresholds', 'error');
+    } finally {
+      setSavingMarginRisk(false);
     }
   };
 
@@ -353,6 +439,24 @@ export default function DerivativesPage() {
             }}
           >
             <Percent size={14} /> Margin Borrow Rates ({marginConfigs.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('risk')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: activeTab === 'risk' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              border: 'none',
+              color: activeTab === 'risk' ? '#fff' : 'rgba(255,255,255,0.6)',
+              fontWeight: 600,
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            <Shield size={14} /> Risk & Insurance Fund
           </button>
         </div>
 
@@ -629,6 +733,573 @@ export default function DerivativesPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* --- Tab 3: Risk & Insurance Fund --- */}
+      {activeTab === 'risk' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Insurance Fund Metric Cards */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {/* Total Fund Balance */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '20px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+                  Insurance Fund Balance
+                </span>
+                <Shield size={16} color="#34d399" />
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                ${insuranceFund?.total_fund_balance_usd ? Number(insuranceFund.total_fund_balance_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+              </div>
+              <span style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', display: 'block' }}>
+                Backed collateral reserve
+              </span>
+            </div>
+
+            {/* Total Open Interest */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '20px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+                  Futures Open Interest
+                </span>
+                <TrendingUp size={16} color="#818cf8" />
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                ${insuranceFund?.total_open_interest_usd ? Number(insuranceFund.total_open_interest_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+              </div>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '4px', display: 'block' }}>
+                Live active perpetual positions
+              </span>
+            </div>
+
+            {/* Coverage Ratio */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '20px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+                  Coverage Ratio
+                </span>
+                <Percent size={16} color="#fbbf24" />
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: '#fbbf24', fontFamily: 'var(--font-mono)' }}>
+                {insuranceFund?.coverage_ratio ? `${(Number(insuranceFund.coverage_ratio) * 100).toFixed(2)}%` : '0.00%'}
+              </div>
+              <span style={{ fontSize: '12px', color: insuranceFund?.is_depleted ? '#ef4444' : 'rgba(255,255,255,0.5)', marginTop: '4px', display: 'block' }}>
+                {insuranceFund?.is_depleted ? 'Critical depletion warning (< 1%)' : 'Healthy reserve margin (target ≥ 5%)'}
+              </span>
+            </div>
+
+            {/* Health / Alert Level */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '20px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+                  System Risk Level
+                </span>
+                <AlertTriangle size={16} color={insuranceFund?.alert_level === 'CRITICAL' ? '#ef4444' : insuranceFund?.alert_level === 'WARNING' ? '#fbbf24' : '#34d399'} />
+              </div>
+              <div style={{ marginTop: '6px' }}>
+                <span
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    background: insuranceFund?.alert_level === 'CRITICAL'
+                      ? 'rgba(239, 68, 68, 0.15)'
+                      : insuranceFund?.alert_level === 'WARNING'
+                      ? 'rgba(245, 158, 11, 0.15)'
+                      : 'rgba(16, 185, 129, 0.15)',
+                    color: insuranceFund?.alert_level === 'CRITICAL'
+                      ? '#f87171'
+                      : insuranceFund?.alert_level === 'WARNING'
+                      ? '#fbbf24'
+                      : '#34d399',
+                    border: `1px solid ${
+                      insuranceFund?.alert_level === 'CRITICAL'
+                        ? 'rgba(239, 68, 68, 0.3)'
+                        : insuranceFund?.alert_level === 'WARNING'
+                        ? 'rgba(245, 158, 11, 0.3)'
+                        : 'rgba(16, 185, 129, 0.3)'
+                    }`,
+                    display: 'inline-block',
+                  }}
+                >
+                  {insuranceFund?.alert_level || 'NORMAL'}
+                </span>
+              </div>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '8px', display: 'block' }}>
+                Auto-Deleveraging (ADL) trigger state
+              </span>
+            </div>
+          </div>
+
+          {/* Dynamic Risk Parameters: Spot & Margin */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {/* Spot Risk Limits */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '24px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <Sliders size={18} color="#818cf8" />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#fff', fontWeight: 600 }}>
+                  Spot Market Risk Limits
+                </h3>
+              </div>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 20px', lineHeight: '1.5' }}>
+                Guards matching engine against fat-finger orders and extreme price deviation spikes.
+              </p>
+
+              <form onSubmit={handleSaveSpotRisk}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Fat-Finger Price Deviation Band (e.g. 0.10 = ±10%)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={spotRiskLimits.fat_finger_pct}
+                      onChange={(e) => setSpotRiskLimits({ ...spotRiskLimits, fat_finger_pct: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Max Order Notional Value (USD)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={spotRiskLimits.max_notional}
+                      onChange={(e) => setSpotRiskLimits({ ...spotRiskLimits, max_notional: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={savingSpotRisk}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '8px',
+                    background: '#4d77f0',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    cursor: savingSpotRisk ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {savingSpotRisk ? 'Saving Limits...' : 'Save Spot Risk Limits'}
+                </button>
+              </form>
+            </div>
+
+            {/* Margin Risk Limits */}
+            <div
+              style={{
+                background: '#13151c',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '14px',
+                padding: '24px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <Percent size={18} color="#fbbf24" />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#fff', fontWeight: 600 }}>
+                  Margin Maintenance & Liquidation Thresholds
+                </h3>
+              </div>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', margin: '0 0 20px', lineHeight: '1.5' }}>
+                Account margin level triggers for warning notifications, margin calls, and automated forced liquidations.
+              </p>
+
+              <form onSubmit={handleSaveMarginRisk}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Warning Ratio (e.g. 1.20)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={marginRiskLimits.warning_threshold}
+                      onChange={(e) => setMarginRiskLimits({ ...marginRiskLimits, warning_threshold: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Margin Call (e.g. 1.10)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={marginRiskLimits.call_threshold}
+                      onChange={(e) => setMarginRiskLimits({ ...marginRiskLimits, call_threshold: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Liquidation (e.g. 1.05)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={marginRiskLimits.liquidation_threshold}
+                      onChange={(e) => setMarginRiskLimits({ ...marginRiskLimits, liquidation_threshold: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                      Default Leverage (e.g. 3)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={marginRiskLimits.default_cross_leverage}
+                      onChange={(e) => setMarginRiskLimits({ ...marginRiskLimits, default_cross_leverage: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: '#181a24',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={savingMarginRisk}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '8px',
+                    background: '#4d77f0',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    cursor: savingMarginRisk ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {savingMarginRisk ? 'Saving Thresholds...' : 'Save Margin Thresholds'}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* ADL Queue Section */}
+          <div
+            style={{
+              background: '#13151c',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              padding: '24px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#fff', fontWeight: 600 }}>
+                  Live ADL (Auto-Deleveraging) Counterparty Queue
+                </h3>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                  Prioritized position list for automated deleveraging if the insurance fund is depleted during a bankruptcy event.
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Filter by Symbol (e.g. BTCUSDT)"
+                  value={adlSymbolFilter}
+                  onChange={(e) => setAdlSymbolFilter(e.target.value.toUpperCase())}
+                  style={{
+                    padding: '8px 12px',
+                    background: '#181a24',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontSize: '12px',
+                    outline: 'none',
+                  }}
+                />
+                <button
+                  onClick={fetchAll}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#fff',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <RefreshCw size={12} /> Refresh Queue
+                </button>
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                    <th style={{ padding: '12px 14px' }}>Rank</th>
+                    <th style={{ padding: '12px 14px' }}>User ID</th>
+                    <th style={{ padding: '12px 14px' }}>Position ID</th>
+                    <th style={{ padding: '12px 14px' }}>Symbol</th>
+                    <th style={{ padding: '12px 14px' }}>Side</th>
+                    <th style={{ padding: '12px 14px' }}>Size</th>
+                    <th style={{ padding: '12px 14px' }}>Entry Price</th>
+                    <th style={{ padding: '12px 14px' }}>Leverage</th>
+                    <th style={{ padding: '12px 14px' }}>PnL %</th>
+                    <th style={{ padding: '12px 14px' }}>ADL Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adlQueue.length === 0 ? (
+                    <tr>
+                      <td colSpan="10" style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                        No positions currently queued for Auto-Deleveraging.
+                      </td>
+                    </tr>
+                  ) : (
+                    adlQueue.map((item, idx) => (
+                      <tr key={item.position_id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 700, color: '#fbbf24' }}>
+                          #{item.queue_rank || idx + 1}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: '#9ca3af', fontSize: '12px' }}>
+                          {item.user_id ? `${item.user_id.slice(0, 10)}...` : '—'}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                          {item.position_id ? `${item.position_id.slice(0, 10)}...` : '—'}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, color: '#fff' }}>
+                          {item.symbol}
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span
+                            style={{
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              background: item.side === 'LONG' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                              color: item.side === 'LONG' ? '#34d399' : '#f87171',
+                            }}
+                          >
+                            {item.side}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace' }}>
+                          {item.size}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace' }}>
+                          ${item.entry_price}
+                        </td>
+                        <td style={{ padding: '12px 14px', color: '#818cf8', fontWeight: 600 }}>
+                          {item.leverage}x
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: Number(item.pnl_percent) >= 0 ? '#34d399' : '#f87171' }}>
+                          {item.pnl_percent}%
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700, color: '#fbbf24' }}>
+                          {item.adl_score}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Exchange Fee Breakdown Section */}
+          <div
+            style={{
+              background: '#13151c',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              padding: '24px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#fff', fontWeight: 600 }}>
+                  Cumulative Exchange Trading Fee Breakdown
+                </h3>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                  All-time revenue audit by collected token asset and maker/taker role.
+                </span>
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                    <th style={{ padding: '12px 14px' }}>Asset</th>
+                    <th style={{ padding: '12px 14px' }}>Liquidity Role</th>
+                    <th style={{ padding: '12px 14px' }}>Total Fee Collected</th>
+                    <th style={{ padding: '12px 14px' }}>Trade Executions</th>
+                    <th style={{ padding: '12px 14px' }}>USD Value Approx.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {feeReport.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" style={{ padding: '30px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                        No fee revenue history recorded yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    feeReport.map((row, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 700, color: '#fff' }}>
+                          {row.fee_asset}
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span
+                            style={{
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              background: row.role === 'MAKER' ? 'rgba(77, 119, 240, 0.15)' : 'rgba(129, 140, 248, 0.15)',
+                              color: row.role === 'MAKER' ? '#818cf8' : '#a5b4fc',
+                            }}
+                          >
+                            {row.role || 'TAKER'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: '#34d399', fontWeight: 600 }}>
+                          {row.total_fee} {row.fee_asset}
+                        </td>
+                        <td style={{ padding: '12px 14px', color: 'rgba(255,255,255,0.7)' }}>
+                          {Number(row.trade_count || 0).toLocaleString()}
+                        </td>
+                        <td style={{ padding: '12px 14px', fontFamily: 'monospace', color: '#fff' }}>
+                          ${row.total_fee_usd || row.value_usd ? Number(row.total_fee_usd || row.value_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 

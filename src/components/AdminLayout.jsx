@@ -294,7 +294,7 @@ export default function AdminLayout() {
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/roles') || location.pathname.startsWith('/audit') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/roles') || location.pathname.startsWith('/audit') || location.pathname.startsWith('/pending-approvals') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('staffAdmin')}
               >
                 <div className="nav-group-title">
@@ -307,6 +307,11 @@ export default function AdminLayout() {
                   {hasRole('superadmin') && (
                     <NavLink to="/roles" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                       Operator Accounts
+                    </NavLink>
+                  )}
+                  {hasRole('superadmin') && (
+                    <NavLink to="/pending-approvals" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                      Pending Approvals
                     </NavLink>
                   )}
                   <NavLink to="/audit" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>

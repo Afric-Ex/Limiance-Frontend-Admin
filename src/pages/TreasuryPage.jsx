@@ -5,7 +5,8 @@ import {
   Landmark, ArrowRightLeft, Sliders, RefreshCw, Copy, ExternalLink,
   CheckCircle2, AlertTriangle, Flame, Snowflake, Droplets, Layers,
   Scale, SlidersHorizontal, Clock, Info, ChevronRight,
-  TrendingUp, Send, Shield, KeyRound, Cpu
+  TrendingUp, Send, Shield, KeyRound, Cpu,
+  Plus, X, Search
 } from 'lucide-react';
 import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
 
@@ -361,9 +362,74 @@ export default function TreasuryPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast]               = useState(null);
 
-  const showToast = (msg, type = 'success') => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 4200);
+  // Fee Collection Accounts State
+  const [collectionAccounts, setCollectionAccounts] = useState([]);
+  const [collectionLoading, setCollectionLoading] = useState(false);
+  const [createCollectionModalOpen, setCreateCollectionModalOpen] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState('');
+  const [newCollectionType, setNewCollectionType] = useState('spot');
+  const [creatingCollection, setCreatingCollection] = useState(false);
+  const [selectedCollectionAcc, setSelectedCollectionAcc] = useState(null);
+  const [collectionTransactions, setCollectionTransactions] = useState([]);
+  const [collectionTxsLoading, setCollectionTxsLoading] = useState(false);
+  const [collectionTxSymbol, setCollectionTxSymbol] = useState('');
+
+  const fetchCollectionAccounts = async () => {
+    setCollectionLoading(true);
+    try {
+      const res = await api('/api/collection-accounts');
+      setCollectionAccounts(res.collection_accounts || []);
+    } catch (err) {
+      console.error('Failed to load collection accounts:', err);
+      showToast(err.message || 'Failed to load fee collection accounts', 'error');
+    } finally {
+      setCollectionLoading(false);
+    }
+  };
+
+  const handleCreateCollectionAccount = async (e) => {
+    e.preventDefault();
+    if (!newCollectionName.trim()) return;
+    setCreatingCollection(true);
+    try {
+      await api('/api/collection-accounts', {
+        method: 'POST',
+        body: { name: newCollectionName.trim(), type: newCollectionType },
+      });
+      showToast(`Fee collection account "${newCollectionName}" created successfully`);
+      setCreateCollectionModalOpen(false);
+      setNewCollectionName('');
+      fetchCollectionAccounts();
+    } catch (err) {
+      showToast(err.message || 'Failed to create collection account', 'error');
+    } finally {
+      setCreatingCollection(false);
+    }
+  };
+
+  const openCollectionTransactions = async (acc, symbol = '') => {
+    setSelectedCollectionAcc(acc);
+    setCollectionTxSymbol(symbol);
+    setCollectionTxsLoading(true);
+    try {
+      const query = symbol ? `?symbol=${symbol}&page=1&page_size=50` : '?page=1&page_size=50';
+      const res = await api(`/api/collection-accounts/${acc.id}/transactions${query}`);
+      setCollectionTransactions(res.transactions || []);
+    } catch (err) {
+      showToast(err.message || 'Failed to load account transactions', 'error');
+    } finally {
+      setCollectionTxsLoading(false);
+    }
+  };
+
+  const refreshAccountBalance = async (accId, symbol) => {
+    try {
+      const res = await api(`/api/collection-accounts/${accId}/balance?symbol=${symbol}`);
+      showToast(`Live ${symbol} balance: ${res.balance || '0'}`);
+      fetchCollectionAccounts();
+    } catch (err) {
+      showToast(err.message || 'Failed to refresh balance', 'error');
+    }
   };
 
   // ─── Live API Data Fetcher ──────────────────────────────────────────────────
@@ -401,6 +467,7 @@ export default function TreasuryPage() {
 
   useEffect(() => {
     fetchData();
+    fetchCollectionAccounts();
   }, [fetchData]);
 
   // Totals calculated from live API
@@ -510,10 +577,11 @@ export default function TreasuryPage() {
   };
 
   const tabs = [
-    { id: 'wallets',  label: 'System Wallets',             Icon: Layers },
-    { id: 'ledger',   label: 'Ledger & Proof of Reserves', Icon: Scale },
-    { id: 'policies', label: 'Automation Policies',        Icon: SlidersHorizontal },
-    { id: 'history',  label: 'Rebalance Audit Log',        Icon: Clock },
+    { id: 'wallets',    label: 'System Wallets',             Icon: Layers },
+    { id: 'ledger',     label: 'Ledger & Proof of Reserves', Icon: Scale },
+    { id: 'policies',   label: 'Automation Policies',        Icon: SlidersHorizontal },
+    { id: 'history',    label: 'Rebalance Audit Log',        Icon: Clock },
+    { id: 'collection', label: 'Fee Collection Accounts',   Icon: ArrowRightLeft },
   ];
 
   return (
@@ -1007,6 +1075,375 @@ export default function TreasuryPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB 5 — FEE COLLECTION ACCOUNTS
+      ══════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'collection' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Header toolbar */}
+          <div
+            style={{
+              background: '#13151c',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '12px',
+              padding: '16px 20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff' }}>
+                Exchange Fee Collection Accounts
+              </div>
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
+                Dedicated segregation vaults accumulating trade commissions, funding payments, and on-chain withdrawal gas surcharges.
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={fetchCollectionAccounts}
+                disabled={collectionLoading}
+                style={{
+                  padding: '8px 14px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: collectionLoading ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <RefreshCw size={13} className={collectionLoading ? 'spin' : ''} /> Refresh
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreateCollectionModalOpen(true)}
+                style={{
+                  padding: '8px 16px',
+                  background: '#4d77f0',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Plus size={14} /> Register Collection Account
+              </button>
+            </div>
+          </div>
+
+          {/* Accounts Grid */}
+          {collectionLoading && collectionAccounts.length === 0 ? (
+            <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '24px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <ShimmerTableRows rows={4} cols={4} colWidths={['25%', '25%', '25%', '25%']} />
+                </tbody>
+              </table>
+            </div>
+          ) : collectionAccounts.length === 0 ? (
+            <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '48px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+              <Landmark size={36} style={{ display: 'block', margin: '0 auto 12px', opacity: 0.3 }} />
+              No collection accounts registered yet. Click "Register Collection Account" above to create one.
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '16px' }}>
+              {collectionAccounts.map((acc) => {
+                const balances = acc.balances || {};
+                const balanceEntries = Object.entries(balances);
+
+                return (
+                  <div
+                    key={acc.id}
+                    style={{
+                      background: '#13151c',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      {/* Top Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                        <div>
+                          <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff' }}>{acc.name}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                            <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>
+                              ID: {acc.id ? `${acc.id.slice(0, 12)}...` : '—'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => { navigator.clipboard.writeText(acc.id); showToast('Account ID copied'); }}
+                              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', padding: 0 }}
+                              title="Copy ID"
+                            >
+                              <Copy size={11} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <span
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: 'rgba(77,119,240,0.12)',
+                            color: '#818cf8',
+                            border: '1px solid rgba(77,119,240,0.25)',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {acc.type || 'FEE'}
+                        </span>
+                      </div>
+
+                      {/* Balances List */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', marginBottom: '16px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                          Current Accumulated Balances
+                        </div>
+
+                        {balanceEntries.length === 0 ? (
+                          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', padding: '6px 0' }}>
+                            No fee collections posted to this account yet.
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '160px', overflowY: 'auto' }}>
+                            {balanceEntries.map(([sym, bal]) => (
+                              <div
+                                key={sym}
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  background: '#181a24',
+                                  border: '1px solid rgba(255,255,255,0.05)',
+                                  borderRadius: '6px',
+                                  padding: '6px 10px',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: tokenColor(sym) }} />
+                                  <span style={{ fontWeight: 600, fontSize: '12px', color: '#fff' }}>{sym}</span>
+                                </div>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#34d399', fontWeight: 600 }}>
+                                    {bal}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => refreshAccountBalance(acc.id, sym)}
+                                    style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px' }}
+                                    title={`Verify live on-ledger balance for ${sym}`}
+                                  >
+                                    <RefreshCw size={11} />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Actions */}
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => openCollectionTransactions(acc)}
+                        style={{
+                          padding: '6px 12px',
+                          background: 'rgba(255,255,255,0.06)',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontSize: '12px',
+                          fontWeight: 500,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <Clock size={12} /> Inspect Transactions
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Modal: Register Collection Account ── */}
+      {createCollectionModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
+          <div style={{ background: '#181a24', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', width: '100%', maxWidth: '460px', padding: '1.75rem', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Landmark size={18} color="#4d77f0" />
+                <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#fff' }}>Register Collection Account</span>
+              </div>
+              <button type="button" onClick={() => setCreateCollectionModalOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <form onSubmit={handleCreateCollectionAccount}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Account Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Primary Spot Trading Fee Vault"
+                    value={newCollectionName}
+                    onChange={(e) => setNewCollectionName(e.target.value)}
+                    style={{ width: '100%', padding: '8px 10px', background: '#13151c', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Account Business Type</label>
+                  <select
+                    value={newCollectionType}
+                    onChange={(e) => setNewCollectionType(e.target.value)}
+                    style={{ width: '100%', padding: '8px 10px', background: '#13151c', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                  >
+                    <option value="spot">Spot Trading Fees</option>
+                    <option value="margin">Margin Borrow & Trading Fees</option>
+                    <option value="futures">Futures Funding & Trading Fees</option>
+                    <option value="p2p">P2P Escrow Mediation Fees</option>
+                    <option value="deposit">Deposit Gateway Fees</option>
+                    <option value="withdrawal">Withdrawal Surcharges</option>
+                    <option value="convert">Token Conversion Spread Fees</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '1rem' }}>
+                  <button type="button" onClick={() => setCreateCollectionModalOpen(false)} style={{ padding: '8px 16px', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
+                  <button type="submit" disabled={creatingCollection || !newCollectionName.trim()} style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: creatingCollection ? 'not-allowed' : 'pointer' }}>
+                    {creatingCollection ? 'Creating...' : 'Create Account'}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal: Collection Account Transactions ── */}
+      {selectedCollectionAcc && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
+          <div style={{ background: '#181a24', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', width: '100%', maxWidth: '780px', padding: '1.75rem', maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#fff' }}>
+                  {selectedCollectionAcc.name} — Ledger Transactions
+                </div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+                  Type: {selectedCollectionAcc.type} · Account ID: {selectedCollectionAcc.id}
+                </div>
+              </div>
+              <button type="button" onClick={() => setSelectedCollectionAcc(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            {/* Filter toolbar */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
+              <input
+                type="text"
+                placeholder="Filter by Symbol (e.g. USDT, BTC)"
+                value={collectionTxSymbol}
+                onChange={(e) => setCollectionTxSymbol(e.target.value.toUpperCase())}
+                style={{ padding: '6px 10px', background: '#13151c', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px', color: '#fff', fontSize: '12px' }}
+              />
+              <button
+                type="button"
+                onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol)}
+                style={{ padding: '6px 12px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Filter
+              </button>
+            </div>
+
+            {/* Transactions table */}
+            <div style={{ flex: 1, overflowY: 'auto', background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
+              {collectionTxsLoading ? (
+                <div style={{ padding: '20px' }}>
+                  <ShimmerTableRows rows={4} cols={5} colWidths={['20%', '20%', '20%', '20%', '20%']} />
+                </div>
+              ) : collectionTransactions.length === 0 ? (
+                <div style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+                  No fee transactions recorded for this account.
+                </div>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                  <thead>
+                    <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
+                      <th style={{ padding: '10px 12px', textAlign: 'left' }}>Time</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left' }}>Symbol</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left' }}>Amount Credited</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left' }}>Balance After</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left' }}>Reference / Order</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {collectionTransactions.map((tx, idx) => (
+                      <tr key={tx.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <td style={{ padding: '10px 12px', color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
+                          {tx.created_at ? new Date(tx.created_at).toLocaleString() : '—'}
+                        </td>
+                        <td style={{ padding: '10px 12px', fontWeight: 700, color: '#fff' }}>
+                          {tx.symbol}
+                        </td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#34d399', fontWeight: 600 }}>
+                          +{tx.amount}
+                        </td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'rgba(255,255,255,0.8)' }}>
+                          {tx.balance_after || '—'}
+                        </td>
+                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>
+                          {tx.reference_id || tx.order_id || '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <button
+                type="button"
+                onClick={() => setSelectedCollectionAcc(null)}
+                style={{ padding: '8px 18px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

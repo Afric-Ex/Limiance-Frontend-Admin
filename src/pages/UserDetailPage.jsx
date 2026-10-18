@@ -22,6 +22,9 @@ import {
   ExternalLink,
   Copy,
   ArrowLeft,
+  Sliders,
+  Bell,
+  Save,
 } from "lucide-react";
 
 export default function UserDetailPage() {
@@ -55,6 +58,11 @@ export default function UserDetailPage() {
   const [userLoginLogs, setUserLoginLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
 
+  // User Preferences & Settings State
+  const [userSettings, setUserSettings] = useState(null);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
+
   // KYC Override Form State
   const [newKycStatus, setNewKycStatus] = useState("UNVERIFIED");
   const [newKycTier, setNewKycTier] = useState(0);
@@ -86,6 +94,35 @@ export default function UserDetailPage() {
     }
   };
 
+  const fetchUserSettings = async (userId) => {
+    setSettingsLoading(true);
+    try {
+      const res = await api(`/api/users/${userId}/settings`);
+      setUserSettings(res || {});
+    } catch (err) {
+      showToast(err.message || "Failed to load user preferences", "error");
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const handleUpdateSettings = async (e) => {
+    e.preventDefault();
+    if (!selectedUser?.id || !userSettings) return;
+    setSavingSettings(true);
+    try {
+      await api(`/api/users/${selectedUser.id}/settings`, {
+        method: "PUT",
+        body: userSettings,
+      });
+      showToast("User preferences updated successfully");
+    } catch (err) {
+      showToast(err.message || "Failed to update user preferences", "error");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   useEffect(() => {
     if (id) fetchFullUser();
   }, [id]);
@@ -102,6 +139,8 @@ export default function UserDetailPage() {
       fetchUserApiKeys(selectedUser.id);
     } else if (activeTab === "logs") {
       fetchUserLoginLogs(selectedUser.id);
+    } else if (activeTab === "settings") {
+      fetchUserSettings(selectedUser.id);
     }
   }, [activeTab, selectedUser?.id, tradesPage]);
 
@@ -464,6 +503,7 @@ export default function UserDetailPage() {
                 { id: 'trades', label: 'Trade Executions', icon: ArrowRightLeft },
                 { id: 'apikeys', label: 'API Keys', icon: Key },
                 { id: 'logs', label: 'Sign-In Logs', icon: Clock },
+                { id: 'settings', label: 'Preferences & Settings', icon: Sliders },
               ].map((t) => {
                 const Icon = t.icon;
                 const active = activeTab === t.id;
@@ -1218,6 +1258,313 @@ export default function UserDetailPage() {
                         </tbody>
                       </table>
                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* Tab 7: Preferences & Settings */}
+              {activeTab === 'settings' && (
+                <div style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Sliders size={18} style={{ color: '#818cf8' }} /> User Account Preferences & Notification Settings
+                      </h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                        Manage user localization, security whitelisting, notification rules, and trading fee deduction settings.
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => fetchUserSettings(selectedUser.id)}
+                        disabled={settingsLoading}
+                        style={{
+                          background: '#1f222e',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          borderRadius: '8px',
+                          padding: '7px 14px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                        }}
+                      >
+                        <RefreshCw size={14} className={settingsLoading ? "animate-spin" : ""} /> Refresh
+                      </button>
+                      <button
+                        onClick={handleUpdateSettings}
+                        disabled={savingSettings || settingsLoading || !userSettings}
+                        style={{
+                          background: '#6366f1',
+                          border: 'none',
+                          color: '#fff',
+                          borderRadius: '8px',
+                          padding: '7px 16px',
+                          cursor: savingSettings ? 'not-allowed' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          opacity: savingSettings ? 0.7 : 1,
+                        }}
+                      >
+                        <Save size={14} /> {savingSettings ? 'Saving...' : 'Save Settings'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {settingsLoading ? (
+                    <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                      Loading preferences...
+                    </div>
+                  ) : !userSettings ? (
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                      No settings record found for this user.
+                    </div>
+                  ) : (
+                    <form onSubmit={handleUpdateSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      {/* Grid 1: General & Localization */}
+                      <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+                        <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Sliders size={16} style={{ color: '#818cf8' }} /> Localization & Security Preferences
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                              Timezone
+                            </label>
+                            <input
+                              type="text"
+                              value={userSettings.timezone || ''}
+                              onChange={(e) => setUserSettings({ ...userSettings, timezone: e.target.value })}
+                              placeholder="e.g. UTC, America/New_York"
+                              style={{
+                                width: '100%',
+                                background: '#12141a',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                color: '#fff',
+                                fontSize: '13px',
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                              Language
+                            </label>
+                            <input
+                              type="text"
+                              value={userSettings.language || ''}
+                              onChange={(e) => setUserSettings({ ...userSettings, language: e.target.value })}
+                              placeholder="e.g. en, fr, es"
+                              style={{
+                                width: '100%',
+                                background: '#12141a',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                color: '#fff',
+                                fontSize: '13px',
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                              Anti-Phishing Code
+                            </label>
+                            <input
+                              type="text"
+                              value={userSettings.antiPhishingCode || ''}
+                              onChange={(e) => setUserSettings({ ...userSettings, antiPhishingCode: e.target.value })}
+                              placeholder="Custom code"
+                              style={{
+                                width: '100%',
+                                background: '#12141a',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                color: '#fff',
+                                fontSize: '13px',
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '24px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#cbd5e1' }}>
+                            <input
+                              type="checkbox"
+                              checked={!!userSettings.withdrawalWhitelist}
+                              onChange={(e) => setUserSettings({ ...userSettings, withdrawalWhitelist: e.target.checked })}
+                              style={{ cursor: 'pointer', accentColor: '#6366f1' }}
+                            />
+                            Withdrawal Address Whitelist Active
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#cbd5e1' }}>
+                            <input
+                              type="checkbox"
+                              checked={!!userSettings.chartColor}
+                              onChange={(e) => setUserSettings({ ...userSettings, chartColor: e.target.checked })}
+                              style={{ cursor: 'pointer', accentColor: '#6366f1' }}
+                            />
+                            Alternative Chart Colors (Green Up / Red Down)
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Grid 2: Notifications & Reminders */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+                        {/* Notification Preferences */}
+                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Bell size={16} style={{ color: '#38bdf8' }} /> Notifications
+                          </h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {[
+                              { key: 'tradeNotification', label: 'Trade Notification Alerts' },
+                              { key: 'activities', label: 'Account Activities' },
+                              { key: 'news', label: 'Product & Market News' },
+                              { key: 'systemMessages', label: 'System & Security Messages' },
+                            ].map((item) => (
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={!!userSettings.notificationPreference?.[item.key]}
+                                  onChange={(e) => setUserSettings({
+                                    ...userSettings,
+                                    notificationPreference: {
+                                      ...(userSettings.notificationPreference || {}),
+                                      [item.key]: e.target.checked,
+                                    },
+                                  })}
+                                  style={{ cursor: 'pointer', accentColor: '#38bdf8' }}
+                                />
+                                {item.label}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Trade Orders Notification Reminders */}
+                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Clock size={16} style={{ color: '#fbbf24' }} /> Order Reminders
+                          </h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {[
+                              { key: 'limitOrder', label: 'Limit Order Execution Reminders' },
+                              { key: 'marketOrder', label: 'Market Order Filled Reminders' },
+                              { key: 'stopOrder', label: 'Stop-Loss / Take-Profit Trigger Reminders' },
+                              { key: 'autoBorrowRepayMargin', label: 'Auto-Borrow / Repay Margin Alerts' },
+                            ].map((item) => (
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={!!userSettings.tradeOrdersNotificationReminder?.[item.key]}
+                                  onChange={(e) => setUserSettings({
+                                    ...userSettings,
+                                    tradeOrdersNotificationReminder: {
+                                      ...(userSettings.tradeOrdersNotificationReminder || {}),
+                                      [item.key]: e.target.checked,
+                                    },
+                                  })}
+                                  style={{ cursor: 'pointer', accentColor: '#fbbf24' }}
+                                />
+                                {item.label}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Transaction Sound & Real-time Alerts */}
+                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Bell size={16} style={{ color: '#a855f7' }} /> Execution Sounds & Alerts
+                          </h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {[
+                              { key: 'spotTradingNotification', label: 'Spot Trading Push Notification' },
+                              { key: 'spotNotificationSound', label: 'Spot Execution Sound Effect' },
+                              { key: 'futuresTradingNotification', label: 'Futures Trading Push Notification' },
+                              { key: 'futuresNotificationSound', label: 'Futures Execution Sound Effect' },
+                            ].map((item) => (
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={!!userSettings.transactionNotifications?.[item.key]}
+                                  onChange={(e) => setUserSettings({
+                                    ...userSettings,
+                                    transactionNotifications: {
+                                      ...(userSettings.transactionNotifications || {}),
+                                      [item.key]: e.target.checked,
+                                    },
+                                  })}
+                                  style={{ cursor: 'pointer', accentColor: '#a855f7' }}
+                                />
+                                {item.label}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Trade Fee Deduction Options */}
+                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Shield size={16} style={{ color: '#34d399' }} /> Fee Deductions (BNB Discount)
+                          </h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {[
+                              { key: 'useBNBToPayFees', label: 'Use BNB to Pay Spot Fees (25% discount)' },
+                              { key: 'useBNBToPayMarginFees', label: 'Use BNB for Margin Interest Fees' },
+                              { key: 'useBNBToPayFuturesFees', label: 'Use BNB for Futures Trading Fees (10% discount)' },
+                            ].map((item) => (
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={!!userSettings.tradeFeeDeductions?.[item.key]}
+                                  onChange={(e) => setUserSettings({
+                                    ...userSettings,
+                                    tradeFeeDeductions: {
+                                      ...(userSettings.tradeFeeDeductions || {}),
+                                      [item.key]: e.target.checked,
+                                    },
+                                  })}
+                                  style={{ cursor: 'pointer', accentColor: '#34d399' }}
+                                />
+                                {item.label}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                        <button
+                          type="submit"
+                          disabled={savingSettings}
+                          style={{
+                            background: '#6366f1',
+                            border: 'none',
+                            color: '#fff',
+                            borderRadius: '8px',
+                            padding: '10px 24px',
+                            cursor: savingSettings ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                          }}
+                        >
+                          <Save size={16} /> {savingSettings ? 'Saving...' : 'Save Preferences'}
+                        </button>
+                      </div>
+                    </form>
                   )}
                 </div>
               )}

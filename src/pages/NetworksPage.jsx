@@ -13,6 +13,8 @@ import {
   CheckCircle,
   ExternalLink,
   Layers,
+  Languages,
+  Clock,
 } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
 
@@ -30,8 +32,14 @@ export default function NetworksPage() {
   const [networkModalOpen, setNetworkModalOpen] = useState(false);
   const [currencyModalOpen, setCurrencyModalOpen] = useState(false);
   const [rpcModalOpen, setRpcModalOpen] = useState(false);
+  const [languageModalOpen, setLanguageModalOpen] = useState(false);
+  const [timezoneModalOpen, setTimezoneModalOpen] = useState(false);
 
   const [editingItem, setEditingItem] = useState(null);
+
+  // Languages & Timezones State
+  const [languages, setLanguages] = useState([]);
+  const [timezones, setTimezones] = useState([]);
 
   // Network Form
   const [networkForm, setNetworkForm] = useState({
@@ -64,6 +72,23 @@ export default function NetworksPage() {
     endpoints: '{"http": "https://eth.llamarpc.com"}',
   });
 
+  // Language Form
+  const [languageForm, setLanguageForm] = useState({
+    code: '',
+    name: '',
+    nativename: '',
+    direction: 'ltr',
+    isactive: true,
+  });
+
+  // Timezone Form
+  const [timezoneForm, setTimezoneForm] = useState({
+    code: '',
+    name: '',
+    offset: '+00:00',
+    isactive: true,
+  });
+
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
@@ -72,10 +97,12 @@ export default function NetworksPage() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [netRes, currRes, rpcRes] = await Promise.allSettled([
+      const [netRes, currRes, rpcRes, langRes, tzRes] = await Promise.allSettled([
         api('/api/networks'),
         api('/api/currencies'),
         api('/api/rpcs'),
+        api('/api/languages'),
+        api('/api/timezones'),
       ]);
 
       if (netRes.status === 'fulfilled') {
@@ -89,6 +116,14 @@ export default function NetworksPage() {
       if (rpcRes.status === 'fulfilled') {
         const data = rpcRes.value;
         setRpcs(Array.isArray(data) ? data : data?.rpcs || data?.data || []);
+      }
+      if (langRes.status === 'fulfilled') {
+        const data = langRes.value;
+        setLanguages(Array.isArray(data) ? data : data?.languages || data?.data || []);
+      }
+      if (tzRes.status === 'fulfilled') {
+        const data = tzRes.value;
+        setTimezones(Array.isArray(data) ? data : data?.timezones || data?.data || []);
       }
     } catch (err) {
       console.error(err);
@@ -248,6 +283,99 @@ export default function NetworksPage() {
     }
   };
 
+  // --- Language Actions ---
+  const handleSaveLanguage = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingItem) {
+        await api(`/api/languages/${editingItem.code}`, {
+          method: 'PATCH',
+          body: {
+            name: languageForm.name,
+            nativename: languageForm.nativename,
+            direction: languageForm.direction,
+            isactive: languageForm.isactive,
+          },
+        });
+        showToast(`Updated language ${editingItem.code}`);
+      } else {
+        await api('/api/languages', {
+          method: 'POST',
+          body: [languageForm],
+        });
+        showToast(`Added language ${languageForm.code}`);
+      }
+      setLanguageModalOpen(false);
+      fetchAll();
+    } catch (err) {
+      showToast(err.message || 'Failed to save language', 'error');
+    }
+  };
+
+  const handleDeleteLanguage = async (code) => {
+    const ok = await confirm({
+      title: 'Delete Language',
+      message: `Are you sure you want to remove language locale ${code}?`,
+      confirmText: 'Delete Language',
+      variant: 'danger',
+    });
+    if (!ok) return;
+
+    try {
+      await api(`/api/languages/${code}`, { method: 'DELETE' });
+      showToast(`Deleted language ${code}`);
+      fetchAll();
+    } catch (err) {
+      showToast(err.message || 'Failed to delete language', 'error');
+    }
+  };
+
+  // --- Timezone Actions ---
+  const handleSaveTimezone = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingItem) {
+        await api(`/api/timezones/${editingItem.code}`, {
+          method: 'PATCH',
+          body: {
+            name: timezoneForm.name,
+            offset: timezoneForm.offset,
+            isactive: timezoneForm.isactive,
+          },
+        });
+        showToast(`Updated timezone ${editingItem.code}`);
+      } else {
+        await api('/api/timezones', {
+          method: 'POST',
+          body: [timezoneForm],
+        });
+        showToast(`Added timezone ${timezoneForm.code}`);
+      }
+      setTimezoneModalOpen(false);
+      fetchAll();
+    } catch (err) {
+      showToast(err.message || 'Failed to save timezone', 'error');
+    }
+  };
+
+  const handleDeleteTimezone = async (code) => {
+    const ok = await confirm({
+      title: 'Delete Timezone',
+      message: `Are you sure you want to remove timezone ${code}?`,
+      confirmText: 'Delete Timezone',
+      variant: 'danger',
+    });
+    if (!ok) return;
+
+    try {
+      await api(`/api/timezones/${code}`, { method: 'DELETE' });
+      showToast(`Deleted timezone ${code}`);
+      fetchAll();
+    } catch (err) {
+      showToast(err.message || 'Failed to delete timezone', 'error');
+    }
+  };
+
   // Filters
   const filteredNetworks = networks.filter((n) =>
     (n.symbol || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -265,6 +393,18 @@ export default function NetworksPage() {
     (r.canonicalName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     (r.nativeSymbol || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     (r.kind || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredLanguages = languages.filter((l) =>
+    (l.code || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (l.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (l.nativename || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredTimezones = timezones.filter((t) =>
+    (t.code || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (t.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (t.offset || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -397,6 +537,56 @@ export default function NetworksPage() {
               <Plus size={14} /> Configure RPC Node
             </button>
           )}
+
+          {activeTab === 'languages' && (
+            <button
+              onClick={() => {
+                setEditingItem(null);
+                setLanguageForm({ code: '', name: '', nativename: '', direction: 'ltr', isactive: true });
+                setLanguageModalOpen(true);
+              }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                background: '#4d77f0',
+                border: 'none',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              <Plus size={14} /> Add Language
+            </button>
+          )}
+
+          {activeTab === 'timezones' && (
+            <button
+              onClick={() => {
+                setEditingItem(null);
+                setTimezoneForm({ code: '', name: '', offset: '+00:00', isactive: true });
+                setTimezoneModalOpen(true);
+              }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                background: '#4d77f0',
+                border: 'none',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              <Plus size={14} /> Add Timezone
+            </button>
+          )}
         </div>
       </div>
 
@@ -412,9 +602,10 @@ export default function NetworksPage() {
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '16px',
+          flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveTab('networks')}
             style={{
@@ -468,6 +659,42 @@ export default function NetworksPage() {
             }}
           >
             <Server size={14} /> RPC Nodes ({rpcs.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('languages')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: activeTab === 'languages' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              border: 'none',
+              color: activeTab === 'languages' ? '#fff' : 'rgba(255,255,255,0.6)',
+              fontWeight: 600,
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            <Languages size={14} /> Languages ({languages.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('timezones')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: activeTab === 'timezones' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              border: 'none',
+              color: activeTab === 'timezones' ? '#fff' : 'rgba(255,255,255,0.6)',
+              fontWeight: 600,
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            <Clock size={14} /> Timezones ({timezones.length})
           </button>
         </div>
 
@@ -839,6 +1066,230 @@ export default function NetworksPage() {
         </div>
       )}
 
+      {/* --- Tab 4: Languages Table --- */}
+      {activeTab === 'languages' && (
+        <div
+          style={{
+            background: '#13151c',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}>
+                <th style={{ padding: '14px 18px' }}>Locale Code</th>
+                <th style={{ padding: '14px 18px' }}>Language Name</th>
+                <th style={{ padding: '14px 18px' }}>Native Name</th>
+                <th style={{ padding: '14px 18px' }}>Text Direction</th>
+                <th style={{ padding: '14px 18px' }}>Status</th>
+                <th style={{ padding: '14px 18px', textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <ShimmerTableRows rows={6} cols={6} colWidths={['15%', '25%', '25%', '15%', '10%', '10%']} />
+              ) : filteredLanguages.length === 0 ? (
+                <tr>
+                  <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                    No language locales configured.
+                  </td>
+                </tr>
+              ) : (
+                filteredLanguages.map((l) => (
+                  <tr key={l.code} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#818cf8', fontFamily: 'var(--font-mono)' }}>
+                      {l.code}
+                    </td>
+                    <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff' }}>
+                      {l.name}
+                    </td>
+                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.8)' }}>
+                      {l.nativename || '—'}
+                    </td>
+                    <td style={{ padding: '14px 18px' }}>
+                      <span
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: l.direction === 'rtl' ? 'rgba(168, 85, 247, 0.12)' : 'rgba(77, 119, 240, 0.12)',
+                          color: l.direction === 'rtl' ? '#c084fc' : '#818cf8',
+                        }}
+                      >
+                        {(l.direction || 'ltr').toUpperCase()}
+                      </span>
+                    </td>
+                    <td style={{ padding: '14px 18px' }}>
+                      <span
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: l.isactive !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                          color: l.isactive !== false ? '#34d399' : '#f87171',
+                        }}
+                      >
+                        {l.isactive !== false ? 'ACTIVE' : 'DISABLED'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => {
+                            setEditingItem(l);
+                            setLanguageForm({
+                              code: l.code,
+                              name: l.name,
+                              nativename: l.nativename || '',
+                              direction: l.direction || 'ltr',
+                              isactive: l.isactive !== false,
+                            });
+                            setLanguageModalOpen(true);
+                          }}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: '#fff',
+                            cursor: 'pointer',
+                          }}
+                          title="Edit Language"
+                        >
+                          <Edit size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLanguage(l.code)}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.2)',
+                            color: '#f87171',
+                            cursor: 'pointer',
+                          }}
+                          title="Delete Language"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* --- Tab 5: Timezones Table --- */}
+      {activeTab === 'timezones' && (
+        <div
+          style={{
+            background: '#13151c',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}>
+                <th style={{ padding: '14px 18px' }}>Identifier / Code</th>
+                <th style={{ padding: '14px 18px' }}>Timezone Name</th>
+                <th style={{ padding: '14px 18px' }}>UTC Offset</th>
+                <th style={{ padding: '14px 18px' }}>Status</th>
+                <th style={{ padding: '14px 18px', textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <ShimmerTableRows rows={6} cols={5} colWidths={['20%', '35%', '20%', '15%', '10%']} />
+              ) : filteredTimezones.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                    No timezones configured.
+                  </td>
+                </tr>
+              ) : (
+                filteredTimezones.map((tz) => (
+                  <tr key={tz.code} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fbbf24', fontFamily: 'var(--font-mono)' }}>
+                      {tz.code}
+                    </td>
+                    <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff' }}>
+                      {tz.name}
+                    </td>
+                    <td style={{ padding: '14px 18px', fontFamily: 'var(--font-mono)', color: '#34d399', fontWeight: 600 }}>
+                      UTC {tz.offset}
+                    </td>
+                    <td style={{ padding: '14px 18px' }}>
+                      <span
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          background: tz.isactive !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                          color: tz.isactive !== false ? '#34d399' : '#f87171',
+                        }}
+                      >
+                        {tz.isactive !== false ? 'ACTIVE' : 'DISABLED'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => {
+                            setEditingItem(tz);
+                            setTimezoneForm({
+                              code: tz.code,
+                              name: tz.name,
+                              offset: tz.offset || '+00:00',
+                              isactive: tz.isactive !== false,
+                            });
+                            setTimezoneModalOpen(true);
+                          }}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: '#fff',
+                            cursor: 'pointer',
+                          }}
+                          title="Edit Timezone"
+                        >
+                          <Edit size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTimezone(tz.code)}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.2)',
+                            color: '#f87171',
+                            cursor: 'pointer',
+                          }}
+                          title="Delete Timezone"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {/* --- Modal: Add / Edit Network --- */}
       {networkModalOpen && (
         <div
@@ -1153,6 +1604,202 @@ export default function NetworksPage() {
                   style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save RPC
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- Modal: Add / Edit Language --- */}
+      {languageModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: '#13151c',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              width: '100%',
+              maxWidth: '480px',
+              padding: '24px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            }}
+          >
+            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+              {editingItem ? `Edit Language: ${editingItem.code}` : 'Add Supported Language'}
+            </h3>
+            <form onSubmit={handleSaveLanguage}>
+              {!editingItem && (
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Locale Code (e.g. en, es, fr, zh, ar)</label>
+                  <input
+                    type="text"
+                    required
+                    value={languageForm.code}
+                    onChange={(e) => setLanguageForm({ ...languageForm, code: e.target.value.toLowerCase().trim() })}
+                    placeholder="e.g. en"
+                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  />
+                </div>
+              )}
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Language English Name</label>
+                <input
+                  type="text"
+                  required
+                  value={languageForm.name}
+                  onChange={(e) => setLanguageForm({ ...languageForm, name: e.target.value })}
+                  placeholder="e.g. English"
+                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                />
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Native Script Name</label>
+                <input
+                  type="text"
+                  value={languageForm.nativename}
+                  onChange={(e) => setLanguageForm({ ...languageForm, nativename: e.target.value })}
+                  placeholder="e.g. Español, Français, العربية"
+                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                />
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Text Layout Direction</label>
+                <select
+                  value={languageForm.direction}
+                  onChange={(e) => setLanguageForm({ ...languageForm, direction: e.target.value })}
+                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                >
+                  <option value="ltr">Left-to-Right (LTR)</option>
+                  <option value="rtl">Right-to-Left (RTL)</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                <input
+                  type="checkbox"
+                  id="langActive"
+                  checked={languageForm.isactive}
+                  onChange={(e) => setLanguageForm({ ...languageForm, isactive: e.target.checked })}
+                />
+                <label htmlFor="langActive" style={{ fontSize: '13px', color: '#fff' }}>Enable language in platform selector</label>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
+                <button
+                  type="button"
+                  onClick={() => setLanguageModalOpen(false)}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Save Language
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- Modal: Add / Edit Timezone --- */}
+      {timezoneModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: '#13151c',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              width: '100%',
+              maxWidth: '480px',
+              padding: '24px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            }}
+          >
+            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+              {editingItem ? `Edit Timezone: ${editingItem.code}` : 'Add Supported Timezone'}
+            </h3>
+            <form onSubmit={handleSaveTimezone}>
+              {!editingItem && (
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Timezone Identifier / Code</label>
+                  <input
+                    type="text"
+                    required
+                    value={timezoneForm.code}
+                    onChange={(e) => setTimezoneForm({ ...timezoneForm, code: e.target.value.trim() })}
+                    placeholder="e.g. UTC, WAT, Africa/Lagos, America/New_York"
+                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  />
+                </div>
+              )}
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Timezone Display Name</label>
+                <input
+                  type="text"
+                  required
+                  value={timezoneForm.name}
+                  onChange={(e) => setTimezoneForm({ ...timezoneForm, name: e.target.value })}
+                  placeholder="e.g. West Africa Time (Lagos)"
+                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                />
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>UTC Offset Format (e.g. +01:00, -05:00)</label>
+                <input
+                  type="text"
+                  required
+                  value={timezoneForm.offset}
+                  onChange={(e) => setTimezoneForm({ ...timezoneForm, offset: e.target.value.trim() })}
+                  placeholder="e.g. +01:00"
+                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontFamily: 'var(--font-mono)', outline: 'none' }}
+                />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                <input
+                  type="checkbox"
+                  id="tzActive"
+                  checked={timezoneForm.isactive}
+                  onChange={(e) => setTimezoneForm({ ...timezoneForm, isactive: e.target.checked })}
+                />
+                <label htmlFor="tzActive" style={{ fontSize: '13px', color: '#fff' }}>Enable timezone in platform preferences</label>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
+                <button
+                  type="button"
+                  onClick={() => setTimezoneModalOpen(false)}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Save Timezone
                 </button>
               </div>
             </form>

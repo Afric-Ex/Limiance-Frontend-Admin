@@ -20,6 +20,7 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
+  Sparkles,
 } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
 
@@ -198,6 +199,24 @@ export default function TokensPage() {
       fetchTokens();
     } catch (err) {
       showToast(err.message || 'Failed to remove chain deployment', 'error');
+    }
+  };
+
+  const handleGeneratePairsBySymbol = async (token) => {
+    const symbol = token.symbol;
+    const ok = await confirm({
+      title: 'Generate Pairs for Token',
+      message: `Generate standard trading pairs for ${symbol} across default quote assets (USDT, BTC, ETH, CNGN)?`,
+      confirmText: 'Generate Pairs',
+      variant: 'primary',
+    });
+    if (!ok) return;
+
+    try {
+      await api(`/api/tokens/${symbol}/pairs/generate`, { method: 'POST' });
+      showToast(`Trading pairs for ${symbol} generated successfully`);
+    } catch (err) {
+      showToast(err.message || 'Failed to generate token pairs', 'error');
     }
   };
 
@@ -649,6 +668,13 @@ export default function TokensPage() {
 
                       <td style={{ padding: '14px 18px', textAlign: 'right' }}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                          <button
+                            onClick={() => handleGeneratePairsBySymbol(t)}
+                            style={{ padding: '6px 10px', background: 'rgba(77,119,240,0.12)', border: '1px solid rgba(77,119,240,0.25)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}
+                            title="Generate Trading Pairs for Token"
+                          >
+                            <Sparkles size={13} />
+                          </button>
                           <button
                             onClick={() => openEditModal(t)}
                             style={{ padding: '6px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}

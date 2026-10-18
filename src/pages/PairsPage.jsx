@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
-import { Plus, RefreshCw, Trash2, Search, Pencil } from 'lucide-react';
+import { Plus, RefreshCw, Trash2, Search, Pencil, Sparkles } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function PairsPage() {
@@ -10,6 +10,7 @@ export default function PairsPage() {
   const [futuresPairs, setFuturesPairs] = useState([]);
   const [marketType, setMarketType] = useState('spot');
   const [loading, setLoading] = useState(true);
+  const [generatingPairs, setGeneratingPairs] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPair, setEditingPair] = useState(null);
@@ -138,6 +139,34 @@ export default function PairsPage() {
     }
   };
 
+  const handleAutoGeneratePairs = async () => {
+    const ok = await confirm({
+      title: 'Auto-Generate Trading Pairs',
+      message: 'Automatically generate trading pairs across all active tokens and default quote assets? Existing pairs will be preserved.',
+      confirmText: 'Generate Pairs',
+      variant: 'primary',
+    });
+    if (!ok) return;
+
+    setGeneratingPairs(true);
+    try {
+      await api('/api/tokens/pairs/generate', {
+        method: 'POST',
+        body: {
+          batch_size: 5000,
+          max_concurrent_batches: 4,
+          timeout_minutes: 30,
+        },
+      });
+      showToast('Trading pairs generated successfully');
+      fetchPairs();
+    } catch (err) {
+      showToast(err.message || 'Failed to auto-generate trading pairs', 'error');
+    } finally {
+      setGeneratingPairs(false);
+    }
+  };
+
   const visiblePairs = marketType === 'futures'
     ? futuresPairs.map((p) => ({
       ...p,
@@ -184,6 +213,25 @@ export default function PairsPage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={handleAutoGeneratePairs}
+            disabled={generatingPairs}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: 'rgba(77, 119, 240, 0.15)',
+              border: '1px solid rgba(77, 119, 240, 0.3)',
+              color: '#818cf8',
+              fontWeight: 600,
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: generatingPairs ? 'not-allowed' : 'pointer',
+            }}
+          >
+            <Sparkles size={14} className={generatingPairs ? 'spin' : ''} /> {generatingPairs ? 'Generating...' : 'Auto-Generate Pairs'}
+          </button>
           <button
             onClick={() => { setEditingPair(null); setModalOpen(true); }}
             style={{

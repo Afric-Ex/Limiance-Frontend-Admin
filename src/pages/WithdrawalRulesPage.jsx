@@ -12,6 +12,7 @@ import {
   Search,
   ChevronDown,
   Coins,
+  ArrowRightLeft,
 } from 'lucide-react';
 
 export default function WithdrawalRulesPage() {
@@ -25,6 +26,14 @@ export default function WithdrawalRulesPage() {
 
   // Whitelist settings
   const [whitelistDelay, setWhitelistDelay] = useState(24);
+
+  // Conversion Limits & Spread
+  const [conversionLimits, setConversionLimits] = useState({
+    min_quantity: '0.001',
+    max_quantity: '100000',
+    spread_bps: '50',
+  });
+  const [savingConversionLimits, setSavingConversionLimits] = useState(false);
 
   // Available tokens fetched from /api/tokens
   const [tokensList, setTokensList] = useState([]);
@@ -51,9 +60,10 @@ export default function WithdrawalRulesPage() {
   const fetchGlobalSettings = async () => {
     setLoading(true);
     try {
-      const [threshRes, whiteRes] = await Promise.allSettled([
+      const [threshRes, whiteRes, convRes] = await Promise.allSettled([
         api('/api/withdrawal-limits/approval-threshold'),
         api('/api/withdrawal-whitelist-settings'),
+        api('/api/conversion-limits'),
       ]);
 
       if (threshRes.status === 'fulfilled' && threshRes.value?.threshold) {
@@ -61,6 +71,13 @@ export default function WithdrawalRulesPage() {
       }
       if (whiteRes.status === 'fulfilled' && whiteRes.value?.delay_hours !== undefined) {
         setWhitelistDelay(whiteRes.value.delay_hours);
+      }
+      if (convRes.status === 'fulfilled' && convRes.value) {
+        setConversionLimits({
+          min_quantity: convRes.value.min_quantity || '0.001',
+          max_quantity: convRes.value.max_quantity || '100000',
+          spread_bps: convRes.value.spread_bps !== undefined ? String(convRes.value.spread_bps) : '50',
+        });
       }
     } catch (err) {
       console.error(err);
@@ -198,6 +215,22 @@ export default function WithdrawalRulesPage() {
       showToast(err.message || 'Failed to update whitelist delay', 'error');
     } finally {
       setSavingWhitelist(false);
+    }
+  };
+
+  const handleSaveConversionLimits = async (e) => {
+    e.preventDefault();
+    setSavingConversionLimits(true);
+    try {
+      await api('/api/conversion-limits', {
+        method: 'PUT',
+        body: conversionLimits,
+      });
+      showToast('Conversion limits and spread updated successfully');
+    } catch (err) {
+      showToast(err.message || 'Failed to update conversion limits', 'error');
+    } finally {
+      setSavingConversionLimits(false);
     }
   };
 
@@ -366,7 +399,7 @@ export default function WithdrawalRulesPage() {
       </div>
 
       {/* Global Rules Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px', marginBottom: '24px' }}>
         {/* Card 1: USD Approval Threshold */}
         <div
           style={{
@@ -510,6 +543,124 @@ export default function WithdrawalRulesPage() {
               }}
             >
               <Save size={14} /> {savingWhitelist ? 'Updating...' : 'Save Whitelist Delay'}
+            </button>
+          </form>
+        </div>
+
+        {/* Card 3: Token Conversion Limits & Spread */}
+        <div
+          style={{
+            background: '#13151c',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '14px',
+            padding: '24px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: '8px', color: '#fbbf24' }}>
+              <ArrowRightLeft size={18} />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+                Token Conversion Limits & Spread
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                OTC token swap limits & system spread markup (in basis points)
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveConversionLimits}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                  Min Quantity
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={conversionLimits.min_quantity}
+                  onChange={(e) => setConversionLimits({ ...conversionLimits, min_quantity: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    background: '#181a22',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '13px',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                  Max Quantity
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={conversionLimits.max_quantity}
+                  onChange={(e) => setConversionLimits({ ...conversionLimits, max_quantity: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    background: '#181a22',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '13px',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                Exchange Spread (BPS, e.g. 50 = 0.50%)
+              </label>
+              <input
+                type="text"
+                required
+                value={conversionLimits.spread_bps}
+                onChange={(e) => setConversionLimits({ ...conversionLimits, spread_bps: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '8px 10px',
+                  background: '#181a22',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '13px',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingConversionLimits}
+              style={{
+                padding: '10px 20px',
+                background: '#4d77f0',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              <Save size={14} /> {savingConversionLimits ? 'Saving...' : 'Save Conversion Limits'}
             </button>
           </form>
         </div>
