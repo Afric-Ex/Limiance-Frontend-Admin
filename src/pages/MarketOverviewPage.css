@@ -445,3 +445,131 @@
   color: #64748b;
   font-size: 0.9rem;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Light Theme Overrides
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] .market-overview-page {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-title-group h1 {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-title-group p {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .mo-timeframe-selector {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .mo-tf-btn {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .mo-tf-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .mo-refresh-btn {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .mo-refresh-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-metric-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .mo-metric-label {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .mo-metric-value {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-metric-sub {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .mo-chart-tabs-bar {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .mo-chart-tab-btn {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .mo-chart-tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .mo-table-section {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .mo-table-header {
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .mo-tab-btn {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .mo-tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .mo-search-input {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-sort-select {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-table th {
+  color: var(--text-muted);
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .mo-table td {
+  border-bottom-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-table tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .mo-pair-symbol {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .mo-chain-pill {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+

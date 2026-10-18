@@ -14,13 +14,17 @@ import {
   LogOut,
   Shield,
   Menu,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import './AdminLayout.css';
 
 const DESKTOP_BREAKPOINT = 1024;
 
 export default function AdminLayout() {
   const { user, roles, logout, hasRole } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -344,6 +348,27 @@ export default function AdminLayout() {
             aria-expanded={sidebarOpen}
           >
             <Menu size={20} />
+          </button>
+
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun size={15} className="theme-icon sun" />
+                <span className="theme-toggle-label">Light</span>
+              </>
+            ) : (
+              <>
+                <Moon size={15} className="theme-icon moon" />
+                <span className="theme-toggle-label">Dark</span>
+              </>
+            )}
           </button>
 
           <div className="user-email">{user?.email}</div>

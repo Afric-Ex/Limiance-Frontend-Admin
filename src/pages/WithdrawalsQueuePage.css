@@ -117,7 +117,7 @@
 }
 .wq-amount {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   font-family: var(--font-mono);
 }
 .wq-asset-badge {

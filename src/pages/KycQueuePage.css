@@ -405,3 +405,85 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Light Theme Overrides
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] .kyc-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .kyc-filter-btn {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .kyc-filter-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .kyc-table th {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .kyc-table td {
+  border-bottom-color: var(--border-subtle);
+}
+
+[data-theme="light"] .kyc-table tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .action-btn.view {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .action-btn.view:hover {
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .kyc-detail-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="light"] .kyc-detail-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .kyc-info-grid {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .kyc-info-value {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .kyc-doc-item {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .kyc-doc-name {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .kyc-doc-view-btn {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--color-primary);
+}
+
+[data-theme="light"] .kyc-detail-footer {
+  background: var(--bg-surface);
+  border-top-color: var(--border);
+}
+

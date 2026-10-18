@@ -111,3 +111,24 @@
   background-color: rgba(239, 68, 68, 0.25);
   color: #ffffff;
 }
+
+/* Light Mode Overrides for RolesPage */
+[data-theme="light"] .search-form input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .role-item {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .role-item:hover {
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .role-info h4 {
+  color: #0f172a;
+}

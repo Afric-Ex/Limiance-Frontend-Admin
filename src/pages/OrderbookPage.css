@@ -534,3 +534,133 @@
 }
 
 .ob-alert button:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Light Theme Overrides
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] .orderbook-page {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-title-group h1 {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-title-group p {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .ob-market-tabs {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .ob-market-tab {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .ob-market-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .ob-pair-selector {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-ticker-bar {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .ob-ticker-symbol {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-ticker-price.neutral {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-stat-label {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .ob-stat-value {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-panel {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .ob-panel-header {
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .ob-panel-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-view-btn {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .ob-table-header {
+  color: var(--text-muted);
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .ob-col.qty {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-col.total {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .ob-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .ob-spread-banner {
+  background: rgba(99, 102, 241, 0.08);
+  border-left-color: #6366f1;
+}
+
+[data-theme="light"] .ob-spread-details {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .ob-pressure-wrap {
+  border-top-color: var(--border);
+}
+
+[data-theme="light"] .ob-depth-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .ob-card-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-stat-box {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .ob-stat-box-label {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .ob-stat-box-value {
+  color: var(--text-primary);
+}

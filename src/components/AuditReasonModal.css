@@ -104,3 +104,43 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(77, 119, 240, 0.2);
   background: #1c1f2b;
 }
+
+/* Light Mode Overrides for Audit Reason Modal */
+[data-theme="light"] .modal-overlay {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+[data-theme="light"] .modal-content {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .modal-content h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .modal-desc {
+  color: #475569;
+}
+
+[data-theme="light"] .btn-cancel {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="light"] .btn-cancel:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="light"] textarea {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] textarea:focus {
+  background: #ffffff;
+}

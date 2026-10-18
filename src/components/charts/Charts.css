@@ -244,3 +244,83 @@
   min-width: 36px;
   text-align: right;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Light Theme Overrides
+   ══════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] .chart-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .chart-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] .chart-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .chart-subtitle {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .chart-timeframe-btn {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .chart-timeframe-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+[data-theme="light"] .chart-legend-item {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .chart-floating-tooltip {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] .tooltip-date {
+  color: var(--text-muted);
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .tooltip-series-name {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .tooltip-val {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .donut-legend-row {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .donut-legend-row:hover,
+[data-theme="light"] .donut-legend-row.active {
+  background: var(--bg-subtle);
+  border-color: var(--border-hover);
+}
+
+[data-theme="light"] .donut-legend-label {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .donut-legend-val {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .donut-legend-pct {
+  color: var(--text-muted);
+}
+

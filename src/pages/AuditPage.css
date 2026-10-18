@@ -264,3 +264,37 @@
 .al-expanded-meta strong {
   color: #ffffff;
 }
+
+/* Light Mode Overrides for AuditPage */
+[data-theme="light"] .al-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .al-event-expanded {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+}
+
+[data-theme="light"] .al-note {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #1e1b4b;
+}
+
+[data-theme="light"] .al-payload-json {
+  background: #ffffff;
+  color: #047857;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .al-expanded-meta strong {
+  color: #0f172a;
+}
+
+[data-theme="light"] .al-event-row {
+  border-bottom-color: #f1f5f9;
+}
+
+[data-theme="light"] .al-event-row:hover {
+  background: #f8fafc;
+}

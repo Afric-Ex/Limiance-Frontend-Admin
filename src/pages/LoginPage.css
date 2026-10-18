@@ -198,3 +198,28 @@
   color: var(--text-muted);
   line-height: 1.5;
 }
+
+/* Light Mode Overrides for LoginPage */
+[data-theme="light"] .login-container {
+  background: radial-gradient(circle at 50% 30%, rgba(77, 119, 240, 0.08) 0%, rgba(248, 250, 252, 0.98) 70%), #f8fafc;
+}
+
+[data-theme="light"] .login-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .login-header h2 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .login-header p {
+  color: #475569;
+}
+
+[data-theme="light"] .login-form input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}

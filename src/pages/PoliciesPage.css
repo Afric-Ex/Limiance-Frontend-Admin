@@ -142,3 +142,34 @@
   background: linear-gradient(135deg, #5982f8 0%, #466fe4 100%);
   box-shadow: 0 4px 16px rgba(77, 119, 240, 0.4);
 }
+
+/* Light Mode Overrides for PoliciesPage */
+[data-theme="light"] .page-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .control-item {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .control-item:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .control-info h4 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .control-info p {
+  color: #64748b;
+}
+
+[data-theme="light"] .pair-form input,
+[data-theme="light"] .pair-form select {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}

@@ -218,3 +218,48 @@
   background: linear-gradient(135deg, #5982f8 0%, #466fe4 100%);
   box-shadow: 0 6px 20px rgba(77, 119, 240, 0.5);
 }
+
+/* Light Mode Overrides for Confirm Modal */
+[data-theme="light"] .confirm-modal-overlay {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+[data-theme="light"] .confirm-modal-content {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .confirm-modal-close {
+  color: #64748b;
+}
+
+[data-theme="light"] .confirm-modal-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme="light"] .confirm-modal-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .confirm-modal-message {
+  color: #475569;
+}
+
+[data-theme="light"] .confirm-prompt-input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .confirm-btn-cancel {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="light"] .confirm-btn-cancel:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+}

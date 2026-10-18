@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ConfirmProvider } from './context/ConfirmContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/AdminLayout';
 import LoginPage from './pages/LoginPage';
@@ -39,9 +40,10 @@ import PendingApprovalsPage from './pages/PendingApprovalsPage';
 
 function App() {
   return (
-    <AuthProvider>
-      <ConfirmProvider>
-        <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <ConfirmProvider>
+          <Router>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
 
@@ -337,6 +339,7 @@ function App() {
         </Router>
       </ConfirmProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 
