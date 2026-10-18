@@ -244,7 +244,7 @@ export default function DashboardPage() {
       id: 'risk',
       label: 'Risk Switches',
       sub: frozenUsers > 0 ? `${frozenUsers} restricted` : 'All systems nominal',
-      count: frozenUsers > 0 ? `${frozenUsers} Frozen` : 'Nominal',
+      count: frozenUsers > 0 ? frozenUsers : 'Nominal',
       icon: ShieldAlert,
       color: frozenUsers > 0 ? 'yellow' : 'green',
       urgent: frozenUsers > 0,
@@ -486,14 +486,14 @@ export default function DashboardPage() {
       <div style={{ marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
-            <h3 style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 600, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h3 className="analytics-section-title">
               Platform Analytics & Flow Dynamics
             </h3>
-            <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)' }}>
+            <p className="analytics-section-sub">
               Live graphical telemetry across cash flows, liquidity, trading volumes, and onboarding
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+          <div className="analytics-stream-badge">
             <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px #34d399' }} />
             Streaming Live Metrics
           </div>

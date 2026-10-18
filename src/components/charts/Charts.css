@@ -324,3 +324,19 @@
   color: var(--text-muted);
 }
 
+/* Light Mode SVG Chart Axis Text & Grid Lines */
+[data-theme="light"] svg text[fill*="rgba(255"],
+[data-theme="light"] svg text[fill*="rgba(255, 255, 255"],
+[data-theme="light"] svg text[fill*="rgba(255,255,255"],
+[data-theme="light"] svg text[fill="#ffffff"],
+[data-theme="light"] svg text[fill="#fff"] {
+  fill: #475569 !important;
+}
+
+[data-theme="light"] svg line[stroke*="rgba(255"],
+[data-theme="light"] svg line[stroke*="rgba(255, 255, 255"],
+[data-theme="light"] svg line[stroke*="rgba(255,255,255"] {
+  stroke: rgba(15, 23, 42, 0.08) !important;
+}
+
+
