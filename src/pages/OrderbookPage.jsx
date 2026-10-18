@@ -28,8 +28,13 @@ function normalizePair(raw) {
 
   if (typeof raw === 'string') {
     const s = raw.trim().toUpperCase();
+    if (s.endsWith('-PERP') || s.endsWith('/PERP')) {
+      const b = s.replace(/[-/]PERP$/, '');
+      return `${b}-PERP`;
+    }
     if (/[/\-_:]/.test(s)) {
       const [b, q] = s.split(/[/\-_:]/);
+      if (q === 'PERP') return `${b}-PERP`;
       return b && q ? `${b}/${q}` : null;
     }
     const quote = KNOWN_QUOTES.find((q) => s.endsWith(q) && s.length > q.length);
@@ -227,16 +232,32 @@ export default function OrderbookPage() {
       setPairsLoading(true);
       setPairsError(null);
       try {
-        const raw = await api('/api/pairs');
-        const payload = await unwrapResponse(raw);
-        const list = extractList(payload);
+        let list = [];
+        if (marketType === 'futures') {
+          const [pairsRaw, futRaw] = await Promise.allSettled([
+            api('/api/pairs'),
+            api('/api/futures-configs'),
+          ]);
+          if (pairsRaw.status === 'fulfilled') {
+            list.push(...extractList(await unwrapResponse(pairsRaw.value)));
+          }
+          if (futRaw.status === 'fulfilled') {
+            const fd = futRaw.value;
+            const futList = Array.isArray(fd) ? fd : fd?.futures_configs || fd?.data || [];
+            list.push(...futList.map((f) => f.symbol || f).filter(Boolean));
+          }
+        } else {
+          const raw = await api('/api/pairs');
+          const payload = await unwrapResponse(raw);
+          list = extractList(payload);
+        }
 
         const formatted = [...new Set(list.map(normalizePair).filter(Boolean))];
 
         if (cancelled) return;
 
         if (formatted.length === 0) {
-          console.warn('[orderbook] /api/pairs returned no usable pairs. Raw response:', payload);
+          console.warn('[orderbook] returned no usable pairs. Raw response:', list);
           setPairs([]);
           setPairsError('The pairs endpoint responded, but no trading pairs were found in the response.');
           return;
@@ -257,7 +278,7 @@ export default function OrderbookPage() {
     return () => {
       cancelled = true;
     };
-  }, [pairsReload]);
+  }, [pairsReload, marketType]);
 
   /* ------------- 2. Pair / market changed: reset + re-subscribe ------------ */
   useEffect(() => {
