@@ -509,8 +509,8 @@
 
 [data-theme="light"] .user-info,
 .light-theme .user-info {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: #dce2ee;
+  border-bottom: 1px solid #cbd5e1;
 }
 
 [data-theme="light"] .user-email,
@@ -527,25 +527,25 @@
 
 [data-theme="light"] .nav-section-title,
 .light-theme .nav-section-title {
-  color: #94a3b8;
+  color: #64748b;
 }
 
 [data-theme="light"] .nav-item,
 .light-theme .nav-item {
-  color: #475569;
+  color: #334155;
 }
 
 [data-theme="light"] .nav-item:hover,
 .light-theme .nav-item:hover {
-  background-color: #f1f5f9;
+  background-color: #dce2ee;
   color: #0f172a;
 }
 
 [data-theme="light"] .nav-item.active,
 .light-theme .nav-item.active {
-  background-color: rgba(77, 119, 240, 0.08);
+  background-color: rgba(77, 119, 240, 0.12);
   color: #3b65db;
-  border-color: rgba(77, 119, 240, 0.25);
+  border-color: rgba(77, 119, 240, 0.3);
 }
 
 [data-theme="light"] .nav-item.active svg,
@@ -555,12 +555,12 @@
 
 [data-theme="light"] .nav-group-header,
 .light-theme .nav-group-header {
-  color: #475569;
+  color: #334155;
 }
 
 [data-theme="light"] .nav-group-header:hover,
 .light-theme .nav-group-header:hover {
-  background-color: #f1f5f9;
+  background-color: #dce2ee;
   color: #0f172a;
 }
 
@@ -571,7 +571,7 @@
 
 [data-theme="light"] .nav-group-chevron,
 .light-theme .nav-group-chevron {
-  color: #94a3b8;
+  color: #64748b;
 }
 
 [data-theme="light"] .nav-group-chevron.open,
@@ -581,31 +581,31 @@
 
 [data-theme="light"] .nav-sub-items,
 .light-theme .nav-sub-items {
-  border-left-color: #e2e8f0;
+  border-left-color: #cbd5e1;
 }
 
 [data-theme="light"] .nav-sub-item,
 .light-theme .nav-sub-item {
-  color: #64748b;
+  color: #475569;
 }
 
 [data-theme="light"] .nav-sub-item:hover,
 .light-theme .nav-sub-item:hover {
-  background-color: #f1f5f9;
+  background-color: #dce2ee;
   color: #0f172a;
 }
 
 [data-theme="light"] .nav-sub-item.active,
 .light-theme .nav-sub-item.active {
-  background-color: rgba(77, 119, 240, 0.08);
+  background-color: rgba(77, 119, 240, 0.12);
   color: #3b65db;
-  border-color: rgba(77, 119, 240, 0.25);
+  border-color: rgba(77, 119, 240, 0.3);
 }
 
 [data-theme="light"] .logout-btn,
 .light-theme .logout-btn {
-  border-top: 1px solid #e2e8f0;
-  color: #64748b;
+  border-top: 1px solid #cbd5e1;
+  color: #475569;
 }
 
 [data-theme="light"] .logout-btn:hover,
@@ -616,9 +616,9 @@
 
 [data-theme="light"] .topbar,
 .light-theme .topbar {
-  background-color: rgba(255, 255, 255, 0.88);
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  background-color: rgba(233, 237, 244, 0.95);
+  border-bottom: 1px solid #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="light"] .topbar h1,
@@ -628,27 +628,28 @@
 
 [data-theme="light"] .hamburger-btn,
 .light-theme .hamburger-btn {
+  background-color: #dce2ee;
   border-color: #cbd5e1;
-  color: #475569;
+  color: #334155;
 }
 
 [data-theme="light"] .hamburger-btn:hover,
 .light-theme .hamburger-btn:hover {
-  background-color: #f1f5f9;
+  background-color: #cfd7e5;
   color: #0f172a;
 }
 
 [data-theme="light"] .theme-toggle-btn,
 .light-theme .theme-toggle-btn {
-  background: #ffffff;
+  background: #dce2ee;
   border-color: #cbd5e1;
-  color: #334155;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: #1e293b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="light"] .theme-toggle-btn:hover,
 .light-theme .theme-toggle-btn:hover {
-  background: #f8fafc;
+  background: #cfd7e5;
   border-color: #94a3b8;
   color: #0f172a;
 }

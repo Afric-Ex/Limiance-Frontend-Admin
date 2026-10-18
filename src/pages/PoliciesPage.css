@@ -149,14 +149,14 @@
 }
 
 [data-theme="light"] .control-item {
-  background: #ffffff;
-  border-color: #e2e8f0;
+  background: #dce2ee;
+  border-color: #cbd5e1;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="light"] .control-item:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: #cfd7e5;
+  border-color: #94a3b8;
 }
 
 [data-theme="light"] .control-info h4 {

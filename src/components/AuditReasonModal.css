@@ -112,7 +112,7 @@ textarea:focus {
 
 [data-theme="light"] .modal-content {
   background: #ffffff;
-  border-color: #e2e8f0;
+  border-color: #cbd5e1;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
 }
 
@@ -121,17 +121,17 @@ textarea:focus {
 }
 
 [data-theme="light"] .modal-desc {
-  color: #475569;
+  color: #334155;
 }
 
 [data-theme="light"] .btn-cancel {
-  background: #f1f5f9;
+  background: #dce2ee;
   border-color: #cbd5e1;
-  color: #475569;
+  color: #334155;
 }
 
 [data-theme="light"] .btn-cancel:hover {
-  background: #e2e8f0;
+  background: #cfd7e5;
   color: #0f172a;
 }
 

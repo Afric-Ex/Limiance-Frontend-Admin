@@ -201,12 +201,12 @@
 
 /* Light Mode Overrides for LoginPage */
 [data-theme="light"] .login-container {
-  background: radial-gradient(circle at 50% 30%, rgba(77, 119, 240, 0.08) 0%, rgba(248, 250, 252, 0.98) 70%), #f8fafc;
+  background: radial-gradient(circle at 50% 30%, rgba(77, 119, 240, 0.1) 0%, rgba(233, 237, 244, 0.98) 70%), #e9edf4;
 }
 
 [data-theme="light"] .login-card {
-  background: rgba(255, 255, 255, 0.92);
-  border-color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.96);
+  border-color: #cbd5e1;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 

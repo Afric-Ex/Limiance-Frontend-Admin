@@ -275,7 +275,7 @@
 
 [data-theme="light"] .chart-timeframe-btn:hover {
   color: var(--text-primary);
-  background: var(--bg-subtle);
+  background: var(--bg-surface-elevated);
 }
 
 [data-theme="light"] .chart-legend-item {
@@ -308,8 +308,8 @@
 
 [data-theme="light"] .donut-legend-row:hover,
 [data-theme="light"] .donut-legend-row.active {
-  background: var(--bg-subtle);
-  border-color: var(--border-hover);
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-light);
 }
 
 [data-theme="light"] .donut-legend-label {

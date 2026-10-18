@@ -420,7 +420,7 @@
 }
 
 [data-theme="light"] .kyc-filter-btn:hover {
-  background: var(--bg-subtle);
+  background: var(--bg-surface-elevated);
   color: var(--text-primary);
 }
 
@@ -435,7 +435,7 @@
 }
 
 [data-theme="light"] .kyc-table tr:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: #e2e7f1;
 }
 
 [data-theme="light"] .action-btn.view {
@@ -445,7 +445,7 @@
 }
 
 [data-theme="light"] .action-btn.view:hover {
-  background: var(--bg-subtle);
+  background: var(--bg-surface-elevated);
 }
 
 [data-theme="light"] .kyc-detail-card {
