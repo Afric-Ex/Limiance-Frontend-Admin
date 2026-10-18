@@ -269,6 +269,14 @@ function App() {
                 }
               />
               <Route
+                path="risk-limits"
+                element={
+                  <ProtectedRoute requiredRoles={['config_admin', 'risk', 'superadmin']}>
+                    <Navigate to="/derivatives?tab=risk" replace />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="policies"
                 element={
                   <ProtectedRoute requiredRoles={['risk', 'superadmin']}>

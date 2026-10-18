@@ -223,8 +223,11 @@ export default function AdminLayout() {
               </button>
               {openDropdowns.derivativesRisk && (
                 <div className="nav-sub-items">
-                  <NavLink to="/derivatives" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                  <NavLink to="/derivatives" end className={({ isActive }) => (isActive && !location.search.includes('tab=risk') ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Futures & Margin Specs
+                  </NavLink>
+                  <NavLink to="/derivatives?tab=risk" className={() => (location.search.includes('tab=risk') ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Risk Limits & Controls
                   </NavLink>
                   <NavLink to="/policies" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
                     Emergency Controls

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import {
@@ -22,7 +23,22 @@ import { ShimmerTableRows } from '../components/Shimmer';
 
 export default function DerivativesPage() {
   const confirm = useConfirm();
-  const [activeTab, setActiveTab] = useState('futures'); // 'futures' | 'margin'
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl === 'risk' ? 'risk' : tabFromUrl === 'margin' ? 'margin' : 'futures'
+  );
+
+  useEffect(() => {
+    if (tabFromUrl && ['futures', 'margin', 'risk'].includes(tabFromUrl) && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
+
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    setSearchParams({ tab: newTab });
+  };
   const [futuresConfigs, setFuturesConfigs] = useState([]);
   const [marginConfigs, setMarginConfigs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -405,7 +421,7 @@ export default function DerivativesPage() {
       >
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveTab('futures')}
+            onClick={() => handleTabChange('futures')}
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
@@ -423,7 +439,7 @@ export default function DerivativesPage() {
             <TrendingUp size={14} /> Perpetual Futures Specs ({futuresConfigs.length})
           </button>
           <button
-            onClick={() => setActiveTab('margin')}
+            onClick={() => handleTabChange('margin')}
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
@@ -441,7 +457,7 @@ export default function DerivativesPage() {
             <Percent size={14} /> Margin Borrow Rates ({marginConfigs.length})
           </button>
           <button
-            onClick={() => setActiveTab('risk')}
+            onClick={() => handleTabChange('risk')}
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
