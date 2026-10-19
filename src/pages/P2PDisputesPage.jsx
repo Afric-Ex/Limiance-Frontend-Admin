@@ -60,10 +60,10 @@ export default function P2PDisputesPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <ShieldAlert size={22} color="#ef4444" />
-            <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>P2P Escrow Disputes Queue</h1>
+            <ShieldAlert size={22} style={{ color: "var(--danger-text)" }} />
+            <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>P2P Escrow Disputes Queue</h1>
           </div>
-          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: '0.875rem' }}>
+          <p style={{ margin: '4px 0 0', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
             All P2P order matches currently in DISPUTED status requiring escrow release, seller refund, or dispute dismissal.
           </p>
         </div>
@@ -79,9 +79,9 @@ export default function P2PDisputesPage() {
               borderRadius: '8px',
               fontSize: '12px',
               fontWeight: '600',
-              border: '1px solid #374151',
-              background: '#1f2937',
-              color: '#e5e7eb',
+              border: '1px solid var(--border-light)',
+              background: 'var(--bg-surface-2)',
+              color: 'var(--text-primary)',
               cursor: 'pointer',
             }}
           >
@@ -97,9 +97,9 @@ export default function P2PDisputesPage() {
               borderRadius: '8px',
               fontSize: '12px',
               fontWeight: '600',
-              border: '1px solid #374151',
-              background: '#1f2937',
-              color: '#e5e7eb',
+              border: '1px solid var(--border-light)',
+              background: 'var(--bg-surface-2)',
+              color: 'var(--text-primary)',
               cursor: 'pointer',
             }}
           >
@@ -108,10 +108,10 @@ export default function P2PDisputesPage() {
         </div>
       </div>
 
-      <div style={{ background: '#111827', borderRadius: '8px', overflow: 'hidden', border: '1px solid #1f2937' }}>
+      <div style={{ background: 'var(--bg-surface-2)', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-medium)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid #374151', color: '#9ca3af', background: '#161e2e' }}>
+            <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-tertiary)', background: 'var(--bg-surface)' }}>
               <th style={{ padding: '12px 16px' }}>Match ID</th>
               <th style={{ padding: '12px 16px' }}>Escrow Locked</th>
               <th style={{ padding: '12px 16px' }}>Fiat Value</th>
@@ -127,37 +127,37 @@ export default function P2PDisputesPage() {
               <ShimmerTableRows rows={5} cols={8} colWidths={['14%', '14%', '14%', '14%', '14%', '10%', '10%', '10%']} />
             ) : matches.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ padding: '2.5rem', textAlign: 'center', color: '#9ca3af' }}>
+                <td colSpan="8" style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
                   No active P2P disputes found.
                 </td>
               </tr>
             ) : (
               matches.map((m) => (
-                <tr key={m.id} style={{ borderBottom: '1px solid #1f2937', background: 'rgba(239, 68, 68, 0.04)' }}>
-                  <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#e5e7eb', fontSize: '12px' }}>
+                <tr key={m.id} style={{ borderBottom: '1px solid var(--border-medium)', background: 'rgba(239, 68, 68, 0.04)' }}>
+                  <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: 'var(--text-primary)', fontSize: '12px' }}>
                     <div>{m.id.slice(0, 12)}…</div>
-                    <div style={{ color: '#6b7280', fontSize: '11px' }}>Order: {m.order_id?.slice(0, 8)}…</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Order: {m.order_id?.slice(0, 8)}…</div>
                   </td>
-                  <td style={{ padding: '12px 16px', fontWeight: 700, color: '#fff' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {m.quantity} {(m.asset || '').toUpperCase()}
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#93c5fd', fontWeight: 600 }}>
+                  <td style={{ padding: '12px 16px', color: 'var(--accent-blue)', fontWeight: 600 }}>
                     {m.fiat_amount} {(m.fiat_currency || '').toUpperCase()}
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '12px' }}>
-                    <div style={{ color: '#6ee7b7', fontWeight: 600 }}>{m.buyer_name || 'Buyer'}</div>
-                    <div style={{ fontFamily: 'monospace', color: '#9ca3af', fontSize: '11px' }}>{m.buyer_id?.slice(0, 10)}…</div>
+                    <div style={{ color: 'var(--success-text)', fontWeight: 600 }}>{m.buyer_name || 'Buyer'}</div>
+                    <div style={{ fontFamily: 'monospace', color: 'var(--text-tertiary)', fontSize: '11px' }}>{m.buyer_id?.slice(0, 10)}…</div>
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '12px' }}>
-                    <div style={{ color: '#fcd34d', fontWeight: 600 }}>{m.seller_name || 'Seller'}</div>
-                    <div style={{ fontFamily: 'monospace', color: '#9ca3af', fontSize: '11px' }}>{m.seller_id?.slice(0, 10)}…</div>
+                    <div style={{ color: 'var(--warning-text)', fontWeight: 600 }}>{m.seller_name || 'Seller'}</div>
+                    <div style={{ fontFamily: 'monospace', color: 'var(--text-tertiary)', fontSize: '11px' }}>{m.seller_id?.slice(0, 10)}…</div>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span
                       style={{
                         background: 'rgba(239, 68, 68, 0.16)',
-                        color: '#fca5a5',
-                        border: '1px solid rgba(239, 68, 68, 0.4)',
+                        color: 'var(--danger-text)',
+                        border: '1px solid var(--danger-border)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '11px',
@@ -167,7 +167,7 @@ export default function P2PDisputesPage() {
                       {m.disputed_by_role || 'DISPUTED'}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#9ca3af', fontSize: '12px' }}>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                     {m.created_at ? new Date(m.created_at).toLocaleString() : '—'}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
@@ -223,7 +223,7 @@ export default function P2PDisputesPage() {
           >
             Previous
           </button>
-          <span style={{ alignSelf: 'center', color: '#9ca3af', fontSize: '0.85rem' }}>
+          <span style={{ alignSelf: 'center', color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
             Page {currentPage} of {totalPages}
           </span>
           <button

@@ -57,15 +57,15 @@ export default function TransactionDetailPage() {
   if (!selectedTxn) {
     return (
       <div style={{ padding: "60px 0", textAlign: "center" }}>
-        <h2 style={{ color: "#fff" }}>Transaction Not Found</h2>
+        <h2 style={{ color: "var(--text-primary)" }}>Transaction Not Found</h2>
         <button
           onClick={() => navigate("/transactions")}
           style={{
             marginTop: "16px",
             padding: "8px 16px",
-            background: "#1c1e28",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             borderRadius: "8px",
             cursor: "pointer",
           }}
@@ -108,9 +108,9 @@ export default function TransactionDetailPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            background: "#181a22",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             padding: "8px 16px",
             borderRadius: "8px",
             cursor: "pointer",
@@ -124,19 +124,19 @@ export default function TransactionDetailPage() {
 
       <div
         style={{
-          background: "#13151c",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-medium)",
           borderRadius: "16px",
           padding: "32px",
           boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "20px" }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: "20px", color: "#fff", fontWeight: 700 }}>
+            <h2 style={{ margin: 0, fontSize: "20px", color: "var(--text-primary)", fontWeight: 700 }}>
               Transaction Inspection: {selectedTxn.id}
             </h2>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "4px", fontFamily: "var(--font-mono)" }}>
+            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px", fontFamily: "var(--font-mono)" }}>
               Created: {selectedTxn.created_at ? new Date(selectedTxn.created_at).toLocaleString() : "N/A"}
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function TransactionDetailPage() {
             fontSize: "12px",
             fontWeight: 700,
             background: (selectedTxn.status || "").toLowerCase() === "completed" ? "rgba(16, 185, 129, 0.15)" : "rgba(99, 102, 241, 0.15)",
-            color: (selectedTxn.status || "").toLowerCase() === "completed" ? "#34d399" : "#818cf8",
+            color: (selectedTxn.status || "").toLowerCase() === "completed" ? "var(--success-text)" : "var(--info-text)",
           }}>
             {(selectedTxn.status || "COMPLETED").toUpperCase()}
           </span>
@@ -154,43 +154,43 @@ export default function TransactionDetailPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ background: "#181a22", padding: "16px 20px", borderRadius: "10px" }}>
-              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Transaction Type</div>
-              <div style={{ fontSize: "16px", fontWeight: 700, color: "#fff", marginTop: "6px" }}>
+            <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Transaction Type</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)", marginTop: "6px" }}>
                 {(selectedTxn.type || "DEPOSIT").toUpperCase()}
               </div>
             </div>
-            <div style={{ background: "#181a22", padding: "16px 20px", borderRadius: "10px" }}>
-              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Network & Blockchain</div>
-              <div style={{ fontSize: "16px", fontWeight: 700, color: "#818cf8", marginTop: "6px" }}>
+            <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Network & Blockchain</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--info-text)", marginTop: "6px" }}>
                 {selectedTxn.network || net.name} ({net.symbol})
               </div>
             </div>
           </div>
 
-          <div style={{ background: "#181a22", padding: "20px", borderRadius: "10px" }}>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Gross Amount & Asset</div>
-            <div style={{ fontSize: "28px", fontWeight: 700, color: "#fff", fontFamily: "var(--font-mono)", marginTop: "6px" }}>
+          <div style={{ background: "var(--bg-surface)", padding: "20px", borderRadius: "10px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Gross Amount & Asset</div>
+            <div style={{ fontSize: "28px", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-mono)", marginTop: "6px" }}>
               {selectedTxn.amount} {assetSymbol}
             </div>
-            <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+            <div style={{ fontSize: "13px", color: "var(--text-tertiary)", marginTop: "4px" }}>
               Fee: {selectedTxn.fee || "0.00"} {assetSymbol}
             </div>
           </div>
 
-          <div style={{ background: "#181a22", padding: "16px 20px", borderRadius: "10px" }}>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>User Account ID</div>
+          <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>User Account ID</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
-              <span style={{ fontSize: "14px", color: "#818cf8", fontFamily: "var(--font-mono)" }}>{selectedTxn.user_id}</span>
-              <button onClick={() => copyToClipboard(selectedTxn.user_id)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}>
+              <span style={{ fontSize: "14px", color: "var(--info-text)", fontFamily: "var(--font-mono)" }}>{selectedTxn.user_id}</span>
+              <button onClick={() => copyToClipboard(selectedTxn.user_id)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                 <Copy size={13} />
               </button>
               <button
                 onClick={() => navigate("/users/" + selectedTxn.user_id)}
                 style={{
                   background: "rgba(99, 102, 241, 0.15)",
-                  border: "1px solid rgba(99, 102, 241, 0.3)",
-                  color: "#818cf8",
+                  border: "1px solid var(--info-border)",
+                  color: "var(--info-text)",
                   padding: "2px 8px",
                   borderRadius: "4px",
                   fontSize: "11px",
@@ -203,28 +203,28 @@ export default function TransactionDetailPage() {
             </div>
           </div>
 
-          <div style={{ background: "#181a22", padding: "16px 20px", borderRadius: "10px" }}>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>On-Chain Transaction Hash (TxHash)</div>
+          <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>On-Chain Transaction Hash (TxHash)</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
-              <span style={{ fontSize: "13px", color: "#34d399", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
+              <span style={{ fontSize: "13px", color: "var(--success-text)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
                 {selectedTxn.tx_hash || selectedTxn.txHash || "Internal off-chain settlement"}
               </span>
               {(selectedTxn.tx_hash || selectedTxn.txHash) && (
-                <button onClick={() => copyToClipboard(selectedTxn.tx_hash || selectedTxn.txHash)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}>
+                <button onClick={() => copyToClipboard(selectedTxn.tx_hash || selectedTxn.txHash)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                   <Copy size={13} />
                 </button>
               )}
             </div>
           </div>
 
-          <div style={{ background: "#181a22", padding: "16px 20px", borderRadius: "10px" }}>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Destination / Recipient Address</div>
+          <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Destination / Recipient Address</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
-              <span style={{ fontSize: "13px", color: "#e2e8f0", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
+              <span style={{ fontSize: "13px", color: "var(--text-primary)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
                 {selectedTxn.address || selectedTxn.to_address || "—"}
               </span>
               {(selectedTxn.address || selectedTxn.to_address) && (
-                <button onClick={() => copyToClipboard(selectedTxn.address || selectedTxn.to_address)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}>
+                <button onClick={() => copyToClipboard(selectedTxn.address || selectedTxn.to_address)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                   <Copy size={13} />
                 </button>
               )}

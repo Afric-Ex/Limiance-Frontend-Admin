@@ -46,7 +46,7 @@ export default function AuditReasonModal({ isOpen, onClose, onConfirm, title, ac
               minLength={8}
             />
             {validationError && (
-              <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '6px', fontWeight: '500' }}>
+              <div style={{ color: 'var(--danger-text)', fontSize: '12px', marginTop: '6px', fontWeight: '500' }}>
                 {validationError}
               </div>
             )}

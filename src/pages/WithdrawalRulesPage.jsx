@@ -348,10 +348,10 @@ export default function WithdrawalRulesPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#fff' }}>
+          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Withdrawal Risk & Limits Console
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-tertiary)', fontSize: '13px' }}>
             Safeguard cold storage and liquidity via manual review thresholds, whitelisting lock periods, and per-token velocity caps.
           </p>
         </div>
@@ -364,10 +364,10 @@ export default function WithdrawalRulesPage() {
           }}
           style={{
             padding: '8px 14px',
-            background: '#1c1e28',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-medium)',
             borderRadius: '8px',
-            color: '#fff',
+            color: 'var(--text-primary)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -383,7 +383,7 @@ export default function WithdrawalRulesPage() {
       <div
         style={{
           background: 'rgba(245, 158, 11, 0.08)',
-          border: '1px solid rgba(245, 158, 11, 0.25)',
+          border: '1px solid var(--warning-border)',
           borderRadius: '12px',
           padding: '16px 20px',
           marginBottom: '24px',
@@ -392,9 +392,9 @@ export default function WithdrawalRulesPage() {
           gap: '12px',
         }}
       >
-        <AlertTriangle size={20} color="#fbbf24" style={{ flexShrink: 0, marginTop: '2px' }} />
-        <div style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.5 }}>
-          <strong style={{ color: '#fbbf24' }}>Real-time Risk Guard:</strong> Withdrawals that exceed the USD approval threshold will bypass automated hot wallet signing and pause in the operator <strong>Withdrawals Queue</strong> pending cryptographic review.
+        <AlertTriangle size={20}  style={{ color: "var(--warning-text)", flexShrink: 0, marginTop: '2px' }} />
+        <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+          <strong style={{ color: 'var(--warning-text)' }}>Real-time Risk Guard:</strong> Withdrawals that exceed the USD approval threshold will bypass automated hot wallet signing and pause in the operator <strong>Withdrawals Queue</strong> pending cryptographic review.
         </div>
       </div>
 
@@ -403,22 +403,22 @@ export default function WithdrawalRulesPage() {
         {/* Card 1: USD Approval Threshold */}
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.12)', borderRadius: '8px', color: '#818cf8' }}>
+            <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.12)', borderRadius: '8px', color: 'var(--info-text)' }}>
               <ShieldAlert size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
                 Manual Approval Threshold
               </h3>
-              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                 Single withdrawal amount (USD) requiring human operator sign-off
               </p>
             </div>
@@ -426,11 +426,11 @@ export default function WithdrawalRulesPage() {
 
           <form onSubmit={handleSaveThreshold}>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Threshold Amount (USD)
               </label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontWeight: 600 }}>
                   $
                 </span>
                 <input
@@ -441,10 +441,10 @@ export default function WithdrawalRulesPage() {
                   style={{
                     width: '100%',
                     padding: '10px 12px 10px 28px',
-                    background: '#181a22',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-medium)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '15px',
                     fontWeight: 600,
@@ -478,22 +478,22 @@ export default function WithdrawalRulesPage() {
         {/* Card 2: Whitelisting Lock Period */}
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.12)', borderRadius: '8px', color: '#34d399' }}>
+            <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.12)', borderRadius: '8px', color: 'var(--success-text)' }}>
               <Clock size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
                 Address Whitelist Delay
               </h3>
-              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                 Security cooling period before newly whitelisted destination is eligible
               </p>
             </div>
@@ -501,7 +501,7 @@ export default function WithdrawalRulesPage() {
 
           <form onSubmit={handleSaveWhitelist}>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Cooling Period (Hours)
               </label>
               <input
@@ -514,10 +514,10 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '15px',
                   fontWeight: 600,
@@ -550,22 +550,22 @@ export default function WithdrawalRulesPage() {
         {/* Card 3: Token Conversion Limits & Spread */}
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: '8px', color: '#fbbf24' }}>
+            <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: '8px', color: 'var(--warning-text)' }}>
               <ArrowRightLeft size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
                 Token Conversion Limits & Spread
               </h3>
-              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                 OTC token swap limits & system spread markup (in basis points)
               </p>
             </div>
@@ -574,7 +574,7 @@ export default function WithdrawalRulesPage() {
           <form onSubmit={handleSaveConversionLimits}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Min Quantity
                 </label>
                 <input
@@ -585,10 +585,10 @@ export default function WithdrawalRulesPage() {
                   style={{
                     width: '100%',
                     padding: '8px 10px',
-                    background: '#181a22',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-medium)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '13px',
                     outline: 'none',
@@ -597,7 +597,7 @@ export default function WithdrawalRulesPage() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Max Quantity
                 </label>
                 <input
@@ -608,10 +608,10 @@ export default function WithdrawalRulesPage() {
                   style={{
                     width: '100%',
                     padding: '8px 10px',
-                    background: '#181a22',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-medium)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '13px',
                     outline: 'none',
@@ -621,7 +621,7 @@ export default function WithdrawalRulesPage() {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                 Exchange Spread (BPS, e.g. 50 = 0.50%)
               </label>
               <input
@@ -632,10 +632,10 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '8px 10px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '13px',
                   outline: 'none',
@@ -669,22 +669,22 @@ export default function WithdrawalRulesPage() {
       {/* Per-Asset Withdrawal Velocity Limits */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '24px',
           boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-          <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: '8px', color: '#fbbf24' }}>
+          <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.12)', borderRadius: '8px', color: 'var(--warning-text)' }}>
             <Sliders size={18} />
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
               Per-Asset Rules & Limits
             </h3>
-            <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+            <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-tertiary)' }}>
               Configure withdrawal fees, minimum deposit/withdrawal sizes, transaction limits, and 24-hour rolling velocity caps
             </p>
           </div>
@@ -697,8 +697,8 @@ export default function WithdrawalRulesPage() {
             alignItems: 'center',
             gap: '16px',
             marginBottom: '24px',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--overlay-1)',
+            border: '1px solid var(--border-subtle)',
             padding: '16px 20px',
             borderRadius: '10px',
             flexWrap: 'wrap',
@@ -712,12 +712,12 @@ export default function WithdrawalRulesPage() {
                 alignItems: 'center',
                 gap: '6px',
                 fontSize: '12px',
-                color: 'rgba(255,255,255,0.7)',
+                color: 'var(--text-secondary)',
                 marginBottom: '8px',
                 fontWeight: 600,
               }}
             >
-              <Coins size={14} color="#818cf8" /> Select Asset / Token
+              <Coins size={14} style={{ color: "var(--info-text)" }} /> Select Asset / Token
             </label>
             <div style={{ position: 'relative' }}>
               <select
@@ -728,10 +728,10 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '11px 36px 11px 14px',
-                  background: '#181a22',
-                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--info-border)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   fontWeight: 600,
@@ -745,7 +745,7 @@ export default function WithdrawalRulesPage() {
                   <option value={selectedAsset}>{selectedAsset} {loadingTokens ? '(Loading tokens...)' : ''}</option>
                 ) : (
                   tokensList.map((tok) => (
-                    <option key={tok.symbol} value={tok.symbol} style={{ background: '#181a22', color: '#fff' }}>
+                    <option key={tok.symbol} value={tok.symbol} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>
                       {tok.symbol} — {tok.name} {tok.blockchain ? `(${tok.blockchain})` : ''}
                     </option>
                   ))
@@ -753,9 +753,9 @@ export default function WithdrawalRulesPage() {
               </select>
               <ChevronDown
                 size={16}
-                color="rgba(255,255,255,0.5)"
+                
                 style={{
-                  position: 'absolute',
+                  color: "var(--text-tertiary)", position: 'absolute',
                   right: '12px',
                   top: '50%',
                   transform: 'translateY(-50%)',
@@ -769,9 +769,9 @@ export default function WithdrawalRulesPage() {
             <span
               style={{
                 fontSize: '12px',
-                color: 'rgba(255,255,255,0.6)',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                color: 'var(--text-secondary)',
+                background: 'var(--overlay-2)',
+                border: '1px solid var(--border)',
                 padding: '9px 14px',
                 borderRadius: '8px',
                 fontWeight: 500,
@@ -785,7 +785,7 @@ export default function WithdrawalRulesPage() {
         <form onSubmit={handleSaveAssetLimits}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '20px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Asset Symbol
               </label>
               <div style={{ position: 'relative' }}>
@@ -799,10 +799,10 @@ export default function WithdrawalRulesPage() {
                   style={{
                     width: '100%',
                     padding: '10px 32px 10px 12px',
-                    background: '#181a22',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-medium)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '14px',
                     fontWeight: 600,
@@ -816,7 +816,7 @@ export default function WithdrawalRulesPage() {
                     <option value={assetLimits.asset}>{assetLimits.asset}</option>
                   ) : (
                     tokensList.map((tok) => (
-                      <option key={tok.symbol} value={tok.symbol} style={{ background: '#181a22', color: '#fff' }}>
+                      <option key={tok.symbol} value={tok.symbol} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>
                         {tok.symbol} — {tok.name}
                       </option>
                     ))
@@ -824,9 +824,9 @@ export default function WithdrawalRulesPage() {
                 </select>
                 <ChevronDown
                   size={14}
-                  color="rgba(255,255,255,0.4)"
+                  
                   style={{
-                    position: 'absolute',
+                    color: "var(--text-muted)", position: 'absolute',
                     right: '10px',
                     top: '50%',
                     transform: 'translateY(-50%)',
@@ -834,13 +834,13 @@ export default function WithdrawalRulesPage() {
                   }}
                 />
               </div>
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 Selected token from listed assets
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Withdrawal Fee ({assetLimits.asset})
               </label>
               <input
@@ -851,22 +851,22 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 Fixed fee deducted per withdrawal
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Deposit Min ({assetLimits.asset})
               </label>
               <input
@@ -877,22 +877,22 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 Deposits below this will be rejected
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Withdrawal Min ({assetLimits.asset})
               </label>
               <input
@@ -903,22 +903,22 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 Minimum single withdrawal allowed
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Max Single Withdrawal ({assetLimits.asset})
               </label>
               <input
@@ -929,22 +929,22 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 Cap per individual transaction
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Withdrawal Max ({assetLimits.asset})
               </label>
               <input
@@ -955,22 +955,22 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--warning-text)', marginTop: '4px', display: 'block' }}>
                 Ceiling (≤ Manual Approval Threshold: ${threshold || '0'})
               </span>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Daily Rolling Limit ({assetLimits.asset})
               </label>
               <input
@@ -981,16 +981,16 @@ export default function WithdrawalRulesPage() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  background: '#181a22',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-medium)',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '14px',
                   outline: 'none',
                 }}
               />
-              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', display: 'block' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                 24-hour total rolling withdrawal cap
               </span>
             </div>

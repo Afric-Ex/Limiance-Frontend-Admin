@@ -63,13 +63,13 @@ export function ConfirmProvider({ children }) {
   const getIcon = (variant) => {
     switch (variant) {
       case 'danger':
-        return <AlertTriangle size={24} color="#ef4444" />;
+        return <AlertTriangle size={24} style={{ color: "var(--danger-text)" }} />;
       case 'warning':
-        return <AlertCircle size={24} color="#f59e0b" />;
+        return <AlertCircle size={24} style={{ color: "var(--warning-text)" }} />;
       case 'success':
-        return <CheckCircle2 size={24} color="#34d399" />;
+        return <CheckCircle2 size={24} style={{ color: "var(--success-text)" }} />;
       default:
-        return <HelpCircle size={24} color="#818cf8" />;
+        return <HelpCircle size={24} style={{ color: "var(--info-text)" }} />;
     }
   };
 

@@ -224,10 +224,10 @@ export default function FeeTiersPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#fff' }}>
+          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Fee Tiers & Limits
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-tertiary)', fontSize: '13px' }}>
             Configure maker/taker VIP volume ladders, platform service charges, and tiered KYC withdrawal caps.
           </p>
         </div>
@@ -293,8 +293,8 @@ export default function FeeTiersPage() {
       {/* Tabs */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '16px 20px',
           marginBottom: '20px',
@@ -309,9 +309,9 @@ export default function FeeTiersPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'tiers' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'tiers' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'tiers' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'tiers' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -327,9 +327,9 @@ export default function FeeTiersPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'platform' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'platform' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'platform' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'platform' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -345,9 +345,9 @@ export default function FeeTiersPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'kyc' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'kyc' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'kyc' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'kyc' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -364,10 +364,10 @@ export default function FeeTiersPage() {
           onClick={fetchAll}
           style={{
             padding: '8px 14px',
-            background: '#1c1e28',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-medium)',
             borderRadius: '8px',
-            color: '#fff',
+            color: 'var(--text-primary)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -383,8 +383,8 @@ export default function FeeTiersPage() {
       {activeTab === 'tiers' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -392,14 +392,14 @@ export default function FeeTiersPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>VIP Tier</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>30-Day Min Volume (USD)</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Maker Fee Rate</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Taker Fee Rate</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Min LIM Balance</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>LIM Discount</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>VIP Tier</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>30-Day Min Volume (USD)</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Maker Fee Rate</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Taker Fee Rate</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Min LIM Balance</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>LIM Discount</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -407,7 +407,7 @@ export default function FeeTiersPage() {
                 <ShimmerTableRows rows={6} cols={7} colWidths={['15%', '25%', '20%', '20%', '25%', '20%', '15%']} />
               ) : feeTiers.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No fee tiers configured.
                   </td>
                 </tr>
@@ -415,7 +415,7 @@ export default function FeeTiersPage() {
                 feeTiers
                   .sort((a, b) => a.tier - b.tier)
                   .map((tier) => (
-                    <tr key={tier.tier} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <tr key={tier.tier} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                       <td style={{ padding: '14px 18px' }}>
                         <span
                           style={{
@@ -423,27 +423,27 @@ export default function FeeTiersPage() {
                             borderRadius: '6px',
                             fontSize: '12px',
                             fontWeight: 700,
-                            background: tier.tier === 0 ? 'rgba(255,255,255,0.06)' : 'rgba(245, 158, 11, 0.15)',
-                            color: tier.tier === 0 ? '#94a3b8' : '#fbbf24',
-                            border: `1px solid ${tier.tier === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(245, 158, 11, 0.3)'}`,
+                            background: tier.tier === 0 ? 'var(--overlay-2)' : 'rgba(245, 158, 11, 0.15)',
+                            color: tier.tier === 0 ? 'var(--text-tertiary)' : 'var(--warning-text)',
+                            border: `1px solid ${tier.tier === 0 ? 'var(--border-medium)' : 'var(--warning-border)'}`,
                           }}
                         >
                           VIP {tier.tier}
                         </span>
                       </td>
-                      <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         ${Number(tier.min_volume_usd_30d).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '14px 18px', color: '#34d399', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', color: 'var(--success-text)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                         {(Number(tier.maker_rate) * 100).toFixed(4)}% ({tier.maker_rate})
                       </td>
-                      <td style={{ padding: '14px 18px', color: '#60a5fa', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', color: 'var(--accent-blue)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                         {(Number(tier.taker_rate) * 100).toFixed(4)}% ({tier.taker_rate})
                       </td>
-                      <td style={{ padding: '14px 18px', color: '#a78bfa', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', color: 'var(--accent-purple)', fontFamily: 'var(--font-mono)' }}>
                         {tier.min_lim_balance ? Number(tier.min_lim_balance).toLocaleString() : '—'}
                       </td>
-                      <td style={{ padding: '14px 18px', color: '#f59e0b', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', color: 'var(--warning-text)', fontFamily: 'var(--font-mono)' }}>
                         {tier.lim_discount_percent ? `${(Number(tier.lim_discount_percent) * 100).toFixed(0)}%` : '—'}
                       </td>
                       <td style={{ padding: '14px 18px', textAlign: 'right' }}>
@@ -466,9 +466,9 @@ export default function FeeTiersPage() {
                             style={{
                               padding: '6px 10px',
                               borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.05)',
-                              border: '1px solid rgba(255,255,255,0.1)',
-                              color: '#fff',
+                              background: 'var(--overlay-2)',
+                              border: '1px solid var(--border-medium)',
+                              color: 'var(--text-primary)',
                               cursor: 'pointer',
                             }}
                           >
@@ -480,8 +480,8 @@ export default function FeeTiersPage() {
                               padding: '6px 10px',
                               borderRadius: '6px',
                               background: 'rgba(239, 68, 68, 0.1)',
-                              border: '1px solid rgba(239, 68, 68, 0.2)',
-                              color: '#f87171',
+                              border: '1px solid var(--danger-border)',
+                              color: 'var(--danger-text)',
                               cursor: 'pointer',
                             }}
                           >
@@ -501,8 +501,8 @@ export default function FeeTiersPage() {
       {activeTab === 'platform' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -510,11 +510,11 @@ export default function FeeTiersPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Fee Identifier</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Percentage Rate</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Fixed Flat Amount</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Fee Identifier</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Percentage Rate</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Fixed Flat Amount</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -522,20 +522,20 @@ export default function FeeTiersPage() {
                 <ShimmerTableRows rows={5} cols={4} colWidths={['35%', '25%', '25%', '15%']} />
               ) : platformFees.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No platform service fees configured.
                   </td>
                 </tr>
               ) : (
                 platformFees.map((fee) => (
-                  <tr key={fee.name} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={fee.name} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {fee.name}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#818cf8', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--info-text)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                       {(Number(fee.percentage) * 100).toFixed(4)}% ({fee.percentage})
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {fee.fixed_amount}
                     </td>
                     <td style={{ padding: '14px 18px', textAlign: 'right' }}>
@@ -553,9 +553,9 @@ export default function FeeTiersPage() {
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                           }}
                         >
@@ -567,8 +567,8 @@ export default function FeeTiersPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                         >
@@ -588,8 +588,8 @@ export default function FeeTiersPage() {
       {activeTab === 'kyc' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -597,11 +597,11 @@ export default function FeeTiersPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>KYC Verification Level</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Daily Withdrawal Cap (USD)</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Monthly Withdrawal Cap (USD)</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>KYC Verification Level</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Daily Withdrawal Cap (USD)</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Monthly Withdrawal Cap (USD)</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -609,7 +609,7 @@ export default function FeeTiersPage() {
                 <ShimmerTableRows rows={4} cols={4} colWidths={['20%', '35%', '35%', '10%']} />
               ) : kycLimits.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No KYC limits configured.
                   </td>
                 </tr>
@@ -617,7 +617,7 @@ export default function FeeTiersPage() {
                 kycLimits
                   .sort((a, b) => a.tier - b.tier)
                   .map((limit) => (
-                    <tr key={limit.tier} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <tr key={limit.tier} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                       <td style={{ padding: '14px 18px' }}>
                         <span
                           style={{
@@ -635,28 +635,28 @@ export default function FeeTiersPage() {
                                 : 'rgba(168, 85, 247, 0.12)',
                             color:
                               limit.tier === 0
-                                ? '#f87171'
+                                ? 'var(--danger-text)'
                                 : limit.tier === 1
-                                ? '#60a5fa'
+                                ? 'var(--accent-blue)'
                                 : limit.tier === 2
-                                ? '#34d399'
-                                : '#c084fc',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                                ? 'var(--success-text)'
+                                : 'var(--accent-purple)',
+                            border: '1px solid var(--border-medium)',
                           }}
                         >
                           Level {limit.tier} ({limit.tier === 0 ? 'Unverified' : limit.tier === 1 ? 'Email Verified' : limit.tier === 2 ? 'Sumsub ID Verified' : 'Institutional / VIP'})
                         </span>
                       </td>
-                      <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {limit.daily_usd_cap === -1 ? (
-                          <span style={{ color: '#34d399' }}>UNLIMITED</span>
+                          <span style={{ color: 'var(--success-text)' }}>UNLIMITED</span>
                         ) : (
                           `$${Number(limit.daily_usd_cap).toLocaleString()}`
                         )}
                       </td>
-                      <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                         {limit.monthly_usd_cap === -1 ? (
-                          <span style={{ color: '#34d399' }}>UNLIMITED</span>
+                          <span style={{ color: 'var(--success-text)' }}>UNLIMITED</span>
                         ) : (
                           `$${Number(limit.monthly_usd_cap).toLocaleString()}`
                         )}
@@ -676,7 +676,7 @@ export default function FeeTiersPage() {
                             borderRadius: '6px',
                             background: 'rgba(77, 119, 240, 0.15)',
                             border: '1px solid rgba(77, 119, 240, 0.3)',
-                            color: '#818cf8',
+                            color: 'var(--info-text)',
                             fontSize: '12px',
                             fontWeight: 600,
                             cursor: 'pointer',
@@ -709,8 +709,8 @@ export default function FeeTiersPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '460px',
@@ -718,57 +718,57 @@ export default function FeeTiersPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               Configure VIP Fee Tier
             </h3>
             <form onSubmit={handleSaveTier}>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>VIP Tier Index (0 = Regular)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>VIP Tier Index (0 = Regular)</label>
                 <input
                   type="number"
                   required
                   value={tierForm.tier}
                   onChange={(e) => setTierForm({ ...tierForm, tier: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Min 30-Day Volume (USD)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Min 30-Day Volume (USD)</label>
                 <input
                   type="number"
                   required
                   value={tierForm.min_volume_usd_30d}
                   onChange={(e) => setTierForm({ ...tierForm, min_volume_usd_30d: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Maker Rate (e.g. 0.001)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Maker Rate (e.g. 0.001)</label>
                   <input
                     type="number"
                     step="0.00001"
                     required
                     value={tierForm.maker_rate}
                     onChange={(e) => setTierForm({ ...tierForm, maker_rate: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Taker Rate (e.g. 0.002)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Taker Rate (e.g. 0.002)</label>
                   <input
                     type="number"
                     step="0.00001"
                     required
                     value={tierForm.taker_rate}
                     onChange={(e) => setTierForm({ ...tierForm, taker_rate: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Min LIM Balance</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Min LIM Balance</label>
                   <input
                     type="number"
                     step="1"
@@ -776,12 +776,12 @@ export default function FeeTiersPage() {
                     value={tierForm.min_lim_balance ?? ''}
                     onChange={(e) => setTierForm({ ...tierForm, min_lim_balance: e.target.value })}
                     placeholder="e.g. 1000"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
-                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>LIM tokens required to unlock discount</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>LIM tokens required to unlock discount</span>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>LIM Discount % (0–100)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>LIM Discount % (0–100)</label>
                   <input
                     type="number"
                     step="1"
@@ -793,16 +793,16 @@ export default function FeeTiersPage() {
                       setTierForm({ ...tierForm, lim_discount_display: e.target.value, lim_discount_percent: (pct / 100).toFixed(4) });
                     }}
                     placeholder="e.g. 20"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
-                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>% discount off base rate when holding LIM</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>% discount off base rate when holding LIM</span>
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setTierModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -834,8 +834,8 @@ export default function FeeTiersPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '460px',
@@ -843,48 +843,48 @@ export default function FeeTiersPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               {editingItem ? `Edit Fee: ${editingItem.name}` : 'Create Platform Fee Rule'}
             </h3>
             <form onSubmit={handleSaveFee}>
               {!editingItem && (
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Fee Name / Operation</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Fee Name / Operation</label>
                   <input
                     type="text"
                     required
                     value={feeForm.name}
                     onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })}
                     placeholder="e.g. withdrawal_handling, p2p_escrow"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               )}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Percentage Fee (decimal, e.g. 0.002 = 0.2%)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Percentage Fee (decimal, e.g. 0.002 = 0.2%)</label>
                 <input
                   type="text"
                   required
                   value={feeForm.percentage}
                   onChange={(e) => setFeeForm({ ...feeForm, percentage: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Fixed Flat Amount</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Fixed Flat Amount</label>
                 <input
                   type="text"
                   required
                   value={feeForm.fixed_amount}
                   onChange={(e) => setFeeForm({ ...feeForm, fixed_amount: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setFeeModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -916,8 +916,8 @@ export default function FeeTiersPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '460px',
@@ -925,35 +925,35 @@ export default function FeeTiersPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               Edit KYC Tier {kycForm.tier} Withdrawal Caps
             </h3>
             <form onSubmit={handleSaveKycLimit}>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Daily USD Cap (-1 for Unlimited)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Daily USD Cap (-1 for Unlimited)</label>
                 <input
                   type="number"
                   required
                   value={kycForm.daily_usd_cap}
                   onChange={(e) => setKycForm({ ...kycForm, daily_usd_cap: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Monthly USD Cap (-1 for Unlimited)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Monthly USD Cap (-1 for Unlimited)</label>
                 <input
                   type="number"
                   required
                   value={kycForm.monthly_usd_cap}
                   onChange={(e) => setKycForm({ ...kycForm, monthly_usd_cap: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setKycModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

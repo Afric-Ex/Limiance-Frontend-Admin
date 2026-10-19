@@ -6,7 +6,7 @@ export default function ChartCard({
   subtitle,
   icon: Icon,
   badge,
-  badgeColor = '#34d399',
+  badgeColor = 'var(--success-text)',
   timeframe,
   onTimeframeChange,
   timeframes = ['24H', '7D', '30D', '12M'],
@@ -20,7 +20,7 @@ export default function ChartCard({
       <div className="chart-header">
         <div className="chart-title-group">
           <div className="chart-title-row">
-            {Icon && <Icon size={18} color="#818cf8" />}
+            {Icon && <Icon size={18} style={{ color: "var(--info-text)" }} />}
             <h3 className="chart-title">{title}</h3>
             {badge && (
               <span
@@ -29,9 +29,9 @@ export default function ChartCard({
                   fontWeight: 600,
                   padding: '2px 8px',
                   borderRadius: '9999px',
-                  background: `${badgeColor}18`,
+                  background: `color-mix(in srgb, ${badgeColor} 12%, transparent)`,
                   color: badgeColor,
-                  border: `1px solid ${badgeColor}35`,
+                  border: `1px solid color-mix(in srgb, ${badgeColor} 28%, transparent)`,
                   marginLeft: '4px',
                 }}
               >
@@ -44,7 +44,7 @@ export default function ChartCard({
 
         <div className="chart-controls">
           {onTimeframeChange && timeframes && (
-            <div style={{ display: 'flex', gap: '4px', background: 'rgba(0,0,0,0.25)', padding: '3px', borderRadius: '8px' }}>
+            <div className="chart-timeframe-group" style={{ display: 'flex', gap: '4px', padding: '3px', borderRadius: '8px' }}>
               {timeframes.map((tf) => (
                 <button
                   key={tf}
@@ -65,7 +65,7 @@ export default function ChartCard({
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#4d77f0',
+                color: 'var(--primary-strong)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: 'pointer',

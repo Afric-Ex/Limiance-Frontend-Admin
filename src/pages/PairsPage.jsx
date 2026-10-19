@@ -207,8 +207,8 @@ export default function PairsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700 }}>Trading Pairs</h1>
-          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)', fontWeight: 700 }}>Trading Pairs</h1>
+          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             Manage shared spot and margin pairs, plus configured futures markets.
           </p>
         </div>
@@ -221,7 +221,7 @@ export default function PairsPage() {
               borderRadius: '8px',
               background: 'rgba(77, 119, 240, 0.15)',
               border: '1px solid rgba(77, 119, 240, 0.3)',
-              color: '#818cf8',
+              color: 'var(--info-text)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -255,16 +255,16 @@ export default function PairsPage() {
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
         {['spot', 'margin', 'futures'].map((type) => (
-          <button key={type} onClick={() => setMarketType(type)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: marketType === type ? '#4d77f0' : '#1c1e28', color: '#fff', textTransform: 'capitalize', cursor: 'pointer' }}>
+          <button key={type} onClick={() => setMarketType(type)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-medium)', background: marketType === type ? '#4d77f0' : 'var(--bg-surface-2)', color: marketType === type ? '#fff' : 'var(--text-secondary)', textTransform: 'capitalize', cursor: 'pointer' }}>
             {type}
           </button>
         ))}
       </div>
 
       {/* Search Bar */}
-      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
-          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
             placeholder="Search pairs (e.g. BTC/USDT)..."
@@ -274,9 +274,9 @@ export default function PairsPage() {
               width: '100%',
               padding: '8px 12px 8px 36px',
               borderRadius: '8px',
-              background: '#181a22',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-medium)',
+              color: 'var(--text-primary)',
               fontSize: '14px',
               outline: 'none',
             }}
@@ -284,25 +284,25 @@ export default function PairsPage() {
         </div>
         <button
           onClick={fetchPairs}
-          style={{ padding: '8px 14px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+          style={{ padding: '8px 14px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
         >
           <RefreshCw size={14} /> Refresh
         </button>
       </div>
 
       {/* Pairs Table */}
-      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Trading Pair</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Base / Quote</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Mark Price</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Index Price</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Price Precision</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Min Order Qty</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Status</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+            <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Trading Pair</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Base / Quote</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Mark Price</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Index Price</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Price Precision</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Min Order Qty</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'right' }}>Status</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -310,41 +310,41 @@ export default function PairsPage() {
               <ShimmerTableRows rows={6} cols={8} colWidths={['25%', '25%', '20%', '20%', '15%', '15%', '20%', '15%']} />
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                <td colSpan="8" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                   No trading pairs configured yet. Click "Add Trading Pair".
                 </td>
               </tr>
             ) : (
               filtered.map((p, idx) => (
-                <tr key={p.symbol || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fff', fontSize: '14px', fontFamily: 'monospace' }}>
+                <tr key={p.symbol || idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                  <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'monospace' }}>
                     {p.symbol}
                   </td>
                   <td style={{ padding: '14px 18px', fontSize: '13px' }}>
-                    <span style={{ color: '#818cf8', fontWeight: 600 }}>{p.base_asset || p.symbol?.split('/')[0]}</span>
-                    <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>/</span>
-                    <span style={{ color: '#34d399', fontWeight: 600 }}>{p.quote_asset || p.symbol?.split('/')[1]}</span>
+                    <span style={{ color: 'var(--info-text)', fontWeight: 600 }}>{p.base_asset || p.symbol?.split('/')[0]}</span>
+                    <span style={{ color: 'var(--text-faint)', margin: '0 4px' }}>/</span>
+                    <span style={{ color: 'var(--success-text)', fontWeight: 600 }}>{p.quote_asset || p.symbol?.split('/')[1]}</span>
                   </td>
-                  <td style={{ padding: '14px 18px', color: '#e2e8f0', fontSize: '13px', fontFamily: 'monospace' }}>{marketType === 'futures' ? '—' : (p.mark_price ?? '0')}</td>
-                  <td style={{ padding: '14px 18px', color: '#e2e8f0', fontSize: '13px', fontFamily: 'monospace' }}>{marketType === 'futures' ? '—' : (p.index_price ?? '0')}</td>
-                  <td style={{ padding: '14px 18px', color: '#94a3b8', fontSize: '13px', fontFamily: 'monospace' }}>
+                  <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'monospace' }}>{marketType === 'futures' ? '—' : (p.mark_price ?? '0')}</td>
+                  <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'monospace' }}>{marketType === 'futures' ? '—' : (p.index_price ?? '0')}</td>
+                  <td style={{ padding: '14px 18px', color: 'var(--text-tertiary)', fontSize: '13px', fontFamily: 'monospace' }}>
                     {p.price_decimals ?? p.price_precision ?? 2} decimals
                   </td>
-                  <td style={{ padding: '14px 18px', color: '#e2e8f0', fontSize: '13px', fontFamily: 'monospace' }}>
+                  <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'monospace' }}>
                     {p.min_order_qty || p.min_order_size || '0.0001'}
                   </td>
                   <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                    <span style={{ padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: p.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: p.is_active !== false ? '#34d399' : '#f87171' }}>
+                    <span style={{ padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: p.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: p.is_active !== false ? 'var(--success-text)' : 'var(--danger-text)' }}>
                       {p.is_active !== false ? 'ONLINE' : 'HALTED'}
                     </span>
                   </td>
                   <td style={{ padding: '14px 18px', textAlign: 'right' }}>
                     {marketType !== 'futures' && (
                       <>
-                        <button type="button" title="Edit mark and index prices" onClick={() => handleEditPair(p)} style={{ background: 'transparent', border: 'none', color: '#93c5fd', cursor: 'pointer', marginRight: '8px' }}>
+                        <button type="button" title="Edit mark and index prices" onClick={() => handleEditPair(p)} style={{ background: 'transparent', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', marginRight: '8px' }}>
                           <Pencil size={15} />
                         </button>
-                        <button type="button" title="Delete pair" onClick={() => handleDeletePair(p)} style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer' }}>
+                        <button type="button" title="Delete pair" onClick={() => handleDeletePair(p)} style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', cursor: 'pointer' }}>
                           <Trash2 size={16} />
                         </button>
                       </>
@@ -360,30 +360,30 @@ export default function PairsPage() {
       {/* Modal: Add or edit pair */}
       {modalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', width: '100%', maxWidth: editingPair ? '600px' : '480px', padding: '24px' }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', color: '#fff' }}>{editingPair ? `Edit ${editingPair.symbol} Prices` : 'Add Trading Pair'}</h2>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: '16px', width: '100%', maxWidth: editingPair ? '600px' : '480px', padding: '24px' }}>
+            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', color: 'var(--text-primary)' }}>{editingPair ? `Edit ${editingPair.symbol} Prices` : 'Add Trading Pair'}</h2>
             <form onSubmit={editingPair ? handleUpdatePairPrices : handleCreatePair} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Base Asset (e.g. BTC)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Base Asset (e.g. BTC)</label>
                   <input
                     type="text"
                     required
                     value={pairForm.base_asset}
                     disabled={Boolean(editingPair)}
                     onChange={(e) => setPairForm({ ...pairForm, base_asset: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Quote Asset (e.g. USDT)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Quote Asset (e.g. USDT)</label>
                   <input
                     type="text"
                     required
                     value={pairForm.quote_asset}
                     disabled={Boolean(editingPair)}
                     onChange={(e) => setPairForm({ ...pairForm, quote_asset: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }}
                   />
                 </div>
               </div>
@@ -391,39 +391,39 @@ export default function PairsPage() {
               {editingPair ? (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Mark Price</label>
-                    <input type="number" min="0" step="any" required value={pairForm.mark_price} onChange={(e) => setPairForm({ ...pairForm, mark_price: e.target.value })} style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }} />
+                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Mark Price</label>
+                    <input type="number" min="0" step="any" required value={pairForm.mark_price} onChange={(e) => setPairForm({ ...pairForm, mark_price: e.target.value })} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Index Price</label>
-                    <input type="number" min="0" step="any" required value={pairForm.index_price} onChange={(e) => setPairForm({ ...pairForm, index_price: e.target.value })} style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }} />
+                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Index Price</label>
+                    <input type="number" min="0" step="any" required value={pairForm.index_price} onChange={(e) => setPairForm({ ...pairForm, index_price: e.target.value })} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }} />
                   </div>
                 </div>
               ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Price Decimals</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Price Decimals</label>
                   <input
                     type="number"
                     value={pairForm.price_decimals}
                     onChange={(e) => setPairForm({ ...pairForm, price_decimals: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Min Order Qty</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Min Order Qty</label>
                   <input
                     type="text"
                     value={pairForm.min_order_qty}
                     onChange={(e) => setPairForm({ ...pairForm, min_order_qty: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '14px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px' }}
                   />
                 </div>
               </div>
               )}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '14px' }}>
-                <button type="button" onClick={() => { setModalOpen(false); setEditingPair(null); }} style={{ padding: '8px 16px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}>
+                <button type="button" onClick={() => { setModalOpen(false); setEditingPair(null); }} style={{ padding: '8px 16px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                   Cancel
                 </button>
                 <button type="submit" style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>

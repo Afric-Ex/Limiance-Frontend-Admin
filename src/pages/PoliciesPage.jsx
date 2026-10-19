@@ -131,7 +131,7 @@ export default function PoliciesPage() {
   const isMarketHalted = (m) => (emergencyStatus?.halted_markets || []).includes(m);
 
   if (loading && !emergencyStatus) {
-    return <div style={{ padding: '2rem', color: '#fff' }}>Loading emergency controls & policies...</div>;
+    return <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>Loading emergency controls & policies...</div>;
   }
 
   return (
@@ -161,16 +161,16 @@ export default function PoliciesPage() {
       <div
         className="card"
         style={{
-          borderLeft: `4px solid ${circuitBreaker?.is_halted ? '#ef4444' : '#10b981'}`,
-          background: circuitBreaker?.is_halted ? '#2a0a0a' : '#111827',
+          borderLeft: `4px solid ${circuitBreaker?.is_halted ? 'var(--danger)' : 'var(--success)'}`,
+          background: circuitBreaker?.is_halted ? 'var(--danger-bg)' : 'var(--bg-surface-2)',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h3 style={{ margin: 0, color: circuitBreaker?.is_halted ? '#fca5a5' : '#fff', fontSize: '1.2rem' }}>
+            <h3 style={{ margin: 0, color: circuitBreaker?.is_halted ? 'var(--danger-text)' : 'var(--text-primary)', fontSize: '1.2rem' }}>
               Global Trading Circuit Breaker
             </h3>
-            <p style={{ margin: '6px 0 0', color: '#9ca3af', fontSize: '0.875rem' }}>
+            <p style={{ margin: '6px 0 0', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
               {circuitBreaker?.is_halted
                 ? `HALTED by ${circuitBreaker?.halted_by || 'Risk Admin'}: "${circuitBreaker?.reason}" (${circuitBreaker?.halted_at ? new Date(circuitBreaker.halted_at).toLocaleString() : ''})`
                 : 'All matching engines, order placements, and execution flows operating normally.'}
@@ -285,18 +285,18 @@ export default function PoliciesPage() {
               <div
                 key={market}
                 style={{
-                  background: '#1f2937',
+                  background: 'var(--bg-surface-2)',
                   padding: '1.25rem',
                   borderRadius: '8px',
-                  border: `1px solid ${halted ? '#ef4444' : '#374151'}`,
+                  border: `1px solid ${halted ? 'var(--danger)' : 'var(--border-light)'}`,
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}
               >
                 <div>
-                  <h4 style={{ margin: 0, textTransform: 'uppercase', color: '#fff' }}>{market} Market</h4>
-                  <span style={{ fontSize: '12px', color: halted ? '#ef4444' : '#10b981', fontWeight: 'bold' }}>
+                  <h4 style={{ margin: 0, textTransform: 'uppercase', color: 'var(--text-primary)' }}>{market} Market</h4>
+                  <span style={{ fontSize: '12px', color: halted ? 'var(--danger-text)' : 'var(--success)', fontWeight: 'bold' }}>
                     {halted ? 'HALTED' : 'ONLINE'}
                   </span>
                 </div>
@@ -342,9 +342,9 @@ export default function PoliciesPage() {
             style={{
               padding: '10px 14px',
               borderRadius: '6px',
-              border: '1px solid #374151',
-              background: '#1f2937',
-              color: '#fff',
+              border: '1px solid var(--border-light)',
+              background: 'var(--bg-surface-2)',
+              color: 'var(--text-primary)',
               minWidth: '200px',
             }}
           />
@@ -365,15 +365,15 @@ export default function PoliciesPage() {
 
         {emergencyStatus?.halted_symbols && emergencyStatus.halted_symbols.length > 0 && (
           <div style={{ marginTop: '1.5rem' }}>
-            <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#9ca3af' }}>Currently Halted Pairs:</h4>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: 'var(--text-tertiary)' }}>Currently Halted Pairs:</h4>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {emergencyStatus.halted_symbols.map((sym) => (
                 <span
                   key={sym}
                   style={{
                     background: 'rgba(239, 68, 68, 0.15)',
-                    color: '#f87171',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: 'var(--danger-text)',
+                    border: '1px solid var(--danger-border)',
                     padding: '4px 10px',
                     borderRadius: '6px',
                     fontSize: '13px',
@@ -392,7 +392,7 @@ export default function PoliciesPage() {
                         label: `Resume Trading for ${sym}`,
                       })
                     }
-                    style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', fontSize: '14px', padding: 0 }}
+                    style={{ background: 'none', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '14px', padding: 0 }}
                   >
                     ×
                   </button>

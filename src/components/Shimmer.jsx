@@ -73,8 +73,8 @@ export function ShimmerDetailCard({ title = 'Loading Details...' }) {
   return (
     <div
       style={{
-        background: '#13151c',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
         borderRadius: '14px',
         padding: '28px',
         maxWidth: '1200px',
@@ -94,8 +94,8 @@ export function ShimmerDetailCard({ title = 'Loading Details...' }) {
           <div
             key={i}
             style={{
-              background: '#181a22',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: '10px',
               padding: '16px',
               display: 'flex',
@@ -133,7 +133,7 @@ export function PageSpinner({ message = 'Loading...', size = 32, style = {} }) {
           borderWidth: size > 24 ? '3px' : '2px',
         }}
       />
-      {message && <span style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: '13px' }}>{message}</span>}
+      {message && <span style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>{message}</span>}
     </div>
   );
 }

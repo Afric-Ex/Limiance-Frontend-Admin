@@ -4,8 +4,8 @@ import './Charts.css';
 export default function GroupedBarChart({
   data = [],
   series = [
-    { key: 'deposit', name: 'Deposits', color: '#10b981' },
-    { key: 'withdrawal', name: 'Withdrawals', color: '#f59e0b' },
+    { key: 'deposit', name: 'Deposits', color: 'var(--success)' },
+    { key: 'withdrawal', name: 'Withdrawals', color: 'var(--warning-text)' },
   ],
   height = 260,
   valueFormatter = (v) => `$${Number(v).toLocaleString()}`,
@@ -89,13 +89,13 @@ export default function GroupedBarChart({
                 y1={y}
                 x2={width - margins.right}
                 y2={y}
-                stroke="rgba(255,255,255,0.06)"
+                style={{ stroke: 'var(--border-subtle)' }}
                 strokeDasharray="3 3"
               />
               <text
                 x={margins.left - 10}
                 y={y + 4}
-                fill="rgba(255,255,255,0.4)"
+                style={{ fill: 'var(--text-muted)' }}
                 fontSize="11"
                 fontFamily="var(--font-mono, monospace)"
                 textAnchor="end"
@@ -124,7 +124,7 @@ export default function GroupedBarChart({
                   y={margins.top}
                   width={groupWidth}
                   height={plotHeight}
-                  fill="rgba(255, 255, 255, 0.03)"
+                  style={{ fill: 'var(--overlay-1)' }}
                   rx={4}
                 />
               )}
@@ -143,12 +143,12 @@ export default function GroupedBarChart({
                     y={barY}
                     width={barWidth - 2}
                     height={Math.max(1, barH)}
-                    fill={s.color}
                     opacity={isHovered ? 1 : 0.82}
                     rx={3}
                     style={{
+                      fill: s.color,
                       transition: 'opacity 0.15s ease, y 0.2s ease, height 0.2s ease',
-                      filter: isHovered ? `drop-shadow(0 0 8px ${s.color}80)` : 'none',
+                      filter: isHovered ? `drop-shadow(0 0 8px color-mix(in srgb, ${s.color} 50%, transparent))` : 'none',
                     }}
                   />
                 );
@@ -159,7 +159,7 @@ export default function GroupedBarChart({
                 <text
                   x={groupX + groupWidth / 2}
                   y={height - 10}
-                  fill={isHovered ? '#ffffff' : 'rgba(255,255,255,0.45)'}
+                  style={{ fill: isHovered ? 'var(--text-primary)' : 'var(--text-tertiary)' }}
                   fontSize="11"
                   fontWeight={isHovered ? 600 : 400}
                   fontFamily="var(--font-mono, monospace)"
@@ -203,12 +203,12 @@ export default function GroupedBarChart({
             <div
               className="tooltip-row"
               style={{
-                borderTop: '1px solid rgba(255,255,255,0.08)',
+                borderTop: '1px solid var(--border)',
                 paddingTop: '4px',
                 marginTop: '4px',
               }}
             >
-              <span className="tooltip-series-name" style={{ color: '#94a3b8' }}>
+              <span className="tooltip-series-name" style={{ color: 'var(--text-tertiary)' }}>
                 Net Treasury
               </span>
               {(() => {
@@ -217,7 +217,7 @@ export default function GroupedBarChart({
                 return (
                   <span
                     className="tooltip-val"
-                    style={{ color: isPos ? '#34d399' : '#f87171' }}
+                    style={{ color: isPos ? 'var(--success-text)' : 'var(--danger-text)' }}
                   >
                     {isPos ? '+' : ''}
                     {valueFormatter(net)}

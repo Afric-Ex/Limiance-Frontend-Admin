@@ -132,19 +132,19 @@ export default function RolesPage() {
 
         <form onSubmit={handleCreateOperator} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginTop: '1rem', alignItems: 'end' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '6px' }}>Operator Email</label>
+            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>Operator Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="operator@limiance.com"
               required
-              style={{ width: '100%', padding: '10px 12px', background: '#1f2937', border: '1px solid #374151', color: '#fff', borderRadius: '6px', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '10px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '6px', boxSizing: 'border-box' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '6px' }}>Initial Password (min 8 chars)</label>
+            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>Initial Password (min 8 chars)</label>
             <input
               type="password"
               value={password}
@@ -152,16 +152,16 @@ export default function RolesPage() {
               placeholder="••••••••••••"
               required
               minLength={8}
-              style={{ width: '100%', padding: '10px 12px', background: '#1f2937', border: '1px solid #374151', color: '#fff', borderRadius: '6px', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '10px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '6px', boxSizing: 'border-box' }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '6px' }}>System Role</label>
+            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>System Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', background: '#1f2937', border: '1px solid #374151', color: '#fff', borderRadius: '6px', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '10px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '6px', boxSizing: 'border-box' }}
             >
               {OPERATOR_ROLES.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -200,7 +200,7 @@ export default function RolesPage() {
         <div style={{ marginTop: '1rem', overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #374151', color: '#9ca3af' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-tertiary)' }}>
                 <th style={{ padding: '12px' }}>Operator ID</th>
                 <th style={{ padding: '12px' }}>Email</th>
                 <th style={{ padding: '12px' }}>Role</th>
@@ -214,7 +214,7 @@ export default function RolesPage() {
                 <ShimmerTableRows rows={5} cols={6} colWidths={['20%', '30%', '15%', '15%', '20%', '15%']} />
               ) : operators.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>
+                  <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
                     No operators found.
                   </td>
                 </tr>
@@ -222,18 +222,18 @@ export default function RolesPage() {
                 operators.map((op) => {
                   const isCurrent = op.email === user?.email;
                   return (
-                    <tr key={op.id} style={{ borderBottom: '1px solid #1f2937' }}>
-                      <td style={{ padding: '12px', fontFamily: 'monospace', color: '#9ca3af', fontSize: '12px' }}>
+                    <tr key={op.id} style={{ borderBottom: '1px solid var(--border-medium)' }}>
+                      <td style={{ padding: '12px', fontFamily: 'monospace', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                         {op.id}
                       </td>
-                      <td style={{ padding: '12px', fontWeight: '500', color: '#fff' }}>
-                        {op.email} {isCurrent && <span style={{ color: '#60a5fa', fontSize: '11px' }}>(You)</span>}
+                      <td style={{ padding: '12px', fontWeight: '500', color: 'var(--text-primary)' }}>
+                        {op.email} {isCurrent && <span style={{ color: 'var(--accent-blue)', fontSize: '11px' }}>(You)</span>}
                       </td>
                       <td style={{ padding: '12px' }}>
                         <span
                           style={{
                             background: op.role === 'superadmin' ? '#7c3aed22' : '#2563eb22',
-                            color: op.role === 'superadmin' ? '#c084fc' : '#60a5fa',
+                            color: op.role === 'superadmin' ? 'var(--accent-purple)' : 'var(--accent-blue)',
                             padding: '3px 10px',
                             borderRadius: '9999px',
                             fontSize: '12px',
@@ -247,7 +247,7 @@ export default function RolesPage() {
                       <td style={{ padding: '12px' }}>
                         <span
                           style={{
-                            color: op.is_active ? '#34d399' : '#ef4444',
+                            color: op.is_active ? 'var(--success-text)' : 'var(--danger-text)',
                             fontWeight: '600',
                             fontSize: '13px',
                           }}
@@ -255,7 +255,7 @@ export default function RolesPage() {
                           {op.is_active ? 'Active' : 'Disabled'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px', color: '#9ca3af', fontSize: '12px' }}>
+                      <td style={{ padding: '12px', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                         {op.created_at ? new Date(op.created_at).toLocaleDateString() : '—'}
                       </td>
                       <td style={{ padding: '12px' }}>

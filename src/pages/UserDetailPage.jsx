@@ -356,7 +356,7 @@ export default function UserDetailPage() {
 
   if (modalLoading) {
     return (
-      <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
+      <div style={{ padding: "80px 0", textAlign: "center", color: "var(--text-tertiary)" }}>
         <RefreshCw size={28} className="animate-spin" style={{ margin: "0 auto 12px" }} />
         <div>Loading user 360 profile...</div>
       </div>
@@ -366,15 +366,15 @@ export default function UserDetailPage() {
   if (!selectedUser) {
     return (
       <div style={{ padding: "60px 0", textAlign: "center" }}>
-        <h2 style={{ color: "#fff" }}>User Not Found</h2>
+        <h2 style={{ color: "var(--text-primary)" }}>User Not Found</h2>
         <button
           onClick={() => navigate("/users")}
           style={{
             marginTop: "16px",
             padding: "8px 16px",
-            background: "#1c1e28",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             borderRadius: "8px",
             cursor: "pointer",
           }}
@@ -414,9 +414,9 @@ export default function UserDetailPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            background: "#181a22",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             padding: "8px 16px",
             borderRadius: "8px",
             cursor: "pointer",
@@ -431,8 +431,8 @@ export default function UserDetailPage() {
 
       <div
         style={{
-          background: "#13151c",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-medium)",
           borderRadius: "16px",
           width: "100%",
           display: "flex",
@@ -442,31 +442,31 @@ export default function UserDetailPage() {
         }}
       >
             {/* Modal Header */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#161822', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', background: '#161822', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
                     {selectedUser.email || selectedUser.username || selectedUser.id}
                   </h2>
                   {isSelectedFrozen ? (
-                    <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                    <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger-text)', border: '1px solid var(--danger-border)' }}>
                       ❄️ FROZEN
                     </span>
                   ) : (
-                    <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                    <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(16, 185, 129, 0.12)', color: 'var(--success-text)', border: '1px solid var(--success-border)' }}>
                       ACTIVE
                     </span>
                   )}
-                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(99, 102, 241, 0.14)', color: '#a5b4fc', border: '1px solid rgba(99, 102, 241, 0.25)' }}>
+                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: 'rgba(99, 102, 241, 0.14)', color: 'var(--info-text)', border: '1px solid var(--info-border)' }}>
                     KYC Tier {selectedUser.kyc_tier || 0} ({selectedUser.kyc_status || 'UNVERIFIED'})
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                   <span>User ID:</span>
-                  <code style={{ color: '#818cf8', background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: '4px' }}>
+                  <code style={{ color: 'var(--info-text)', background: 'var(--overlay-2)', padding: '1px 6px', borderRadius: '4px' }}>
                     {selectedUser.id}
                   </code>
-                  <button onClick={() => copyToClipboard(selectedUser.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: 0 }}>
+                  <button onClick={() => copyToClipboard(selectedUser.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}>
                     <Copy size={12} />
                   </button>
                   {selectedUser.created_at && (
@@ -478,12 +478,12 @@ export default function UserDetailPage() {
               <button
                 onClick={() => navigate("/users")}
                 style={{
-                  background: 'rgba(255,255,255,0.08)',
+                  background: 'var(--overlay-3)',
                   border: 'none',
                   borderRadius: '8px',
                   width: '32px',
                   height: '32px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -495,7 +495,7 @@ export default function UserDetailPage() {
             </div>
 
             {/* Navigation Tabs */}
-            <div style={{ display: 'flex', gap: '2px', background: '#0e1017', padding: '6px 20px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-deep)', padding: '6px 20px 0', borderBottom: '1px solid var(--border-subtle)', overflowX: 'auto' }}>
               {[
                 { id: 'overview', label: 'Overview & Controls', icon: Shield },
                 { id: 'wallets', label: 'Custodial Wallets', icon: Wallet },
@@ -518,12 +518,12 @@ export default function UserDetailPage() {
                       padding: '10px 16px',
                       borderRadius: '8px 8px 0 0',
                       border: 'none',
-                      background: active ? '#13151c' : 'transparent',
-                      color: active ? '#818cf8' : 'rgba(255,255,255,0.5)',
+                      background: active ? 'var(--bg-card)' : 'transparent',
+                      color: active ? 'var(--info-text)' : 'var(--text-tertiary)',
                       fontWeight: 600,
                       fontSize: '13px',
                       cursor: 'pointer',
-                      borderBottom: active ? '2px solid #818cf8' : '2px solid transparent',
+                      borderBottom: active ? '2px solid var(--info-text)' : '2px solid transparent',
                     }}
                   >
                     <Icon size={14} /> {t.label}
@@ -538,65 +538,65 @@ export default function UserDetailPage() {
               {activeTab === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {/* User Profile & Bio-Data Card */}
-                  <div style={{ background: '#181a22', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '20px' }}>
-                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '20px' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       User Profile & Bio-Data
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Full Name</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Full Name</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                           {selectedUser.first_name || selectedUser.last_name
                             ? `${selectedUser.first_name || ''} ${selectedUser.last_name || ''}`.trim()
                             : selectedUser.name || 'Not Specified'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Primary Email</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#818cf8', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Primary Email</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--info-text)', marginTop: '4px' }}>
                           {selectedUser.email || '—'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Username</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Username</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                           {selectedUser.username ? `@${selectedUser.username}` : 'None Set'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Phone Number</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Phone Number</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                           {selectedUser.phone || selectedUser.phone_number || 'None Linked'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Country / Region</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#34d399', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Country / Region</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--success-text)', marginTop: '4px' }}>
                           {selectedUser.country || selectedUser.nationality || 'Not Specified'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Referral Code</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#fbbf24', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Referral Code</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--warning-text)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
                           {selectedUser.referral_code || '—'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Referred By</div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Referred By</div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
                           {selectedUser.referred_by || 'None'}
                         </div>
                       </div>
 
-                      <div style={{ background: '#13151c', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Registration Date</div>
-                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#cbd5e1', marginTop: '4px' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Registration Date</div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                           {selectedUser.created_at ? new Date(selectedUser.created_at).toLocaleString() : '—'}
                         </div>
                       </div>
@@ -604,13 +604,13 @@ export default function UserDetailPage() {
                   </div>
 
                   {/* Emergency Freeze Banner */}
-                  <div style={{ padding: '16px 20px', borderRadius: '12px', background: isSelectedFrozen ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.08)', border: isSelectedFrozen ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(245,158,11,0.25)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div style={{ padding: '16px 20px', borderRadius: '12px', background: isSelectedFrozen ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.08)', border: isSelectedFrozen ? '1px solid var(--danger-border)' : '1px solid var(--warning-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                     <div>
-                      <div style={{ fontWeight: 700, color: isSelectedFrozen ? '#f87171' : '#fbbf24', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ fontWeight: 700, color: isSelectedFrozen ? 'var(--danger-text)' : 'var(--warning-text)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <ShieldAlert size={18} />
                         {isSelectedFrozen ? 'ACCOUNT CURRENTLY FROZEN' : 'EMERGENCY KILL SWITCH'}
                       </div>
-                      <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>
+                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
                         {isSelectedFrozen
                           ? 'All trading, withdrawals, and deposits are fully suspended for this account.'
                           : 'Instantly lock down trading, withdrawal execution, and deposit crediting in case of suspicious behavior or compromise.'}
@@ -636,62 +636,62 @@ export default function UserDetailPage() {
                   </div>
 
                   {/* Granular Permission Toggles */}
-                  <div style={{ background: '#181a22', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px' }}>
-                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Granular Capability Toggles
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
                       {/* Trading Toggle */}
-                      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.06)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Spot & Futures Trading</div>
-                          <div style={{ fontSize: '11px', color: selectedUser.trading_enabled !== false ? '#34d399' : '#f87171' }}>{selectedUser.trading_enabled !== false ? 'Active' : 'Disabled'}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Spot & Futures Trading</div>
+                          <div style={{ fontSize: '11px', color: selectedUser.trading_enabled !== false ? 'var(--success-text)' : 'var(--danger-text)' }}>{selectedUser.trading_enabled !== false ? 'Active' : 'Disabled'}</div>
                         </div>
                         <button
                           onClick={() => executeUserAction(selectedUser.trading_enabled !== false ? 'disable-trading' : 'enable-trading', 'Toggle Trading')}
-                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.trading_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.trading_enabled !== false ? '#f87171' : '#34d399' }}
+                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.trading_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.trading_enabled !== false ? 'var(--danger-text)' : 'var(--success-text)' }}
                         >
                           {selectedUser.trading_enabled !== false ? 'Disable' : 'Enable'}
                         </button>
                       </div>
 
                       {/* Withdrawals Toggle */}
-                      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.06)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Withdrawals</div>
-                          <div style={{ fontSize: '11px', color: selectedUser.withdrawals_enabled !== false ? '#34d399' : '#f87171' }}>{selectedUser.withdrawals_enabled !== false ? 'Active' : 'Disabled'}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Withdrawals</div>
+                          <div style={{ fontSize: '11px', color: selectedUser.withdrawals_enabled !== false ? 'var(--success-text)' : 'var(--danger-text)' }}>{selectedUser.withdrawals_enabled !== false ? 'Active' : 'Disabled'}</div>
                         </div>
                         <button
                           onClick={() => executeUserAction(selectedUser.withdrawals_enabled !== false ? 'disable-withdrawals' : 'enable-withdrawals', 'Toggle Withdrawals')}
-                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.withdrawals_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.withdrawals_enabled !== false ? '#f87171' : '#34d399' }}
+                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.withdrawals_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.withdrawals_enabled !== false ? 'var(--danger-text)' : 'var(--success-text)' }}
                         >
                           {selectedUser.withdrawals_enabled !== false ? 'Disable' : 'Enable'}
                         </button>
                       </div>
 
                       {/* Deposits Toggle */}
-                      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.06)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Deposits</div>
-                          <div style={{ fontSize: '11px', color: selectedUser.deposits_enabled !== false ? '#34d399' : '#f87171' }}>{selectedUser.deposits_enabled !== false ? 'Active' : 'Disabled'}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Deposits</div>
+                          <div style={{ fontSize: '11px', color: selectedUser.deposits_enabled !== false ? 'var(--success-text)' : 'var(--danger-text)' }}>{selectedUser.deposits_enabled !== false ? 'Active' : 'Disabled'}</div>
                         </div>
                         <button
                           onClick={() => executeUserAction(selectedUser.deposits_enabled !== false ? 'disable-deposits' : 'enable-deposits', 'Toggle Deposits')}
-                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.deposits_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.deposits_enabled !== false ? '#f87171' : '#34d399' }}
+                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.deposits_enabled !== false ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.deposits_enabled !== false ? 'var(--danger-text)' : 'var(--success-text)' }}
                         >
                           {selectedUser.deposits_enabled !== false ? 'Disable' : 'Enable'}
                         </button>
                       </div>
 
                       {/* Custodial Wallet Toggle */}
-                      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.06)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Custodial Wallet Access</div>
-                          <div style={{ fontSize: '11px', color: selectedUser.is_wallet_enabled ? '#34d399' : '#f87171' }}>{selectedUser.is_wallet_enabled ? 'Active' : 'Disabled'}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Custodial Wallet Access</div>
+                          <div style={{ fontSize: '11px', color: selectedUser.is_wallet_enabled ? 'var(--success-text)' : 'var(--danger-text)' }}>{selectedUser.is_wallet_enabled ? 'Active' : 'Disabled'}</div>
                         </div>
                         <button
                           onClick={() => executeUserAction(selectedUser.is_wallet_enabled ? 'wallet_disable' : 'wallet_enable', 'Toggle Wallet Access')}
-                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.is_wallet_enabled ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.is_wallet_enabled ? '#f87171' : '#34d399' }}
+                          style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', background: selectedUser.is_wallet_enabled ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', color: selectedUser.is_wallet_enabled ? 'var(--danger-text)' : 'var(--success-text)' }}
                         >
                           {selectedUser.is_wallet_enabled ? 'Disable' : 'Enable'}
                         </button>
@@ -702,17 +702,17 @@ export default function UserDetailPage() {
                   {/* Security & KYC Overrides */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
                     {/* KYC Tier Override */}
-                    <div style={{ background: '#181a22', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px' }}>
-                      <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px' }}>
+                      <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Manual KYC Level Override
                       </h3>
                       <form onSubmit={handleKycOverride} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <div>
-                          <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Verification Status</label>
+                          <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Verification Status</label>
                           <select
                             value={newKycStatus}
                             onChange={(e) => setNewKycStatus(e.target.value)}
-                            style={{ width: '100%', padding: '8px 12px', background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                            style={{ width: '100%', padding: '8px 12px', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}
                           >
                             <option value="VERIFIED">VERIFIED (Approved)</option>
                             <option value="APPROVED">APPROVED</option>
@@ -725,11 +725,11 @@ export default function UserDetailPage() {
                         </div>
 
                         <div>
-                          <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>KYC Tier Bracket</label>
+                          <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>KYC Tier Bracket</label>
                           <select
                             value={newKycTier}
                             onChange={(e) => setNewKycTier(parseInt(e.target.value, 10))}
-                            style={{ width: '100%', padding: '8px 12px', background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                            style={{ width: '100%', padding: '8px 12px', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}
                           >
                             <option value={0}>Tier 0 (Unverified / Restricted)</option>
                             <option value={1}>Tier 1 (Basic Identity Verified)</option>
@@ -748,12 +748,12 @@ export default function UserDetailPage() {
                     </div>
 
                     {/* Security Authentication Overrides */}
-                    <div style={{ background: '#181a22', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
-                        <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           Security & Authenticator Actions
                         </h3>
-                        <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
+                        <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                           Reset lost 2FA Google Authenticator devices, or manage government ID verification overrides directly.
                         </p>
                       </div>
@@ -761,20 +761,20 @@ export default function UserDetailPage() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <button
                           onClick={() => executeUserAction('reset-2fa', 'Reset 2FA Authenticator')}
-                          style={{ padding: '10px', background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '6px', color: '#fbbf24', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                          style={{ padding: '10px', background: 'rgba(245,158,11,0.12)', border: '1px solid var(--warning-border)', borderRadius: '6px', color: 'var(--warning-text)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
                         >
                           Reset User Two-Factor (2FA)
                         </button>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button
                             onClick={() => executeUserAction(selectedUser.is_id_verified ? 'id_unverify' : 'id_verify', 'Toggle ID Verification')}
-                            style={{ flex: 1, padding: '8px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                            style={{ flex: 1, padding: '8px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                           >
                             {selectedUser.is_id_verified ? 'Revoke Gov ID Verify' : 'Mark Gov ID Verified'}
                           </button>
                           <button
                             onClick={() => executeUserAction(selectedUser.is_active ? 'deactivate' : 'activate', 'Toggle Active Status')}
-                            style={{ flex: 1, padding: '8px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                            style={{ flex: 1, padding: '8px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                           >
                             {selectedUser.is_active ? 'Deactivate User' : 'Activate User'}
                           </button>
@@ -789,33 +789,33 @@ export default function UserDetailPage() {
               {activeTab === 'wallets' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Assigned on-chain deposit addresses and custodial wallets across blockchains.
                     </div>
                     <button
                       onClick={() => fetchUserWallets(selectedUser.id)}
-                      style={{ padding: '6px 12px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+                      style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
                     >
                       <RefreshCw size={12} /> Refresh
                     </button>
                   </div>
 
                   {walletsLoading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading wallets...</div>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading wallets...</div>
                   ) : userWallets.length === 0 ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No custodial wallets provisioned yet.
                     </div>
                   ) : (
-                    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Blockchain Network</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Address</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Type</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Status</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+                          <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Blockchain Network</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Address</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Type</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -829,46 +829,46 @@ export default function UserDetailPage() {
                             ) : 'Custodial Deposit';
 
                             return (
-                              <tr key={w.id || Math.random()} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <tr key={w.id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                                 <td style={{ padding: '12px 14px' }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <span style={{ padding: '3px 8px', borderRadius: '4px', background: net.bg, color: net.color, fontWeight: 700, fontSize: '11px', letterSpacing: '0.04em' }}>
                                       {net.symbol}
                                     </span>
-                                    <span style={{ color: '#fff', fontSize: '13px', fontWeight: 600 }}>
+                                    <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600 }}>
                                       {net.name}
                                     </span>
                                   </div>
                                 </td>
                                 <td style={{ padding: '12px 14px' }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: '#e2e8f0' }}>
+                                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: 'var(--text-primary)' }}>
                                       {w.address || 'Pending HD Derivation'}
                                     </span>
                                     {w.address && (
-                                      <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
+                                      <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                                         <Copy size={12} />
                                       </button>
                                     )}
                                   </div>
                                   {w.tag && (
-                                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>
                                       Tag/Memo: {w.tag}
                                     </div>
                                   )}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                                   {walletType}
                                 </td>
                                 <td style={{ padding: '12px 14px' }}>
-                                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '10px', fontWeight: 700, background: isWalletActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isWalletActive ? '#34d399' : '#f87171' }}>
+                                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '10px', fontWeight: 700, background: isWalletActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isWalletActive ? 'var(--success-text)' : 'var(--danger-text)' }}>
                                     {w.status || (isWalletActive ? 'ACTIVE' : 'SUSPENDED')}
                                   </span>
                                 </td>
                                 <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                                   <button
                                     onClick={() => handleWalletStatus(w.id, isWalletActive ? 'suspend' : 'reactivate')}
-                                    style={{ padding: '4px 10px', borderRadius: '4px', background: isWalletActive ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', border: '1px solid rgba(255,255,255,0.1)', color: isWalletActive ? '#f87171' : '#34d399', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}
+                                    style={{ padding: '4px 10px', borderRadius: '4px', background: isWalletActive ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)', border: '1px solid var(--border-medium)', color: isWalletActive ? 'var(--danger-text)' : 'var(--success-text)', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}
                                   >
                                     {isWalletActive ? 'Suspend' : 'Reactivate'}
                                   </button>
@@ -902,8 +902,8 @@ export default function UserDetailPage() {
                           padding: '6px 14px',
                           borderRadius: '6px',
                           border: 'none',
-                          background: portfolioCategory === pill.value ? '#4d77f0' : 'rgba(255,255,255,0.06)',
-                          color: portfolioCategory === pill.value ? '#fff' : 'rgba(255,255,255,0.7)',
+                          background: portfolioCategory === pill.value ? '#4d77f0' : 'var(--overlay-2)',
+                          color: portfolioCategory === pill.value ? '#fff' : 'var(--text-secondary)',
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -926,7 +926,7 @@ export default function UserDetailPage() {
                             fetchUserPortfolio(selectedUser.id, portfolioSearch);
                           }
                         }}
-                        style={{ padding: '8px 12px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '13px', width: '280px' }}
+                        style={{ padding: '8px 12px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px', width: '280px' }}
                       />
                       <button
                         onClick={() => fetchUserPortfolio(selectedUser.id, portfolioSearch)}
@@ -937,29 +937,29 @@ export default function UserDetailPage() {
                     </div>
                     <button
                       onClick={() => fetchUserPortfolio(selectedUser.id, portfolioSearch)}
-                      style={{ padding: '6px 12px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+                      style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
                     >
                       <RefreshCw size={12} /> Refresh
                     </button>
                   </div>
 
                   {portfolioLoading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading asset balances...</div>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading asset balances...</div>
                   ) : filteredPortfolio.length === 0 ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No assets found in user portfolio matching current filter.
                     </div>
                   ) : (
-                    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Asset</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Spot Balance</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Funding Balance</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Futures Margin</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>In Orders (Locked)</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textAlign: 'right' }}>Est. Value (USD)</th>
+                          <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Asset</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Spot Balance</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Funding Balance</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Futures Margin</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>In Orders (Locked)</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Est. Value (USD)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -973,26 +973,26 @@ export default function UserDetailPage() {
                             const usdValue = item.usd_value ? parseFloat(item.usd_value) : (total * price);
 
                             return (
-                              <tr key={item.symbol || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                <td style={{ padding: '12px 14px', fontWeight: 700, color: '#fff', fontSize: '13px' }}>
-                                  <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(99,102,241,0.15)', color: '#818cf8', marginRight: '8px' }}>
+                              <tr key={item.symbol || idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                                <td style={{ padding: '12px 14px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '13px' }}>
+                                  <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(99,102,241,0.15)', color: 'var(--info-text)', marginRight: '8px' }}>
                                     {item.symbol || item.currency || '—'}
                                   </span>
                                   {item.name || ''}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#34d399' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--success-text)' }}>
                                   {item.spot_balance || item.available || item.free || '0.00'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#60a5fa' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--accent-blue)' }}>
                                   {item.funding_balance || '0.00'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#a78bfa' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--accent-purple)' }}>
                                   {item.futures_balance || '0.00'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#fbbf24' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--warning-text)' }}>
                                   {item.locked_balance || item.locked || item.in_orders || '0.00'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', textAlign: 'right', color: '#94a3b8' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', textAlign: 'right', color: 'var(--text-tertiary)' }}>
                                   ${usdValue ? usdValue.toFixed(2) : '0.00'}
                                 </td>
                               </tr>
@@ -1009,34 +1009,34 @@ export default function UserDetailPage() {
               {activeTab === 'trades' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Historical filled orders and trade executions ({tradesTotal} records).
                     </div>
                     <button
                       onClick={() => fetchUserTrades(selectedUser.id, tradesPage)}
-                      style={{ padding: '6px 12px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+                      style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
                     >
                       <RefreshCw size={12} /> Refresh
                     </button>
                   </div>
 
                   {tradesLoading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading trades...</div>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading trades...</div>
                   ) : userTrades.length === 0 ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No trades found for this user.
                     </div>
                   ) : (
-                    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Pair</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Side</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Price</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Quantity</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Fee</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textAlign: 'right' }}>Date</th>
+                          <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Pair</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Side</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Price</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Quantity</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Fee</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Date</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1045,25 +1045,25 @@ export default function UserDetailPage() {
                             const isBuy = side === 'buy';
                             const date = t.CreatedAt || t.created_at;
                             return (
-                              <tr key={t.ID || t.id || Math.random()} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                <td style={{ padding: '12px 14px', fontWeight: 700, color: '#fff', fontSize: '13px' }}>
+                              <tr key={t.ID || t.id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                                <td style={{ padding: '12px 14px', fontWeight: 700, color: 'var(--text-primary)', fontSize: '13px' }}>
                                   {t.symbol || t.Symbol || '—'}
                                 </td>
                                 <td style={{ padding: '12px 14px' }}>
-                                  <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, background: isBuy ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', color: isBuy ? '#34d399' : '#f87171' }}>
+                                  <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, background: isBuy ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', color: isBuy ? 'var(--success-text)' : 'var(--danger-text)' }}>
                                     {(t.side || t.Side || 'TRADE').toUpperCase()}
                                   </span>
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#e2e8f0' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-primary)' }}>
                                   {t.price || t.Price || '—'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: '#fff' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-primary)' }}>
                                   {t.quantity || t.Quantity || '—'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '12px', color: '#fbbf24' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '12px', color: 'var(--warning-text)' }}>
                                   {t.fee || t.Fee || '0'} {t.FeeAsset || t.fee_asset || ''}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'right' }}>
                                   {date ? new Date(date).toLocaleString() : '—'}
                                 </td>
                               </tr>
@@ -1073,22 +1073,22 @@ export default function UserDetailPage() {
                       </table>
 
                       {tradesTotalPages > 1 && (
-                        <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#181a22' }}>
-                          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                        <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-surface)' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
                             Page {tradesPage} of {tradesTotalPages}
                           </span>
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button
                               disabled={tradesPage <= 1}
                               onClick={() => setTradesPage((p) => Math.max(1, p - 1))}
-                              style={{ padding: '4px 10px', borderRadius: '4px', background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', color: tradesPage <= 1 ? 'rgba(255,255,255,0.2)' : '#fff', cursor: tradesPage <= 1 ? 'not-allowed' : 'pointer', fontSize: '11px' }}
+                              style={{ padding: '4px 10px', borderRadius: '4px', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', color: tradesPage <= 1 ? 'var(--text-faint)' : 'var(--text-primary)', cursor: tradesPage <= 1 ? 'not-allowed' : 'pointer', fontSize: '11px' }}
                             >
                               Prev
                             </button>
                             <button
                               disabled={tradesPage >= tradesTotalPages}
                               onClick={() => setTradesPage((p) => p + 1)}
-                              style={{ padding: '4px 10px', borderRadius: '4px', background: '#13151c', border: '1px solid rgba(255,255,255,0.1)', color: tradesPage >= tradesTotalPages ? 'rgba(255,255,255,0.2)' : '#fff', cursor: tradesPage >= tradesTotalPages ? 'not-allowed' : 'pointer', fontSize: '11px' }}
+                              style={{ padding: '4px 10px', borderRadius: '4px', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', color: tradesPage >= tradesTotalPages ? 'var(--text-faint)' : 'var(--text-primary)', cursor: tradesPage >= tradesTotalPages ? 'not-allowed' : 'pointer', fontSize: '11px' }}
                             >
                               Next
                             </button>
@@ -1104,13 +1104,13 @@ export default function UserDetailPage() {
               {activeTab === 'apikeys' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Active programmatic API credentials provisioned by user.
                     </div>
                     {userApiKeys.length > 0 && (
                       <button
                         onClick={handleRevokeAllApiKeys}
-                        style={{ padding: '6px 14px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '6px', color: '#f87171', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                        style={{ padding: '6px 14px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--danger-border)', borderRadius: '6px', color: 'var(--danger-text)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                       >
                         Revoke All API Keys
                       </button>
@@ -1118,22 +1118,22 @@ export default function UserDetailPage() {
                   </div>
 
                   {apiKeysLoading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading keys...</div>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading keys...</div>
                   ) : userApiKeys.length === 0 ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No API keys provisioned for this user.
                     </div>
                   ) : (
-                    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Key ID / Label</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Permissions</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Created</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Last Used</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Status</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+                          <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Key ID / Label</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Permissions</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Created</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Last Used</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1146,22 +1146,22 @@ export default function UserDetailPage() {
                             const lastUsedAt = k.LastUsedAt || k.last_used_at;
 
                             return (
-                              <tr key={keyId || Math.random()} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <tr key={keyId || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                                 <td style={{ padding: '12px 14px' }}>
-                                  <div style={{ fontWeight: 600, color: '#fff', fontSize: '13px' }}>{label}</div>
-                                  <div style={{ fontFamily: 'monospace', fontSize: '11px', color: '#94a3b8' }}>{keyId}</div>
+                                  <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{label}</div>
+                                  <div style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-tertiary)' }}>{keyId}</div>
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                                   {perms}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                                   {createdAt ? new Date(createdAt).toLocaleDateString() : '—'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                                   {lastUsedAt ? new Date(lastUsedAt).toLocaleString() : 'Never'}
                                 </td>
                                 <td style={{ padding: '12px 14px' }}>
-                                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '10px', fontWeight: 700, background: isActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isActive ? '#34d399' : '#f87171' }}>
+                                  <span style={{ padding: '2px 8px', borderRadius: '9999px', fontSize: '10px', fontWeight: 700, background: isActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isActive ? 'var(--success-text)' : 'var(--danger-text)' }}>
                                     {isActive ? 'ACTIVE' : 'REVOKED'}
                                   </span>
                                 </td>
@@ -1169,7 +1169,7 @@ export default function UserDetailPage() {
                                   {isActive && (
                                     <button
                                       onClick={() => handleRevokeApiKey(keyId)}
-                                      style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                                      style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--danger-border)', color: 'var(--danger-text)', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                                     >
                                       Revoke
                                     </button>
@@ -1189,33 +1189,33 @@ export default function UserDetailPage() {
               {activeTab === 'logs' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                       Audit records of recent authentication events.
                     </div>
                     <button
                       onClick={() => fetchUserLoginLogs(selectedUser.id)}
-                      style={{ padding: '6px 12px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+                      style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
                     >
                       <RefreshCw size={12} /> Refresh
                     </button>
                   </div>
 
                   {logsLoading ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading logs...</div>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading logs...</div>
                   ) : userLoginLogs.length === 0 ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No sign-in history recorded.
                     </div>
                   ) : (
-                    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
-                          <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Timestamp</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>IP Address</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Location</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Device / Client</th>
-                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textAlign: 'right' }}>Status</th>
+                          <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Timestamp</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>IP Address</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Location</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Device / Client</th>
+                            <th style={{ padding: '10px 14px', fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1227,17 +1227,17 @@ export default function UserDetailPage() {
                             const isSuccess = l.Success !== undefined ? l.Success : (l.success !== undefined ? l.success : true);
 
                             return (
-                              <tr key={l.ID || l.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                <td style={{ padding: '12px 14px', fontSize: '13px', color: '#fff' }}>
+                              <tr key={l.ID || l.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '13px', color: 'var(--text-primary)' }}>
                                   {date ? new Date(date).toLocaleString() : '—'}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '12px', color: '#818cf8' }}>
+                                <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontSize: '12px', color: 'var(--info-text)' }}>
                                   {ip}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: '#cbd5e1' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-primary)' }}>
                                   {loc}
                                 </td>
-                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                                <td style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                                   {device}
                                 </td>
                                 <td style={{ padding: '12px 14px', textAlign: 'right' }}>
@@ -1247,7 +1247,7 @@ export default function UserDetailPage() {
                                     fontSize: '10px',
                                     fontWeight: 700,
                                     background: isSuccess ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
-                                    color: isSuccess ? '#34d399' : '#f87171',
+                                    color: isSuccess ? 'var(--success-text)' : 'var(--danger-text)',
                                   }}>
                                     {isSuccess ? 'SUCCESS' : 'FAILED'}
                                   </span>
@@ -1267,10 +1267,10 @@ export default function UserDetailPage() {
                 <div style={{ padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Sliders size={18} style={{ color: '#818cf8' }} /> User Account Preferences & Notification Settings
+                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Sliders size={18} style={{ color: 'var(--info-text)' }} /> User Account Preferences & Notification Settings
                       </h3>
-                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-tertiary)' }}>
                         Manage user localization, security whitelisting, notification rules, and trading fee deduction settings.
                       </p>
                     </div>
@@ -1279,9 +1279,9 @@ export default function UserDetailPage() {
                         onClick={() => fetchUserSettings(selectedUser.id)}
                         disabled={settingsLoading}
                         style={{
-                          background: '#1f222e',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          color: '#fff',
+                          background: 'var(--bg-surface-elevated)',
+                          border: '1px solid var(--border-medium)',
+                          color: 'var(--text-primary)',
                           borderRadius: '8px',
                           padding: '7px 14px',
                           cursor: 'pointer',
@@ -1298,7 +1298,7 @@ export default function UserDetailPage() {
                         onClick={handleUpdateSettings}
                         disabled={savingSettings || settingsLoading || !userSettings}
                         style={{
-                          background: '#6366f1',
+                          background: 'var(--info)',
                           border: 'none',
                           color: '#fff',
                           borderRadius: '8px',
@@ -1318,23 +1318,23 @@ export default function UserDetailPage() {
                   </div>
 
                   {settingsLoading ? (
-                    <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                    <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
                       Loading preferences...
                     </div>
                   ) : !userSettings ? (
-                    <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: '#181a22', borderRadius: '8px' }}>
+                    <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                       No settings record found for this user.
                     </div>
                   ) : (
                     <form onSubmit={handleUpdateSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       {/* Grid 1: General & Localization */}
-                      <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
-                        <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Sliders size={16} style={{ color: '#818cf8' }} /> Localization & Security Preferences
+                      <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
+                        <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Sliders size={16} style={{ color: 'var(--info-text)' }} /> Localization & Security Preferences
                         </h4>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
                           <div>
-                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '6px' }}>
                               Timezone
                             </label>
                             <input
@@ -1344,17 +1344,17 @@ export default function UserDetailPage() {
                               placeholder="e.g. UTC, America/New_York"
                               style={{
                                 width: '100%',
-                                background: '#12141a',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                background: 'var(--bg-input)',
+                                border: '1px solid var(--border-medium)',
                                 borderRadius: '8px',
                                 padding: '8px 12px',
-                                color: '#fff',
+                                color: 'var(--text-primary)',
                                 fontSize: '13px',
                               }}
                             />
                           </div>
                           <div>
-                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '6px' }}>
                               Language
                             </label>
                             <input
@@ -1364,17 +1364,17 @@ export default function UserDetailPage() {
                               placeholder="e.g. en, fr, es"
                               style={{
                                 width: '100%',
-                                background: '#12141a',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                background: 'var(--bg-input)',
+                                border: '1px solid var(--border-medium)',
                                 borderRadius: '8px',
                                 padding: '8px 12px',
-                                color: '#fff',
+                                color: 'var(--text-primary)',
                                 fontSize: '13px',
                               }}
                             />
                           </div>
                           <div>
-                            <label style={{ display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                            <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: '6px' }}>
                               Anti-Phishing Code
                             </label>
                             <input
@@ -1384,19 +1384,19 @@ export default function UserDetailPage() {
                               placeholder="Custom code"
                               style={{
                                 width: '100%',
-                                background: '#12141a',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                background: 'var(--bg-input)',
+                                border: '1px solid var(--border-medium)',
                                 borderRadius: '8px',
                                 padding: '8px 12px',
-                                color: '#fff',
+                                color: 'var(--text-primary)',
                                 fontSize: '13px',
                               }}
                             />
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '24px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#cbd5e1' }}>
+                        <div style={{ display: 'flex', gap: '24px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
                             <input
                               type="checkbox"
                               checked={!!userSettings.withdrawalWhitelist}
@@ -1405,7 +1405,7 @@ export default function UserDetailPage() {
                             />
                             Withdrawal Address Whitelist Active
                           </label>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#cbd5e1' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
                             <input
                               type="checkbox"
                               checked={!!userSettings.chartColor}
@@ -1420,9 +1420,9 @@ export default function UserDetailPage() {
                       {/* Grid 2: Notifications & Reminders */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
                         {/* Notification Preferences */}
-                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
-                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Bell size={16} style={{ color: '#38bdf8' }} /> Notifications
+                        <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Bell size={16} style={{ color: 'var(--accent-sky)' }} /> Notifications
                           </h4>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
@@ -1431,7 +1431,7 @@ export default function UserDetailPage() {
                               { key: 'news', label: 'Product & Market News' },
                               { key: 'systemMessages', label: 'System & Security Messages' },
                             ].map((item) => (
-                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                                 <input
                                   type="checkbox"
                                   checked={!!userSettings.notificationPreference?.[item.key]}
@@ -1451,9 +1451,9 @@ export default function UserDetailPage() {
                         </div>
 
                         {/* Trade Orders Notification Reminders */}
-                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
-                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Clock size={16} style={{ color: '#fbbf24' }} /> Order Reminders
+                        <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Clock size={16} style={{ color: 'var(--warning-text)' }} /> Order Reminders
                           </h4>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
@@ -1462,7 +1462,7 @@ export default function UserDetailPage() {
                               { key: 'stopOrder', label: 'Stop-Loss / Take-Profit Trigger Reminders' },
                               { key: 'autoBorrowRepayMargin', label: 'Auto-Borrow / Repay Margin Alerts' },
                             ].map((item) => (
-                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                                 <input
                                   type="checkbox"
                                   checked={!!userSettings.tradeOrdersNotificationReminder?.[item.key]}
@@ -1482,8 +1482,8 @@ export default function UserDetailPage() {
                         </div>
 
                         {/* Transaction Sound & Real-time Alerts */}
-                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
-                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Bell size={16} style={{ color: '#a855f7' }} /> Execution Sounds & Alerts
                           </h4>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1493,7 +1493,7 @@ export default function UserDetailPage() {
                               { key: 'futuresTradingNotification', label: 'Futures Trading Push Notification' },
                               { key: 'futuresNotificationSound', label: 'Futures Execution Sound Effect' },
                             ].map((item) => (
-                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                                 <input
                                   type="checkbox"
                                   checked={!!userSettings.transactionNotifications?.[item.key]}
@@ -1513,9 +1513,9 @@ export default function UserDetailPage() {
                         </div>
 
                         {/* Trade Fee Deduction Options */}
-                        <div style={{ background: '#181a22', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
-                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Shield size={16} style={{ color: '#34d399' }} /> Fee Deductions (BNB Discount)
+                        <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
+                          <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Shield size={16} style={{ color: 'var(--success-text)' }} /> Fee Deductions (BNB Discount)
                           </h4>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
@@ -1523,7 +1523,7 @@ export default function UserDetailPage() {
                               { key: 'useBNBToPayMarginFees', label: 'Use BNB for Margin Interest Fees' },
                               { key: 'useBNBToPayFuturesFees', label: 'Use BNB for Futures Trading Fees (10% discount)' },
                             ].map((item) => (
-                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
+                              <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                                 <input
                                   type="checkbox"
                                   checked={!!userSettings.tradeFeeDeductions?.[item.key]}
@@ -1548,7 +1548,7 @@ export default function UserDetailPage() {
                           type="submit"
                           disabled={savingSettings}
                           style={{
-                            background: '#6366f1',
+                            background: 'var(--info)',
                             border: 'none',
                             color: '#fff',
                             borderRadius: '8px',

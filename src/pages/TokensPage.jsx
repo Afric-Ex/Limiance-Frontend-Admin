@@ -338,7 +338,7 @@ export default function TokensPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700, letterSpacing: '-0.02em' }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Listed Tokens & Smart Contracts
           </h1>
          
@@ -351,8 +351,8 @@ export default function TokensPage() {
               padding: '9px 18px',
               borderRadius: '8px',
               background: 'rgba(99, 102, 241, 0.15)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              color: '#818cf8',
+              border: '1px solid var(--info-border)',
+              color: 'var(--info-text)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -401,7 +401,7 @@ export default function TokensPage() {
       >
         <div style={{ display: 'flex', gap: '12px', flex: 1, maxWidth: '650px' }}>
           <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)' }} />
+            <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)' }} />
             <input
               type="text"
               placeholder="Search by ticker, token name, or contract address..."
@@ -413,7 +413,7 @@ export default function TokensPage() {
                 borderRadius: '8px',
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -451,7 +451,7 @@ export default function TokensPage() {
             background: 'var(--bg-surface)',
             border: '1px solid var(--border)',
             borderRadius: '8px',
-            color: '#fff',
+            color: 'var(--text-primary)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -499,7 +499,7 @@ export default function TokensPage() {
 
                 return (
                   <React.Fragment key={rowKey}>
-                    <tr style={{ borderBottom: isExpanded ? 'none' : '1px solid rgba(255,255,255,0.04)' }}>
+                    <tr style={{ borderBottom: isExpanded ? 'none' : '1px solid var(--border-subtle)' }}>
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           {t.image ? (
@@ -510,12 +510,12 @@ export default function TokensPage() {
                               onError={(e) => { e.target.style.display = 'none'; }}
                             />
                           ) : (
-                            <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(77,119,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8', fontWeight: 700, fontSize: '10px' }}>
+                            <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(77,119,240,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--info-text)', fontWeight: 700, fontSize: '10px' }}>
                               {t.symbol.slice(0, 2)}
                             </div>
                           )}
                           <div>
-                            <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px', letterSpacing: '0.01em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '13px', letterSpacing: '0.01em', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <span>{t.symbol}</span>
                               {t.unifier && t.unifier !== t.symbol.toLowerCase() && (
                                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 400 }}>
@@ -541,8 +541,8 @@ export default function TokensPage() {
                                   padding: '3px 8px',
                                   borderRadius: '6px',
                                   background: 'rgba(99, 102, 241, 0.12)',
-                                  border: '1px solid rgba(99, 102, 241, 0.25)',
-                                  color: '#a5b4fc',
+                                  border: '1px solid var(--info-border)',
+                                  color: 'var(--info-text)',
                                   fontSize: '11px',
                                   fontWeight: 600,
                                   letterSpacing: '0.02em',
@@ -558,8 +558,8 @@ export default function TokensPage() {
                                 padding: '3px 8px',
                                 borderRadius: '6px',
                                 background: 'rgba(99, 102, 241, 0.12)',
-                                border: '1px solid rgba(99, 102, 241, 0.25)',
-                                color: '#a5b4fc',
+                                border: '1px solid var(--info-border)',
+                                color: 'var(--info-text)',
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 whiteSpace: 'nowrap',
@@ -582,8 +582,8 @@ export default function TokensPage() {
                                   fontSize: '11px',
                                   padding: '2px 6px',
                                   borderRadius: '4px',
-                                  background: 'rgba(255,255,255,0.06)',
-                                  color: '#cbd5e1',
+                                  background: 'var(--overlay-2)',
+                                  color: 'var(--text-primary)',
                                 }}
                                 title={displayContract}
                               >
@@ -594,7 +594,7 @@ export default function TokensPage() {
                               <button
                                 type="button"
                                 onClick={() => copyToClipboard(displayContract)}
-                                style={{ background: 'none', border: 'none', color: copiedAddress === displayContract ? '#34d399' : 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px' }}
+                                style={{ background: 'none', border: 'none', color: copiedAddress === displayContract ? 'var(--success-text)' : 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
                                 title="Copy Contract Address"
                               >
                                 {copiedAddress === displayContract ? <Check size={12} /> : <Copy size={12} />}
@@ -610,9 +610,9 @@ export default function TokensPage() {
                               onClick={() => toggleExpand(rowKey)}
                               style={{
                                 background: isExpanded ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.12)',
-                                border: '1px solid rgba(99, 102, 241, 0.3)',
+                                border: '1px solid var(--info-border)',
                                 borderRadius: '5px',
-                                color: '#818cf8',
+                                color: 'var(--info-text)',
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 padding: '2px 7px',
@@ -630,30 +630,30 @@ export default function TokensPage() {
                         </div>
                       </td>
 
-                      <td style={{ padding: '14px 18px', color: '#94a3b8', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ padding: '14px 18px', color: 'var(--text-tertiary)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
                         {primaryDeployment.decimals ?? t.decimals ?? 18}
                       </td>
 
                       <td style={{ padding: '14px 18px' }}>
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          <span>Min Dep: <strong style={{ color: '#fff' }}>{primaryDeployment.min_deposit || t.min_deposit || '0'}</strong></span>
-                          <span>Min Wd: <strong style={{ color: '#fff' }}>{primaryDeployment.min_withdrawal || t.min_withdrawal || '0'}</strong></span>
+                        <div style={{ fontSize: '11px', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <span>Min Dep: <strong style={{ color: 'var(--text-primary)' }}>{primaryDeployment.min_deposit || t.min_deposit || '0'}</strong></span>
+                          <span>Min Wd: <strong style={{ color: 'var(--text-primary)' }}>{primaryDeployment.min_withdrawal || t.min_withdrawal || '0'}</strong></span>
                         </div>
                       </td>
 
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                           {t.is_stablecoin && (
-                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(245, 158, 11, 0.12)', color: 'var(--warning-text)', border: '1px solid var(--warning-border)' }}>
                               STABLE
                             </span>
                           )}
                           {t.is_tradable ? (
-                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(16, 185, 129, 0.12)', color: 'var(--success-text)', border: '1px solid var(--success-border)' }}>
                               TRADE
                             </span>
                           ) : (
-                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+                            <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: 'rgba(239, 68, 68, 0.12)', color: 'var(--danger-text)', border: '1px solid var(--danger-border)' }}>
                               OFF
                             </span>
                           )}
@@ -661,7 +661,7 @@ export default function TokensPage() {
                       </td>
 
                       <td style={{ padding: '14px 18px' }}>
-                        <span style={{ padding: '3px 9px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: t.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: t.is_active !== false ? '#34d399' : '#f87171' }}>
+                        <span style={{ padding: '3px 9px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: t.is_active !== false ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: t.is_active !== false ? 'var(--success-text)' : 'var(--danger-text)' }}>
                           {t.is_active !== false ? 'ACTIVE' : 'DISABLED'}
                         </span>
                       </td>
@@ -670,21 +670,21 @@ export default function TokensPage() {
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
                           <button
                             onClick={() => handleGeneratePairsBySymbol(t)}
-                            style={{ padding: '6px 10px', background: 'rgba(77,119,240,0.12)', border: '1px solid rgba(77,119,240,0.25)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}
+                            style={{ padding: '6px 10px', background: 'rgba(77,119,240,0.12)', border: '1px solid rgba(77,119,240,0.25)', borderRadius: '6px', color: 'var(--info-text)', cursor: 'pointer' }}
                             title="Generate Trading Pairs for Token"
                           >
                             <Sparkles size={13} />
                           </button>
                           <button
                             onClick={() => openEditModal(t)}
-                            style={{ padding: '6px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: '#818cf8', cursor: 'pointer' }}
+                            style={{ padding: '6px 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', color: 'var(--info-text)', cursor: 'pointer' }}
                             title="Edit Token Details"
                           >
                             <Edit size={13} />
                           </button>
                           <button
                             onClick={() => handleDeleteToken(t)}
-                            style={{ padding: '6px 10px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '6px', color: '#f87171', cursor: 'pointer' }}
+                            style={{ padding: '6px 10px', background: 'rgba(239,68,68,0.12)', border: '1px solid var(--danger-border)', borderRadius: '6px', color: 'var(--danger-text)', cursor: 'pointer' }}
                             title="Delist Token"
                           >
                             <Trash2 size={13} />
@@ -697,8 +697,8 @@ export default function TokensPage() {
                     {isExpanded && t.deployments && t.deployments.length > 0 && (
                       <tr style={{ background: 'rgba(99, 102, 241, 0.03)', borderBottom: '1px solid var(--border)' }}>
                         <td colSpan="8" style={{ padding: '12px 20px 16px 20px' }}>
-                          <div style={{ background: 'rgba(15, 17, 23, 0.85)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: '10px', padding: '14px 18px' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#a5b4fc', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ background: 'var(--bg-deep)', border: '1px solid var(--info-border)', borderRadius: '10px', padding: '14px 18px' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--info-text)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <Coins size={14} />
                               <span>Chain Deployments for {t.name || t.symbol} ({t.unifier || t.symbol.toLowerCase()})</span>
                             </div>
@@ -706,19 +706,19 @@ export default function TokensPage() {
                               {t.deployments.map((d, dIdx) => (
                                 <div key={dIdx} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 14px' }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{d.blockchain}</span>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{d.blockchain}</span>
                                     <div style={{ display: 'flex', gap: '6px' }}>
                                       <button
                                         type="button"
                                         onClick={() => openEditModal(t, d.blockchain)}
-                                        style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '4px', color: '#818cf8', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid var(--info-border)', borderRadius: '4px', color: 'var(--info-text)', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
                                       >
                                         <Edit size={11} /> Edit
                                       </button>
                                       <button
                                         type="button"
                                         onClick={() => handleDeleteChain(t, d.blockchain)}
-                                        style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: '4px', color: '#f87171', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                        style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid var(--danger-border)', borderRadius: '4px', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
                                       >
                                         <Trash2 size={11} /> Delete
                                       </button>
@@ -727,15 +727,15 @@ export default function TokensPage() {
                                   <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                                     <span>{d.contract_address && d.contract_address !== 'N/A' ? `${d.contract_address.slice(0, 10)}...${d.contract_address.slice(-6)}` : 'Native'}</span>
                                     {d.contract_address && d.contract_address !== 'N/A' && (
-                                      <button type="button" onClick={() => copyToClipboard(d.contract_address)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedAddress === d.contract_address ? '#34d399' : 'rgba(255,255,255,0.4)', padding: 0 }}>
+                                      <button type="button" onClick={() => copyToClipboard(d.contract_address)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedAddress === d.contract_address ? 'var(--success-text)' : 'var(--text-muted)', padding: 0 }}>
                                         {copiedAddress === d.contract_address ? <Check size={11} /> : <Copy size={11} />}
                                       </button>
                                     )}
                                   </div>
                                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '12px' }}>
-                                    <span>Decimals: <strong style={{ color: '#fff' }}>{d.decimals}</strong></span>
-                                    <span>Min Dep: <strong style={{ color: '#fff' }}>{d.min_deposit || '0'}</strong></span>
-                                    <span>Min Wd: <strong style={{ color: '#fff' }}>{d.min_withdrawal || '0'}</strong></span>
+                                    <span>Decimals: <strong style={{ color: 'var(--text-primary)' }}>{d.decimals}</strong></span>
+                                    <span>Min Dep: <strong style={{ color: 'var(--text-primary)' }}>{d.min_deposit || '0'}</strong></span>
+                                    <span>Min Wd: <strong style={{ color: 'var(--text-primary)' }}>{d.min_withdrawal || '0'}</strong></span>
                                   </div>
                                 </div>
                               ))}
@@ -778,7 +778,7 @@ export default function TokensPage() {
                   borderRadius: '6px',
                   background: 'var(--bg-surface)',
                   border: '1px solid var(--border)',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '12px',
                   outline: 'none',
                   cursor: 'pointer',
@@ -802,9 +802,9 @@ export default function TokensPage() {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                background: currentPage <= 1 ? 'rgba(255,255,255,0.02)' : 'var(--bg-surface)',
+                background: currentPage <= 1 ? 'var(--overlay-1)' : 'var(--bg-surface)',
                 border: '1px solid var(--border)',
-                color: currentPage <= 1 ? 'var(--text-muted)' : '#fff',
+                color: currentPage <= 1 ? 'var(--text-muted)' : 'var(--text-primary)',
                 cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -821,9 +821,9 @@ export default function TokensPage() {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                background: currentPage >= totalPages ? 'rgba(255,255,255,0.02)' : 'var(--bg-surface)',
+                background: currentPage >= totalPages ? 'var(--overlay-1)' : 'var(--bg-surface)',
                 border: '1px solid var(--border)',
-                color: currentPage >= totalPages ? 'var(--text-muted)' : '#fff',
+                color: currentPage >= totalPages ? 'var(--text-muted)' : 'var(--text-primary)',
                 cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -864,7 +864,7 @@ export default function TokensPage() {
               boxShadow: '0 24px 70px rgba(0,0,0,0.9)',
             }}
           >
-            <h2 style={{ margin: '0 0 14px', fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>
+            <h2 style={{ margin: '0 0 14px', fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
               {editingToken ? `Edit Token ${editingToken.symbol}` : 'List New Token'}
             </h2>
 
@@ -874,8 +874,8 @@ export default function TokensPage() {
                   padding: '10px 14px',
                   borderRadius: '8px',
                   background: 'rgba(99, 102, 241, 0.12)',
-                  border: '1px solid rgba(99, 102, 241, 0.25)',
-                  color: '#a5b4fc',
+                  border: '1px solid var(--info-border)',
+                  color: 'var(--info-text)',
                   fontSize: '12px',
                   display: 'flex',
                   alignItems: 'center',
@@ -908,7 +908,7 @@ export default function TokensPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                     }}
                   />
@@ -930,7 +930,7 @@ export default function TokensPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                     }}
                   />
@@ -952,7 +952,7 @@ export default function TokensPage() {
                     background: 'var(--bg-surface)',
                     border: '1px solid var(--border)',
                     borderRadius: '6px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                   }}
                 />
@@ -990,7 +990,7 @@ export default function TokensPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                       cursor: 'pointer',
                     }}
@@ -1027,7 +1027,7 @@ export default function TokensPage() {
                     placeholder="18"
                     value={formData.decimals}
                     onChange={(e) => setFormData({ ...formData, decimals: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
               </div>
@@ -1041,7 +1041,7 @@ export default function TokensPage() {
                   placeholder="0x... or mint address or N/A"
                   value={formData.contract_address}
                   onChange={(e) => setFormData({ ...formData, contract_address: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: '#fff', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
+                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
                 />
               </div>
 
@@ -1061,7 +1061,7 @@ export default function TokensPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                     }}
                   />
@@ -1082,7 +1082,7 @@ export default function TokensPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                     }}
                   />
@@ -1104,14 +1104,14 @@ export default function TokensPage() {
                     background: 'var(--bg-surface)',
                     border: '1px solid var(--border)',
                     borderRadius: '6px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                   }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '4px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.is_tradable}
@@ -1120,7 +1120,7 @@ export default function TokensPage() {
                   Tradable on Exchange
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.is_stablecoin}
@@ -1129,7 +1129,7 @@ export default function TokensPage() {
                   Is Stablecoin (USD Pegged)
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-primary)', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.is_fiat_pairable}

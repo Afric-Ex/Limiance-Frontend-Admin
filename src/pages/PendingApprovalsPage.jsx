@@ -152,15 +152,15 @@ export default function PendingApprovalsPage() {
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700 }}>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)', fontWeight: 700 }}>
               Dual-Control Pending Approvals
             </h1>
             {pendingCount > 0 && (
               <span
                 style={{
                   background: 'rgba(245, 158, 11, 0.15)',
-                  color: '#fbbf24',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  color: 'var(--warning-text)',
+                  border: '1px solid var(--warning-border)',
                   padding: '2px 8px',
                   borderRadius: '12px',
                   fontSize: '12px',
@@ -171,7 +171,7 @@ export default function PendingApprovalsPage() {
               </span>
             )}
           </div>
-          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             N-of-M sign-off queue for critical administrative mutations, fund adjustments, and emergency delistings.
           </p>
         </div>
@@ -182,9 +182,9 @@ export default function PendingApprovalsPage() {
           style={{
             padding: '8px 16px',
             borderRadius: '8px',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
+            background: 'var(--overlay-2)',
+            border: '1px solid var(--border-medium)',
+            color: 'var(--text-primary)',
             fontWeight: 600,
             fontSize: '13px',
             display: 'flex',
@@ -200,8 +200,8 @@ export default function PendingApprovalsPage() {
       {/* Filters Toolbar */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '12px 16px',
           marginBottom: '20px',
@@ -228,9 +228,9 @@ export default function PendingApprovalsPage() {
                 style={{
                   padding: '8px 14px',
                   borderRadius: '8px',
-                  background: active ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+                  background: active ? '#4d77f0' : 'var(--overlay-2)',
                   border: 'none',
-                  color: active ? '#fff' : 'rgba(255,255,255,0.6)',
+                  color: active ? '#fff' : 'var(--text-secondary)',
                   fontWeight: 600,
                   fontSize: '13px',
                   display: 'flex',
@@ -250,8 +250,8 @@ export default function PendingApprovalsPage() {
       {/* Table Container */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           overflow: 'hidden',
         }}
@@ -259,7 +259,7 @@ export default function PendingApprovalsPage() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.02)' }}>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-tertiary)', background: 'var(--overlay-1)' }}>
                 <th style={{ padding: '14px 16px' }}>Approval ID</th>
                 <th style={{ padding: '14px 16px' }}>Action Type</th>
                 <th style={{ padding: '14px 16px' }}>Resource</th>
@@ -276,7 +276,7 @@ export default function PendingApprovalsPage() {
                 <ShimmerTableRows rows={6} cols={9} colWidths={['12%', '14%', '12%', '12%', '10%', '10%', '8%', '12%', '10%']} />
               ) : approvals.length === 0 ? (
                 <tr>
-                  <td colSpan="9" style={{ padding: '3rem', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="9" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                     <ShieldCheck size={36} style={{ display: 'block', margin: '0 auto 10px', opacity: 0.3 }} />
                     No approvals found matching filter "{statusFilter}".
                   </td>
@@ -288,19 +288,19 @@ export default function PendingApprovalsPage() {
                   const isRejected = item.status === 'REJECTED';
 
                   return (
-                    <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <tr key={item.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                       {/* ID */}
                       <td style={{ padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontFamily: 'monospace', color: '#9ca3af', fontSize: '12px' }}>
+                          <span style={{ fontFamily: 'monospace', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                             {item.id ? `${item.id.slice(0, 10)}...` : '—'}
                           </span>
                           <button
                             onClick={() => copyToClipboard(item.id)}
-                            style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px' }}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
                             title="Copy ID"
                           >
-                            <Copy size={12} color={copiedId === item.id ? '#10b981' : undefined} />
+                            <Copy size={12} style={{ color: copiedId === item.id ? 'var(--success-text)' : undefined }} />
                           </button>
                         </div>
                       </td>
@@ -310,7 +310,7 @@ export default function PendingApprovalsPage() {
                         <span
                           style={{
                             background: 'rgba(77, 119, 240, 0.12)',
-                            color: '#818cf8',
+                            color: 'var(--info-text)',
                             border: '1px solid rgba(77, 119, 240, 0.25)',
                             padding: '3px 8px',
                             borderRadius: '6px',
@@ -324,16 +324,16 @@ export default function PendingApprovalsPage() {
                       </td>
 
                       {/* Resource */}
-                      <td style={{ padding: '14px 16px', color: '#fff', fontSize: '13px', fontWeight: 500 }}>
+                      <td style={{ padding: '14px 16px', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 500 }}>
                         {item.resource_id || '—'}
                       </td>
 
                       {/* Requested By */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px' }}>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '13px' }}>
                           {item.requested_by}
                           {item.requested_by === user?.email && (
-                            <span style={{ color: '#60a5fa', fontSize: '11px', marginLeft: '4px' }}>(You)</span>
+                            <span style={{ color: 'var(--accent-blue)', fontSize: '11px', marginLeft: '4px' }}>(You)</span>
                           )}
                         </div>
                       </td>
@@ -342,8 +342,8 @@ export default function PendingApprovalsPage() {
                       <td style={{ padding: '14px 16px' }}>
                         <span
                           style={{
-                            background: 'rgba(255,255,255,0.06)',
-                            color: 'rgba(255,255,255,0.8)',
+                            background: 'var(--overlay-2)',
+                            color: 'var(--text-primary)',
                             padding: '3px 8px',
                             borderRadius: '4px',
                             fontSize: '11px',
@@ -363,13 +363,13 @@ export default function PendingApprovalsPage() {
                               : isRejected
                               ? 'rgba(239, 68, 68, 0.12)'
                               : 'rgba(245, 158, 11, 0.12)',
-                            color: isApproved ? '#34d399' : isRejected ? '#f87171' : '#fbbf24',
+                            color: isApproved ? 'var(--success-text)' : isRejected ? 'var(--danger-text)' : 'var(--warning-text)',
                             border: `1px solid ${
                               isApproved
-                                ? 'rgba(16, 185, 129, 0.25)'
+                                ? 'var(--success-border)'
                                 : isRejected
-                                ? 'rgba(239, 68, 68, 0.25)'
-                                : 'rgba(245, 158, 11, 0.25)'
+                                ? 'var(--danger-border)'
+                                : 'var(--warning-border)'
                             }`,
                             padding: '3px 8px',
                             borderRadius: '6px',
@@ -394,9 +394,9 @@ export default function PendingApprovalsPage() {
                           style={{
                             padding: '4px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             fontSize: '12px',
                             display: 'flex',
                             alignItems: 'center',
@@ -409,18 +409,18 @@ export default function PendingApprovalsPage() {
                       </td>
 
                       {/* Timeline */}
-                      <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>
+                      <td style={{ padding: '14px 16px', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                         <div>Created: {item.created_at ? new Date(item.created_at).toLocaleString() : '—'}</div>
                         {item.approved_at && (
-                          <div style={{ color: '#34d399', marginTop: '2px' }}>
+                          <div style={{ color: 'var(--success-text)', marginTop: '2px' }}>
                             Approved: {new Date(item.approved_at).toLocaleString()} by {item.approved_by || 'admin'}
                           </div>
                         )}
                         {item.rejected_at && (
-                          <div style={{ color: '#f87171', marginTop: '2px' }}>
+                          <div style={{ color: 'var(--danger-text)', marginTop: '2px' }}>
                             Rejected: {new Date(item.rejected_at).toLocaleString()} by {item.rejected_by || 'admin'}
                             {item.reject_reason && (
-                              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' }}>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                                 Reason: "{item.reject_reason}"
                               </div>
                             )}
@@ -459,8 +459,8 @@ export default function PendingApprovalsPage() {
                                 padding: '6px 12px',
                                 borderRadius: '6px',
                                 background: 'rgba(239, 68, 68, 0.15)',
-                                border: '1px solid rgba(239, 68, 68, 0.3)',
-                                color: '#f87171',
+                                border: '1px solid var(--danger-border)',
+                                color: 'var(--danger-text)',
                                 fontWeight: 600,
                                 fontSize: '12px',
                                 display: 'inline-flex',
@@ -473,7 +473,7 @@ export default function PendingApprovalsPage() {
                             </button>
                           </div>
                         ) : (
-                          <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>Completed</span>
+                          <span style={{ color: 'var(--text-faint)', fontSize: '12px' }}>Completed</span>
                         )}
                       </td>
                     </tr>
@@ -501,8 +501,8 @@ export default function PendingApprovalsPage() {
         >
           <div
             style={{
-              background: '#181a24',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               maxWidth: '480px',
               width: '100%',
@@ -511,27 +511,27 @@ export default function PendingApprovalsPage() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f87171' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger-text)' }}>
                 <AlertTriangle size={20} />
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
                   Reject Approval Action
                 </h3>
               </div>
               <button
                 onClick={() => setRejectModalItem(null)}
-                style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
             </div>
 
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', lineHeight: '1.5', margin: '0 0 16px' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5', margin: '0 0 16px' }}>
               You are rejecting action <strong>{rejectModalItem.action_type}</strong> (Target: {rejectModalItem.resource_id}). Please provide a rejection reason for the audit trail.
             </p>
 
             <form onSubmit={handleRejectSubmit}>
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Rejection Reason / Justification
                 </label>
                 <textarea
@@ -543,10 +543,10 @@ export default function PendingApprovalsPage() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    background: '#13151c',
-                    border: '1px solid rgba(255,255,255,0.15)',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-light)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                     resize: 'vertical',
@@ -562,9 +562,9 @@ export default function PendingApprovalsPage() {
                   style={{
                     padding: '8px 16px',
                     borderRadius: '8px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    color: '#fff',
+                    background: 'var(--overlay-2)',
+                    border: '1px solid var(--border-medium)',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     cursor: 'pointer',
                   }}
@@ -609,8 +609,8 @@ export default function PendingApprovalsPage() {
         >
           <div
             style={{
-              background: '#181a24',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               maxWidth: '640px',
               width: '100%',
@@ -620,16 +620,16 @@ export default function PendingApprovalsPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#fff' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
                   Approval Payload Details
                 </h3>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
                   Action: {payloadModalItem.action_type} • Resource: {payloadModalItem.resource_id}
                 </span>
               </div>
               <button
                 onClick={() => setPayloadModalItem(null)}
-                style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -637,11 +637,11 @@ export default function PendingApprovalsPage() {
 
             <pre
               style={{
-                background: '#13151c',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 padding: '16px',
-                color: '#34d399',
+                color: 'var(--success-text)',
                 fontFamily: 'monospace',
                 fontSize: '12px',
                 overflowX: 'auto',
@@ -659,9 +659,9 @@ export default function PendingApprovalsPage() {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '6px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#fff',
+                  background: 'var(--overlay-2)',
+                  border: '1px solid var(--border-medium)',
+                  color: 'var(--text-primary)',
                   fontSize: '12px',
                   display: 'flex',
                   alignItems: 'center',
