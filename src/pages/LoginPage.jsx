@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,7 +37,11 @@ export default function LoginPage() {
             <span className="status-dot"></span>
             Limiance Protocol • Core Ops
           </div>
-          <img src="/logo.png" alt="Limiance" className="logo-icon" />
+          <img
+            src={theme === 'light' ? '/logo-dark.png' : '/logo.png'}
+            alt="Limiance"
+            className="logo-icon"
+          />
           <h1>Admin Console</h1>
           <p>Sign in to access privileged exchange operations</p>
         </div>

@@ -507,6 +507,11 @@
   color: #0F172A;
 }
 
+[data-theme="light"] .sidebar-header .logo-icon,
+.light-theme .sidebar-header .logo-icon {
+  filter: drop-shadow(0 1px 3px rgba(15, 23, 42, 0.18));
+}
+
 [data-theme="light"] .user-info,
 .light-theme .user-info {
   background: #F9FAFB;

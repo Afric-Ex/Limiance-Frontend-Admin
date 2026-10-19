@@ -221,6 +221,10 @@
   box-shadow: 0 0 8px rgba(37, 99, 235, 0.45);
 }
 
+[data-theme="light"] .login-header .logo-icon {
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.15));
+}
+
 [data-theme="light"] .login-header h1 {
   color: #0F172A;
 }
