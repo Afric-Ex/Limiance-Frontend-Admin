@@ -538,15 +538,15 @@
 }
 
 [data-theme="light"] .mo-search-input {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: var(--text-primary);
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+  color: #0F172A;
 }
 
 [data-theme="light"] .mo-sort-select {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: var(--text-primary);
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+  color: #0F172A;
 }
 
 [data-theme="light"] .mo-table th {

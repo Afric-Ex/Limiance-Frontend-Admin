@@ -225,41 +225,84 @@
 }
 
 [data-theme="light"] .confirm-modal-content {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="light"] .confirm-modal-close {
-  color: #64748b;
+  color: #6B7280;
 }
 
 [data-theme="light"] .confirm-modal-close:hover {
-  background: #dce2ee;
-  color: #0f172a;
+  background: #F0F4F8;
+  color: #0F172A;
 }
 
 [data-theme="light"] .confirm-modal-title {
-  color: #0f172a;
+  color: #0F172A;
 }
 
 [data-theme="light"] .confirm-modal-message {
-  color: #334155;
+  color: #4B5563;
 }
 
 [data-theme="light"] .confirm-prompt-input {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+  color: #0F172A;
+}
+
+[data-theme="light"] .confirm-prompt-input:focus {
+  background: #FFFFFF;
+  border-color: #2563EB;
 }
 
 [data-theme="light"] .confirm-btn-cancel {
-  background: #dce2ee;
-  border-color: #cbd5e1;
-  color: #334155;
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+  color: #0F172A;
 }
 
 [data-theme="light"] .confirm-btn-cancel:hover:not(:disabled) {
-  background: #cfd7e5;
-  color: #0f172a;
+  background: #F0F4F8;
+  border-color: #BFDBFE;
+  color: #0F172A;
+}
+
+[data-theme="light"] .btn-variant-primary {
+  background: #2563EB;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .btn-variant-primary:hover:not(:disabled) {
+  background: #1D4ED8;
+}
+
+[data-theme="light"] .btn-variant-danger {
+  background: #DC2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+}
+
+[data-theme="light"] .btn-variant-danger:hover:not(:disabled) {
+  background: #B91C1C;
+}
+
+[data-theme="light"] .btn-variant-warning {
+  background: #B45309;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+  color: #FFFFFF;
+}
+
+[data-theme="light"] .btn-variant-warning:hover:not(:disabled) {
+  background: #92400E;
+}
+
+[data-theme="light"] .btn-variant-success {
+  background: #047857;
+  box-shadow: 0 2px 6px rgba(4, 120, 87, 0.25);
+}
+
+[data-theme="light"] .btn-variant-success:hover:not(:disabled) {
+  background: #065F46;
 }

@@ -253,98 +253,112 @@
    Light Theme Overrides
    ══════════════════════════════════════════════════════════════════════ */
 [data-theme="light"] .chart-card {
-  background: var(--bg-card);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+  box-shadow: var(--shadow-elevation-1);
 }
 
 [data-theme="light"] .chart-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-md);
+  border-color: #BFDBFE;
+  box-shadow: var(--shadow-elevation-2);
 }
 
 [data-theme="light"] .chart-title {
-  color: var(--text-primary);
+  color: #0F172A;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 [data-theme="light"] .chart-subtitle {
-  color: var(--text-muted);
+  color: #4B5563;
 }
 
 [data-theme="light"] .chart-timeframe-group {
-  background: rgba(15, 23, 42, 0.05);
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
 }
 
 [data-theme="light"] .chart-timeframe-btn {
-  background: var(--bg-surface);
-  border-color: var(--border);
-  color: var(--text-secondary);
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+  color: #4B5563;
 }
 
 [data-theme="light"] .chart-timeframe-btn:hover {
-  color: var(--text-primary);
-  background: var(--bg-surface-elevated);
+  color: #0F172A;
+  background: #F9FAFB;
+  border-color: #BFDBFE;
+}
+
+[data-theme="light"] .chart-timeframe-btn.active {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 [data-theme="light"] .chart-legend-item {
-  color: var(--text-secondary);
+  color: #4B5563;
+}
+
+[data-theme="light"] .chart-legend-item.disabled {
+  opacity: 0.45;
 }
 
 [data-theme="light"] .chart-floating-tooltip {
-  background: var(--bg-card);
-  border-color: var(--border);
-  box-shadow: var(--shadow-md);
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+  box-shadow: var(--shadow-elevation-2);
 }
 
 [data-theme="light"] .tooltip-date {
-  color: var(--text-muted);
-  border-bottom-color: var(--border);
+  color: #6B7280;
+  border-bottom-color: #E5E7EB;
 }
 
 [data-theme="light"] .tooltip-series-name {
-  color: var(--text-secondary);
+  color: #4B5563;
 }
 
 [data-theme="light"] .tooltip-val {
-  color: var(--text-primary);
+  color: #0F172A !important;
 }
 
 [data-theme="light"] .donut-legend-row {
-  background: var(--bg-surface);
-  border-color: var(--border);
+  background: #F9FAFB;
+  border-color: #E5E7EB;
 }
 
 [data-theme="light"] .donut-legend-row:hover,
 [data-theme="light"] .donut-legend-row.active {
-  background: var(--bg-surface-elevated);
-  border-color: var(--border-light);
+  background: #F0F4F8;
+  border-color: #BFDBFE;
 }
 
 [data-theme="light"] .donut-legend-label {
-  color: var(--text-primary);
+  color: #0F172A;
 }
 
 [data-theme="light"] .donut-legend-val {
-  color: var(--text-primary);
+  color: #0F172A;
 }
 
 [data-theme="light"] .donut-legend-pct {
-  color: var(--text-muted);
+  color: #6B7280;
 }
 
-/* Light Mode SVG Chart Axis Text & Grid Lines */
-[data-theme="light"] svg text[fill*="rgba(255"],
-[data-theme="light"] svg text[fill*="rgba(255, 255, 255"],
-[data-theme="light"] svg text[fill*="rgba(255,255,255"],
-[data-theme="light"] svg text[fill="#ffffff"],
-[data-theme="light"] svg text[fill="#fff"] {
-  fill: #475569 !important;
+/* Light Mode SVG Chart Axis Text */
+[data-theme="light"] .svg-chart-container svg text {
+  fill: #4B5563 !important;
 }
 
-[data-theme="light"] svg line[stroke*="rgba(255"],
-[data-theme="light"] svg line[stroke*="rgba(255, 255, 255"],
-[data-theme="light"] svg line[stroke*="rgba(255,255,255"] {
-  stroke: rgba(15, 23, 42, 0.08) !important;
+[data-theme="light"] .svg-chart-container svg line {
+  stroke: #E5E7EB;
+}
+
+/* Keep hover crosshair visible above the grid */
+[data-theme="light"] .svg-chart-container svg line[stroke-dasharray="4 4"] {
+  stroke: #9CA3AF !important;
 }
 
 

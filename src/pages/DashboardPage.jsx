@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -260,7 +260,7 @@ export default function DashboardPage() {
           <div>
             <h2>Limiance Operations & Risk Overview</h2>
             <p>
-              Signed in as <strong style={{ color: 'var(--text-primary)' }}>{user?.email}</strong> · Real-time operational intelligence across spot, futures, treasury, and compliance.
+              Signed in as <strong style={{ color: 'var(--text-primary)' }}>{user?.email}</strong> Â· Real-time operational intelligence across spot, futures, treasury, and compliance.
             </p>
             <div className="role-chips">
               {roles.map((role) => (
@@ -273,20 +273,9 @@ export default function DashboardPage() {
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
+              type="button"
               onClick={fetchMetrics}
-              style={{
-                padding: '8px 16px',
-                background: 'var(--bg-surface-2)',
-                border: '1px solid var(--border-medium)',
-                borderRadius: '8px',
-                color: 'var(--text-primary)',
-                fontSize: '13px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-              }}
+              className="btn btn-primary"
             >
               <RefreshCw size={14} className={loading ? 'spin' : ''} /> Refresh Live Metrics
             </button>
@@ -294,7 +283,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Top Highlight Statistics Pills */}
-        <div className="stat-pills-container" style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', background: 'rgba(0,0,0,0.3)', padding: '1rem 1.5rem', borderRadius: '12px' }}>
+        <div className="stat-pills-container">
           <div className="stat-pill">
             <div className="stat-pill-label">24h Spot Turnover</div>
             <div className="stat-pill-value" style={{ color: 'var(--info-text)' }}>
@@ -380,7 +369,7 @@ export default function DashboardPage() {
                       item.urgent ? 'urgent' : item.count === 'Nominal' ? 'nominal' : ''
                     }`}
                   >
-                    {loading && !metrics ? '…' : item.count}
+                    {loading && !metrics ? 'â€¦' : item.count}
                   </span>
                 </div>
               </div>
@@ -395,7 +384,9 @@ export default function DashboardPage() {
         <div className="telemetry-card">
           <div className="telemetry-card-top">
             <span className="telemetry-label">Settlement Success (24h)</span>
-            <CheckCircle2 size={16} style={{ color: failedTxs > 0 ? 'var(--warning-text)' : 'var(--success-text)' }} />
+            <span className={`telemetry-icon ${failedTxs > 0 ? 'warning' : 'success'}`}>
+              <CheckCircle2 size={16} />
+            </span>
           </div>
           <div className="telemetry-value" style={{ color: failedTxs > 0 ? 'var(--warning-text)' : 'var(--success-text)' }}>
             {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${txSuccessRate}%`}
@@ -406,7 +397,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <span>{totalTxs.toLocaleString()} total txs</span>
-                <span>·</span>
+                <span>Â·</span>
                 <span style={{ color: failedTxs > 0 ? 'var(--danger-text)' : 'inherit' }}>
                   {failedTxs} failed
                 </span>
@@ -419,7 +410,9 @@ export default function DashboardPage() {
         <div className="telemetry-card">
           <div className="telemetry-card-top">
             <span className="telemetry-label">P2P Escrow Flow (24h)</span>
-            <ArrowRightLeft size={16} style={{ color: "var(--success-text)" }} />
+            <span className="telemetry-icon success">
+              <ArrowRightLeft size={16} />
+            </span>
           </div>
           <div className="telemetry-value" style={{ color: 'var(--success-text)' }}>
             {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `$${fmtUsd(p2pVol24h)}`}
@@ -430,7 +423,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <span>{p2pCompleted24h} trades completed</span>
-                <span>·</span>
+                <span>Â·</span>
                 <span>{p2pDisputes} disputes</span>
               </>
             )}
@@ -441,7 +434,9 @@ export default function DashboardPage() {
         <div className="telemetry-card">
           <div className="telemetry-card-top">
             <span className="telemetry-label">Auth Security Index (24h)</span>
-            <ShieldAlert size={16} style={{ color: failedLogins > 5 ? 'var(--danger-text)' : 'var(--info-text)' }} />
+            <span className={`telemetry-icon ${failedLogins > 5 ? 'danger' : 'info'}`}>
+              <ShieldAlert size={16} />
+            </span>
           </div>
           <div className="telemetry-value" style={{ color: failedLogins > 5 ? 'var(--danger-text)' : 'var(--text-primary)' }}>
             {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${authSuccessRate}% Pass`}
@@ -452,7 +447,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <span>{failedLogins} rejected attempts</span>
-                <span>·</span>
+                <span>Â·</span>
                 <span>{frozenUsers} frozen</span>
               </>
             )}
@@ -463,7 +458,9 @@ export default function DashboardPage() {
         <div className="telemetry-card">
           <div className="telemetry-card-top">
             <span className="telemetry-label">Support Response Health</span>
-            <MessageSquare size={16} style={{ color: openTickets > 0 ? 'var(--warning-text)' : 'var(--info-text)' }} />
+            <span className={`telemetry-icon ${openTickets > 0 ? 'warning' : 'info'}`}>
+              <MessageSquare size={16} />
+            </span>
           </div>
           <div className="telemetry-value" style={{ color: openTickets > 0 ? 'var(--warning-text)' : 'var(--text-primary)' }}>
             {loading && !metrics ? <Shimmer width="80px" height="26px" /> : `${openTickets} Open`}
@@ -474,7 +471,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <span>{supportAvgResHrs > 0 ? `${supportAvgResHrs.toFixed(1)}h` : '< 2h'} turnaround</span>
-                <span>·</span>
+                <span>Â·</span>
                 <span>Triage queue active</span>
               </>
             )}
@@ -515,7 +512,7 @@ export default function DashboardPage() {
             timeframe={treasuryTf}
             onTimeframeChange={setTreasuryTf}
             timeframes={['24H', '7D', '30D', '12M']}
-            actionLabel="Treasury Queue →"
+            actionLabel="Treasury Queue â†’"
             onAction={() => navigate('/withdrawals-queue')}
           >
             <GroupedBarChart
@@ -539,7 +536,7 @@ export default function DashboardPage() {
             timeframe={tradingTf}
             onTimeframeChange={setTradingTf}
             timeframes={['24H', '7D', '30D', '12M']}
-            actionLabel="Orders Explorer →"
+            actionLabel="Orders Explorer â†’"
             onAction={() => navigate('/orders')}
           >
             <AreaSplineChart
@@ -566,7 +563,7 @@ export default function DashboardPage() {
             icon={DollarSign}
             badge={`Est. ARR: $${fmtUsd((parseFloat(rev24h) || 0) * 365)}`}
             badgeColor="var(--warning-text)"
-            actionLabel="Fee Schedules →"
+            actionLabel="Fee Schedules â†’"
             onAction={() => navigate('/fee-tiers')}
           >
             <div style={{ padding: '0.5rem 0' }}>
@@ -588,7 +585,7 @@ export default function DashboardPage() {
               border: '1px solid var(--border)',
               borderRadius: '14px',
               padding: '1.5rem',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+              boxShadow: 'var(--card-shadow)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -618,7 +615,7 @@ export default function DashboardPage() {
                   padding: '4px 6px',
                 }}
               >
-                Risk Specs →
+                Risk Specs â†’
               </button>
             </div>
 
@@ -686,7 +683,7 @@ export default function DashboardPage() {
             timeframe={userGrowthTf}
             onTimeframeChange={setUserGrowthTf}
             timeframes={['7D', '30D', '12M']}
-            actionLabel="User Management →"
+            actionLabel="User Management â†’"
             onAction={() => navigate('/users')}
           >
             <AreaSplineChart
@@ -709,7 +706,7 @@ export default function DashboardPage() {
               border: '1px solid var(--border)',
               borderRadius: '14px',
               padding: '1.5rem',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+              boxShadow: 'var(--card-shadow)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -738,7 +735,7 @@ export default function DashboardPage() {
                     padding: '4px 12px',
                     borderRadius: '6px',
                     border: 'none',
-                    background: distributionTab === 'kyc' ? '#4d77f0' : 'transparent',
+                    background: distributionTab === 'kyc' ? 'var(--primary)' : 'transparent',
                     color: distributionTab === 'kyc' ? '#fff' : 'var(--text-secondary)',
                     fontSize: '11px',
                     fontWeight: 600,
@@ -755,7 +752,7 @@ export default function DashboardPage() {
                     padding: '4px 12px',
                     borderRadius: '6px',
                     border: 'none',
-                    background: distributionTab === 'chains' ? '#4d77f0' : 'transparent',
+                    background: distributionTab === 'chains' ? 'var(--primary)' : 'transparent',
                     color: distributionTab === 'chains' ? '#fff' : 'var(--text-secondary)',
                     fontSize: '11px',
                     fontWeight: 600,
@@ -806,7 +803,7 @@ export default function DashboardPage() {
               border: '1px solid var(--border)',
               borderRadius: '14px',
               padding: '1.5rem',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+              boxShadow: 'var(--card-shadow)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
@@ -820,7 +817,7 @@ export default function DashboardPage() {
                 onClick={() => navigate('/orders')}
                 style={{ background: 'none', border: 'none', color: 'var(--primary-strong)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
               >
-                Order Book Explorer →
+                Order Book Explorer â†’
               </button>
             </div>
 
@@ -846,7 +843,7 @@ export default function DashboardPage() {
                         </span>
                       </div>
                       <div style={{ width: '100%', height: '6px', background: 'var(--overlay-2)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #4d77f0, #818cf8)', borderRadius: '3px' }} />
+                        <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent-sky))', borderRadius: '3px' }} />
                       </div>
                     </div>
                   );
@@ -862,7 +859,7 @@ export default function DashboardPage() {
               border: '1px solid var(--border)',
               borderRadius: '14px',
               padding: '1.5rem',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+              boxShadow: 'var(--card-shadow)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -878,7 +875,7 @@ export default function DashboardPage() {
                 onClick={() => navigate('/support-tickets')}
                 style={{ background: 'none', border: 'none', color: 'var(--primary-strong)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
               >
-                Tickets Console →
+                Tickets Console â†’
               </button>
             </div>
 

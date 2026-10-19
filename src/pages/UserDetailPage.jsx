@@ -437,12 +437,12 @@ export default function UserDetailPage() {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
+          boxShadow: "var(--shadow-lg)",
           overflow: "hidden",
         }}
       >
             {/* Modal Header */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', background: '#161822', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
