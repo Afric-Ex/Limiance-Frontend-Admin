@@ -82,7 +82,7 @@ export default function AuditPage() {
             Cryptographically signed and tamper-evident audit record of every administrative action on the Limiance platform.
           </p>
         </div>
-        <div style={{ color: 'var(--text-tertiary)', fontSize: '14px', background: 'var(--bg-surface-2)', padding: '8px 14px', borderRadius: '6px' }}>
+        <div className="al-record-count">
           {totalRecords} Total Recorded Events
         </div>
       </div>
@@ -213,21 +213,21 @@ export default function AuditPage() {
       </div>
 
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '24px' }}>
+        <div className="al-pagination">
           <button
+            className="al-page-btn"
             disabled={currentPage <= 1}
             onClick={() => setCurrentPage((p) => p - 1)}
-            style={{ padding: '6px 14px', background: '#374151', color: '#fff', borderRadius: '4px', border: 'none' }}
           >
             Previous
           </button>
-          <span style={{ alignSelf: 'center', color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
+          <span className="al-page-status">
             Page {currentPage} of {totalPages}
           </span>
           <button
+            className="al-page-btn"
             disabled={currentPage >= totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
-            style={{ padding: '6px 14px', background: '#374151', color: '#fff', borderRadius: '4px', border: 'none' }}
           >
             Next
           </button>

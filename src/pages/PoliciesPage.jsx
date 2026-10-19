@@ -145,9 +145,9 @@ export default function PoliciesPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '8px',
-            background: toast.type === 'error' ? '#EF4444' : '#10B981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {toast.msg}
@@ -192,7 +192,7 @@ export default function PoliciesPage() {
               fontWeight: '700',
               border: 'none',
               cursor: 'pointer',
-              background: circuitBreaker?.is_halted ? '#10b981' : '#dc2626',
+              background: circuitBreaker?.is_halted ? 'var(--success-solid)' : 'var(--danger-solid)',
               color: '#fff',
             }}
           >
@@ -316,7 +316,7 @@ export default function PoliciesPage() {
                     fontWeight: '600',
                     border: 'none',
                     cursor: 'pointer',
-                    background: halted ? '#10b981' : '#ef4444',
+                    background: halted ? 'var(--success-solid)' : 'var(--danger-solid)',
                     color: '#fff',
                   }}
                 >
@@ -350,14 +350,14 @@ export default function PoliciesPage() {
           />
           <button
             type="submit"
-            style={{ padding: '10px 18px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+            style={{ padding: '10px 18px', background: 'var(--danger-solid)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
           >
             Halt Pair
           </button>
           <button
             type="button"
             onClick={(e) => handleSymbolSubmit(e, false)}
-            style={{ padding: '10px 18px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+            style={{ padding: '10px 18px', background: 'var(--success-solid)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
           >
             Resume Pair
           </button>

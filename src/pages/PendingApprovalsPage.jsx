@@ -127,9 +127,9 @@ export default function PendingApprovalsPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '10px',
-            background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
             backdropFilter: 'blur(10px)',
             fontWeight: 600,
             fontSize: '14px',
@@ -228,7 +228,7 @@ export default function PendingApprovalsPage() {
                 style={{
                   padding: '8px 14px',
                   borderRadius: '8px',
-                  background: active ? '#4d77f0' : 'var(--overlay-2)',
+                  background: active ? 'var(--primary-solid)' : 'var(--overlay-2)',
                   border: 'none',
                   color: active ? '#fff' : 'var(--text-secondary)',
                   fontWeight: 600,
@@ -437,7 +437,7 @@ export default function PendingApprovalsPage() {
                               style={{
                                 padding: '6px 12px',
                                 borderRadius: '6px',
-                                background: '#10b981',
+                                background: 'var(--success-solid)',
                                 border: 'none',
                                 color: '#fff',
                                 fontWeight: 600,
@@ -507,7 +507,7 @@ export default function PendingApprovalsPage() {
               maxWidth: '480px',
               width: '100%',
               padding: '24px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -577,7 +577,7 @@ export default function PendingApprovalsPage() {
                   style={{
                     padding: '8px 18px',
                     borderRadius: '8px',
-                    background: '#ef4444',
+                    background: 'var(--danger-solid)',
                     border: 'none',
                     color: '#fff',
                     fontWeight: 600,
@@ -615,7 +615,7 @@ export default function PendingApprovalsPage() {
               maxWidth: '640px',
               width: '100%',
               padding: '24px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -678,7 +678,7 @@ export default function PendingApprovalsPage() {
                 style={{
                   padding: '8px 18px',
                   borderRadius: '8px',
-                  background: '#4d77f0',
+                  background: 'var(--primary-solid)',
                   border: 'none',
                   color: '#fff',
                   fontWeight: 600,

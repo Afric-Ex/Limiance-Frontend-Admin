@@ -69,19 +69,19 @@
 }
 
 .ob-market-tab.active.spot {
-  background: #6366f1;
+  background: var(--color-accent-solid);
   color: #ffffff;
   box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
 }
 
 .ob-market-tab.active.margin {
-  background: #8b5cf6;
+  background: var(--color-accent-secondary-solid);
   color: #ffffff;
   box-shadow: 0 2px 10px rgba(139, 92, 246, 0.4);
 }
 
 .ob-market-tab.active.futures {
-  background: #f59e0b;
+  background: var(--color-warning-solid);
   color: #ffffff;
   box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
 }
@@ -173,7 +173,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .ob-ticker-main {
@@ -254,7 +254,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
 }
@@ -451,7 +451,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-md);
 }
 
 .ob-card-header {
@@ -566,7 +566,7 @@
 
 [data-theme="light"] .ob-pair-selector {
   background: var(--bg-card);
-  border-color: var(--border);
+  border-color: var(--color-border-control);
   color: var(--text-primary);
 }
 
@@ -608,8 +608,14 @@
 
 [data-theme="light"] .ob-view-btn {
   background: var(--bg-surface);
-  border-color: var(--border);
+  border-color: var(--color-border-control);
   color: var(--text-secondary);
+}
+
+[data-theme="light"] .ob-view-btn.active {
+  background: var(--color-background-active);
+  border-color: var(--color-border-focus);
+  color: var(--color-accent-primary-hover);
 }
 
 [data-theme="light"] .ob-table-header {
@@ -663,4 +669,24 @@
 
 [data-theme="light"] .ob-stat-box-value {
   color: var(--text-primary);
+}
+
+[data-theme="light"] .ob-empty-state {
+  color: var(--color-text-tertiary);
+}
+
+[data-theme="light"] .ob-alert {
+  background: var(--color-error-light);
+  border-color: var(--color-border-error);
+  color: var(--color-error-text);
+}
+
+[data-theme="light"] .ob-alert button {
+  background: var(--color-background-card);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .ob-alert button:hover {
+  background: var(--color-background-hover);
 }

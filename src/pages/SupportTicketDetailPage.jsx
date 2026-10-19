@@ -258,9 +258,9 @@ export default function SupportTicketDetailPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '10px',
-            background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
             fontWeight: '600',
             fontSize: '14px',
           }}
@@ -320,7 +320,7 @@ export default function SupportTicketDetailPage() {
             padding: '24px',
             marginBottom: '20px',
             color: 'var(--text-primary)',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
+            boxShadow: 'var(--shadow-lg)',
           }}
         >
           <div
@@ -400,7 +400,7 @@ export default function SupportTicketDetailPage() {
                   padding: '9px 14px',
                   borderRadius: '8px',
                   border: 'none',
-                  background: canForceReleaseOrRefund ? '#10b981' : 'var(--bg-surface-2)',
+                  background: canForceReleaseOrRefund ? 'var(--success-solid)' : 'var(--bg-surface-2)',
                   color: canForceReleaseOrRefund ? '#fff' : 'var(--text-muted)',
                   fontWeight: 700,
                   fontSize: '12px',
@@ -488,7 +488,7 @@ export default function SupportTicketDetailPage() {
                 <User size={14} /> Trade Counterparties
               </div>
               <div style={{ fontSize: '13px', marginBottom: '8px' }}>
-                      <span style={{ color: 'var(--success)', fontWeight: 700 }}>BUYER:</span>{' '}
+                      <span style={{ color: 'var(--success-text)', fontWeight: 700 }}>BUYER:</span>{' '}
                 <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{p2pMatch.buyer_name || 'User'}</span>
                 <div style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-tertiary)' }}>{p2pMatch.buyer_id}</div>
               </div>
@@ -562,7 +562,7 @@ export default function SupportTicketDetailPage() {
               flexDirection: 'column',
               padding: '24px',
               color: 'var(--text-primary)',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <div
@@ -708,8 +708,8 @@ export default function SupportTicketDetailPage() {
                   alignItems: 'center',
                   gap: '6px',
                   padding: '10px 16px',
-                  background: '#f59e0b',
-                  color: '#111827',
+                  background: 'var(--warning-solid)',
+                  color: '#FFFFFF',
                   border: 'none',
                   borderRadius: '6px',
                   fontWeight: '700',
@@ -734,7 +734,7 @@ export default function SupportTicketDetailPage() {
             flexDirection: 'column',
             padding: '24px',
             color: 'var(--text-primary)',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-lg)',
           }}
         >
           {/* Header */}
@@ -803,7 +803,7 @@ export default function SupportTicketDetailPage() {
                     style={{
                       alignSelf: isAgent ? 'flex-end' : 'flex-start',
                       maxWidth: '85%',
-                      background: isAgent ? '#2563eb' : 'var(--bg-surface-2)',
+                      background: isAgent ? 'var(--primary-solid)' : 'var(--bg-surface-2)',
                       padding: '10px 14px',
                       borderRadius: '8px',
                       color: isAgent ? '#fff' : 'var(--text-primary)',
@@ -843,7 +843,7 @@ export default function SupportTicketDetailPage() {
               disabled={replying}
               style={{
                 padding: '10px 18px',
-                background: '#2563eb',
+                background: 'var(--primary-solid)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '6px',

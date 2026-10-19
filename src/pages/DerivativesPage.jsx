@@ -307,7 +307,7 @@ export default function DerivativesPage() {
             position: 'fixed',
             top: '24px',
             right: '24px',
-            background: toast.type === 'error' ? '#ef4444' : '#10b981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
             padding: '12px 20px',
             borderRadius: '8px',
@@ -317,7 +317,7 @@ export default function DerivativesPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <CheckCircle size={16} />
@@ -358,7 +358,7 @@ export default function DerivativesPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -389,7 +389,7 @@ export default function DerivativesPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -425,7 +425,7 @@ export default function DerivativesPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'futures' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'futures' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'futures' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -443,7 +443,7 @@ export default function DerivativesPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'margin' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'margin' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'margin' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -461,7 +461,7 @@ export default function DerivativesPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'risk' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'risk' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'risk' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -533,7 +533,7 @@ export default function DerivativesPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -651,7 +651,7 @@ export default function DerivativesPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -965,7 +965,7 @@ export default function DerivativesPage() {
                   style={{
                     padding: '8px 18px',
                     borderRadius: '8px',
-                    background: '#4d77f0',
+                    background: 'var(--primary-solid)',
                     border: 'none',
                     color: '#fff',
                     fontWeight: 600,
@@ -1098,7 +1098,7 @@ export default function DerivativesPage() {
                   style={{
                     padding: '8px 18px',
                     borderRadius: '8px',
-                    background: '#4d77f0',
+                    background: 'var(--primary-solid)',
                     border: 'none',
                     color: '#fff',
                     fontWeight: 600,
@@ -1341,7 +1341,7 @@ export default function DerivativesPage() {
               width: '100%',
               maxWidth: '560px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1453,7 +1453,7 @@ export default function DerivativesPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Contract
                 </button>
@@ -1485,7 +1485,7 @@ export default function DerivativesPage() {
               width: '100%',
               maxWidth: '480px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1562,7 +1562,7 @@ export default function DerivativesPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Margin Spec
                 </button>

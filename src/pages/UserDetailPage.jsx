@@ -396,9 +396,9 @@ export default function UserDetailPage() {
             zIndex: 9999,
             padding: "12px 20px",
             borderRadius: "10px",
-            background: toast.type === "error" ? "rgba(239, 68, 68, 0.95)" : "rgba(16, 185, 129, 0.95)",
+            background: toast.type === "error" ? "var(--danger-solid)" : "var(--success-solid)",
             color: "#fff",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            boxShadow: "var(--shadow-md)",
             fontWeight: "600",
             fontSize: "14px",
           }}
@@ -620,7 +620,7 @@ export default function UserDetailPage() {
                       <button
                         onClick={() => executeUserAction('unfreeze', 'Unfreeze Account')}
                         disabled={actionLoading}
-                        style={{ padding: '10px 20px', borderRadius: '8px', background: '#10b981', color: '#fff', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
+                        style={{ padding: '10px 20px', borderRadius: '8px', background: 'var(--success-solid)', color: '#fff', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
                       >
                         Unfreeze Account
                       </button>
@@ -628,7 +628,7 @@ export default function UserDetailPage() {
                       <button
                         onClick={() => executeUserAction('freeze', 'Freeze Entire Account')}
                         disabled={actionLoading}
-                        style={{ padding: '10px 20px', borderRadius: '8px', background: '#ef4444', color: '#fff', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
+                        style={{ padding: '10px 20px', borderRadius: '8px', background: 'var(--danger-solid)', color: '#fff', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
                       >
                         Freeze Entire Account
                       </button>
@@ -740,7 +740,7 @@ export default function UserDetailPage() {
                         <button
                           type="submit"
                           disabled={actionLoading}
-                          style={{ padding: '8px 16px', background: '#4d77f0', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginTop: '4px' }}
+                          style={{ padding: '8px 16px', background: 'var(--primary-solid)', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginTop: '4px' }}
                         >
                           Apply KYC Override
                         </button>
@@ -902,7 +902,7 @@ export default function UserDetailPage() {
                           padding: '6px 14px',
                           borderRadius: '6px',
                           border: 'none',
-                          background: portfolioCategory === pill.value ? '#4d77f0' : 'var(--overlay-2)',
+                          background: portfolioCategory === pill.value ? 'var(--primary-solid)' : 'var(--overlay-2)',
                           color: portfolioCategory === pill.value ? '#fff' : 'var(--text-secondary)',
                           fontSize: '12px',
                           fontWeight: 600,
@@ -930,7 +930,7 @@ export default function UserDetailPage() {
                       />
                       <button
                         onClick={() => fetchUserPortfolio(selectedUser.id, portfolioSearch)}
-                        style={{ padding: '8px 14px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                        style={{ padding: '8px 14px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                       >
                         Filter
                       </button>
@@ -1401,7 +1401,7 @@ export default function UserDetailPage() {
                               type="checkbox"
                               checked={!!userSettings.withdrawalWhitelist}
                               onChange={(e) => setUserSettings({ ...userSettings, withdrawalWhitelist: e.target.checked })}
-                              style={{ cursor: 'pointer', accentColor: '#6366f1' }}
+                              style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
                             />
                             Withdrawal Address Whitelist Active
                           </label>
@@ -1410,7 +1410,7 @@ export default function UserDetailPage() {
                               type="checkbox"
                               checked={!!userSettings.chartColor}
                               onChange={(e) => setUserSettings({ ...userSettings, chartColor: e.target.checked })}
-                              style={{ cursor: 'pointer', accentColor: '#6366f1' }}
+                              style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
                             />
                             Alternative Chart Colors (Green Up / Red Down)
                           </label>
@@ -1442,7 +1442,7 @@ export default function UserDetailPage() {
                                       [item.key]: e.target.checked,
                                     },
                                   })}
-                                  style={{ cursor: 'pointer', accentColor: '#38bdf8' }}
+                                  style={{ cursor: 'pointer', accentColor: 'var(--accent-sky)' }}
                                 />
                                 {item.label}
                               </label>
@@ -1473,7 +1473,7 @@ export default function UserDetailPage() {
                                       [item.key]: e.target.checked,
                                     },
                                   })}
-                                  style={{ cursor: 'pointer', accentColor: '#fbbf24' }}
+                                  style={{ cursor: 'pointer', accentColor: 'var(--warning)' }}
                                 />
                                 {item.label}
                               </label>
@@ -1484,7 +1484,7 @@ export default function UserDetailPage() {
                         {/* Transaction Sound & Real-time Alerts */}
                         <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', padding: '20px' }}>
                           <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Bell size={16} style={{ color: '#a855f7' }} /> Execution Sounds & Alerts
+                            <Bell size={16} style={{ color: 'var(--accent-purple)' }} /> Execution Sounds & Alerts
                           </h4>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
@@ -1504,7 +1504,7 @@ export default function UserDetailPage() {
                                       [item.key]: e.target.checked,
                                     },
                                   })}
-                                  style={{ cursor: 'pointer', accentColor: '#a855f7' }}
+                                  style={{ cursor: 'pointer', accentColor: 'var(--accent-purple)' }}
                                 />
                                 {item.label}
                               </label>
@@ -1534,7 +1534,7 @@ export default function UserDetailPage() {
                                       [item.key]: e.target.checked,
                                     },
                                   })}
-                                  style={{ cursor: 'pointer', accentColor: '#34d399' }}
+                                  style={{ cursor: 'pointer', accentColor: 'var(--success)' }}
                                 />
                                 {item.label}
                               </label>

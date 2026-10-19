@@ -192,9 +192,9 @@ export default function PairsPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '10px',
-            background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
             backdropFilter: 'blur(10px)',
             fontWeight: '600',
             fontSize: '14px',
@@ -237,7 +237,7 @@ export default function PairsPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: '#4d77f0',
+              background: 'var(--primary-solid)',
               border: 'none',
               color: '#fff',
               fontWeight: 600,
@@ -255,7 +255,7 @@ export default function PairsPage() {
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
         {['spot', 'margin', 'futures'].map((type) => (
-          <button key={type} onClick={() => setMarketType(type)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-medium)', background: marketType === type ? '#4d77f0' : 'var(--bg-surface-2)', color: marketType === type ? '#fff' : 'var(--text-secondary)', textTransform: 'capitalize', cursor: 'pointer' }}>
+          <button key={type} onClick={() => setMarketType(type)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-medium)', background: marketType === type ? 'var(--primary-solid)' : 'var(--bg-surface-2)', color: marketType === type ? '#fff' : 'var(--text-secondary)', textTransform: 'capitalize', cursor: 'pointer' }}>
             {type}
           </button>
         ))}
@@ -291,7 +291,7 @@ export default function PairsPage() {
       </div>
 
       {/* Pairs Table */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: 'var(--shadow-md)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
@@ -426,7 +426,7 @@ export default function PairsPage() {
                 <button type="button" onClick={() => { setModalOpen(false); setEditingPair(null); }} style={{ padding: '8px 16px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>
+                <button type="submit" style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>
                   {editingPair ? 'Save Prices' : 'Create Pair'}
                 </button>
               </div>

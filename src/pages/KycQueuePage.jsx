@@ -188,9 +188,9 @@ export default function KycQueuePage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '8px',
-            background: toast.type === 'error' ? '#EF4444' : '#10B981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {toast.msg}

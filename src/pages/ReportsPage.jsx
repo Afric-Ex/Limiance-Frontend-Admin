@@ -77,7 +77,7 @@ export default function ReportsPage() {
                 style={{
                   padding: '6px 14px',
                   borderRadius: '6px',
-                  background: periodDays === p.days ? '#4d77f0' : 'transparent',
+                  background: periodDays === p.days ? 'var(--primary-solid)' : 'transparent',
                   border: 'none',
                   color: periodDays === p.days ? '#fff' : 'var(--text-secondary)',
                   fontWeight: 600,
@@ -118,7 +118,7 @@ export default function ReportsPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -141,7 +141,7 @@ export default function ReportsPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -164,7 +164,7 @@ export default function ReportsPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -191,7 +191,7 @@ export default function ReportsPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -242,7 +242,7 @@ export default function ReportsPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

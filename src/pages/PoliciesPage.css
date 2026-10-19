@@ -126,7 +126,7 @@
 }
 
 .pair-form button {
-  background: linear-gradient(135deg, #4d77f0 0%, #3b65db 100%);
+  background: linear-gradient(135deg, var(--color-accent-solid) 0%, var(--color-accent-solid-hover) 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -151,7 +151,7 @@
 [data-theme="light"] .control-item {
   background: #F9FAFB;
   border-color: #E5E7EB;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 [data-theme="light"] .control-item:hover {
@@ -170,6 +170,6 @@
 [data-theme="light"] .pair-form input,
 [data-theme="light"] .pair-form select {
   background: #FFFFFF;
-  border-color: #D1D5DB;
+  border-color: var(--color-border-control);
   color: #0F172A;
 }

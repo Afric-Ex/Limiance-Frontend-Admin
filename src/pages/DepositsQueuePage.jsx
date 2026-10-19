@@ -111,7 +111,7 @@ export default function DepositsQueuePage() {
                   fontWeight: '500',
                   border: 'none',
                   cursor: 'pointer',
-                  background: statusFilter === st ? '#3b82f6' : 'var(--bg-surface-2)',
+                  background: statusFilter === st ? 'var(--primary-solid)' : 'var(--bg-surface-2)',
                   color: statusFilter === st ? '#fff' : 'var(--text-secondary)',
                 }}
               >

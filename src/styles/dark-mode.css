@@ -1,0 +1,39 @@
+/* ==========================================================================
+   Limiance Admin - Dark Mode Component Overrides (default theme)
+   ========================================================================== */
+
+[data-theme="dark"] .card-interactive:hover,
+[data-theme="dark"] .glass-card:hover,
+[data-theme="dark"] .metric-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--card-shadow-hover);
+}
+
+[data-theme="dark"] .modal-card {
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] th {
+  color: var(--color-text-tertiary);
+  border-bottom-color: var(--color-border-default);
+}
+
+[data-theme="dark"] tbody tr:hover {
+  background: var(--color-background-hover);
+}
+
+[data-theme="dark"] code,
+[data-theme="dark"] .mono {
+  background: var(--color-info-light);
+  color: var(--color-info-text);
+  border-color: var(--color-border-default);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-placeholder);
+}
