@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Limiance Admin - Light Mode Component Overrides
+   Only rules that cannot be expressed by swapping a single token live here.
+   ========================================================================== */
+
+[data-theme="light"] .glass-card,
+[data-theme="light"] .card,
+[data-theme="light"] .metric-card,
+[data-theme="light"] .filter-card {
+  background: var(--color-background-card);
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .card-interactive:hover,
+[data-theme="light"] .glass-card:hover,
+[data-theme="light"] .metric-card:hover {
+  background: var(--color-background-card);
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] .modal-card {
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Tables ------------------------------------------------------------------ */
+[data-theme="light"] th {
+  background-color: var(--color-background-page);
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-border-default);
+}
+
+[data-theme="light"] td {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-border-default);
+}
+
+[data-theme="light"] tbody tr:nth-child(even) {
+  background-color: var(--color-background-card-secondary);
+}
+
+[data-theme="light"] tbody tr:hover {
+  background-color: var(--color-background-hover) !important;
+}
+
+/* Inputs ------------------------------------------------------------------ */
+[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background-color: var(--color-background-input);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-control);
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 1px var(--color-accent-primary), 0 0 0 4px var(--primary-glow);
+}
+
+[data-theme="light"] input:disabled,
+[data-theme="light"] select:disabled,
+[data-theme="light"] textarea:disabled {
+  background-color: var(--color-background-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* Solid controls keep white copy in light mode ---------------------------- */
+[data-theme="light"] .btn-primary,
+[data-theme="light"] .btn-primary *,
+[data-theme="light"] .btn-danger,
+[data-theme="light"] .btn-danger *,
+[data-theme="light"] .btn-success,
+[data-theme="light"] .btn-success *,
+[data-theme="light"] .btn-confirm,
+[data-theme="light"] .btn-confirm *,
+[data-theme="light"] .btn-approve,
+[data-theme="light"] .btn-approve *,
+[data-theme="light"] .pill.active,
+[data-theme="light"] .ob-market-tab.active,
+[data-theme="light"] .mo-tf-btn.active,
+[data-theme="light"] .mo-chart-tab-btn.active,
+[data-theme="light"] .chart-timeframe-btn.active {
+  color: #FFFFFF !important;
+}
+
+[data-theme="light"] .badge-success,
+[data-theme="light"] .badge-danger,
+[data-theme="light"] .badge-error,
+[data-theme="light"] .badge-warning,
+[data-theme="light"] .badge-info {
+  border-color: transparent;
+}
+
+/* Code -------------------------------------------------------------------- */
+[data-theme="light"] code,
+[data-theme="light"] .mono {
+  background: var(--color-background-page);
+  color: var(--color-info-text);
+  border-color: var(--color-border-default);
+}
+
+/* Modal overlays rendered with inline styles ------------------------------ */
+[data-theme="light"] [style*="position: fixed"][style*="inset: 0"] {
+  background-color: var(--modal-overlay) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Scrollbars -------------------------------------------------------------- */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--color-background-page);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-control);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-placeholder);
+}

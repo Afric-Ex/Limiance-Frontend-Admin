@@ -588,7 +588,7 @@ export default function TreasuryPage() {
 
       {/* Toast Notification */}
       {toast && (
-        <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999, padding: '11px 18px', borderRadius: '8px', background: toast.type === 'error' ? 'rgba(239,68,68,0.95)' : 'rgba(16,185,129,0.95)', color: '#fff', fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.4)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999, padding: '11px 18px', borderRadius: '8px', background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)', color: '#fff', fontWeight: 600, boxShadow: 'var(--shadow-md)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
           {toast.msg}
         </div>
@@ -1132,7 +1132,7 @@ export default function TreasuryPage() {
                 onClick={() => setCreateCollectionModalOpen(true)}
                 style={{
                   padding: '8px 16px',
-                  background: '#4d77f0',
+                  background: 'var(--primary-solid)',
                   border: 'none',
                   borderRadius: '6px',
                   color: '#fff',
@@ -1301,7 +1301,7 @@ export default function TreasuryPage() {
       {/* ── Modal: Register Collection Account ── */}
       {createCollectionModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '460px', padding: '1.75rem', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '460px', padding: '1.75rem', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Landmark size={18} style={{ color: "var(--primary-strong)" }} />
@@ -1343,7 +1343,7 @@ export default function TreasuryPage() {
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '1rem' }}>
                   <button type="button" onClick={() => setCreateCollectionModalOpen(false)} style={{ padding: '8px 16px', background: 'none', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
-                  <button type="submit" disabled={creatingCollection || !newCollectionName.trim()} style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: creatingCollection ? 'not-allowed' : 'pointer' }}>
+                  <button type="submit" disabled={creatingCollection || !newCollectionName.trim()} style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: creatingCollection ? 'not-allowed' : 'pointer' }}>
                     {creatingCollection ? 'Creating...' : 'Create Account'}
                   </button>
                 </div>
@@ -1356,7 +1356,7 @@ export default function TreasuryPage() {
       {/* ── Modal: Collection Account Transactions ── */}
       {selectedCollectionAcc && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '780px', padding: '1.75rem', maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '780px', padding: '1.75rem', maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
@@ -1381,7 +1381,7 @@ export default function TreasuryPage() {
               <button
                 type="button"
                 onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol)}
-                style={{ padding: '6px 12px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '6px 12px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
               >
                 Filter
               </button>
@@ -1437,7 +1437,7 @@ export default function TreasuryPage() {
               <button
                 type="button"
                 onClick={() => setSelectedCollectionAcc(null)}
-                style={{ padding: '8px 18px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '8px 18px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
               >
                 Close
               </button>
@@ -1451,7 +1451,7 @@ export default function TreasuryPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {sweepTarget && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '500px', padding: '1.75rem', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '500px', padding: '1.75rem', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ArrowRightLeft size={18} style={{ color: "var(--primary-strong)" }} />
@@ -1558,7 +1558,7 @@ export default function TreasuryPage() {
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
                   <button type="button" onClick={() => { setSweepTarget(null); setSweepRequestID(null); }} style={{ padding: '8px 16px', background: 'none', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
-                  <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, #4d77f0, #38bdf8)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
+                  <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, var(--primary-solid), var(--accent-sky))', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
                     {actionLoading ? 'Dispatching...' : 'Confirm & Dispatch'}
                   </button>
                 </div>
@@ -1573,7 +1573,7 @@ export default function TreasuryPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {thresholdOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '540px', padding: '1.75rem', boxShadow: '0 20px 40px rgba(0,0,0,0.55)' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '14px', width: '100%', maxWidth: '540px', padding: '1.75rem', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <SlidersHorizontal size={18} style={{ color: "var(--info-text)" }} />
@@ -1607,7 +1607,7 @@ export default function TreasuryPage() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '1.25rem' }}>
                 <button type="button" onClick={() => setThresholdOpen(false)} style={{ padding: '8px 16px', background: 'none', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, #4d77f0, #818cf8)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
+                <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, var(--primary-solid), var(--accent-purple))', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
                   {actionLoading ? 'Saving...' : 'Save & Enforce'}
                 </button>
               </div>

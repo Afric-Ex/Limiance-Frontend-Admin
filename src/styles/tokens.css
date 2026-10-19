@@ -1,0 +1,264 @@
+/* ==========================================================================
+   Limiance Admin - Design Tokens
+   Theme contract consumed by base.css, components.css and every page.
+   ========================================================================== */
+
+:root,
+[data-theme="dark"],
+.dark-theme {
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --color-background-page: #0A0B0F;
+  --color-background-card: #13151C;
+  --color-background-card-secondary: #181A22;
+  --color-background-input: #12141A;
+  --color-background-hover: #222634;
+  --color-background-active: rgba(77, 119, 240, 0.16);
+  --color-background-disabled: #1C1E28;
+
+  /* Text */
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: rgba(255, 255, 255, 0.68);
+  --color-text-tertiary: rgba(255, 255, 255, 0.55);
+  --color-text-muted: rgba(255, 255, 255, 0.42);
+  --color-text-faint: rgba(255, 255, 255, 0.32);
+  --color-text-placeholder: rgba(255, 255, 255, 0.42);
+  --color-text-disabled: rgba(255, 255, 255, 0.32);
+  --color-text-inverse: #0A0B0F;
+
+  /* Semantic colors (solid values are safe for white text) */
+  --color-success: #10B981;
+  --color-success-solid: #047857;
+  --color-success-light: rgba(16, 185, 129, 0.14);
+  --color-success-text: #34D399;
+  --color-warning: #F59E0B;
+  --color-warning-solid: #B45309;
+  --color-warning-light: rgba(245, 158, 11, 0.14);
+  --color-warning-text: #FBBF24;
+  --color-error: #EF4444;
+  --color-error-solid: #B91C1C;
+  --color-error-light: rgba(239, 68, 68, 0.14);
+  --color-error-text: #F87171;
+  --color-info: #4F46E5;
+  --color-info-light: rgba(99, 102, 241, 0.14);
+  --color-info-text: #818CF8;
+
+  /* UI elements */
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.05);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-border-control: rgba(255, 255, 255, 0.14);
+  --color-border-focus: rgba(129, 140, 248, 0.55);
+  --color-border-error: rgba(239, 68, 68, 0.45);
+  --color-accent-primary: #4D77F0;
+  --color-accent-primary-hover: #3B65DB;
+  --color-accent-solid: #3B65DB;
+  --color-accent-solid-hover: #3157C9;
+  --color-accent-secondary-solid: #7C3AED;
+  --color-accent-secondary: #A78BFA;
+  --color-accent-sky: #38BDF8;
+  --color-accent-blue: #60A5FA;
+  --color-accent-purple: #A78BFA;
+  --color-focus-ring: #818CF8;
+
+  /* Overlays */
+  --color-overlay-1: rgba(255, 255, 255, 0.03);
+  --color-overlay-2: rgba(255, 255, 255, 0.06);
+  --color-overlay-3: rgba(255, 255, 255, 0.1);
+
+  /* Pills and toasts */
+  --color-pill-bg: #1F2937;
+  --color-pill-bg-hover: #374151;
+  --color-pill-text: #FFFFFF;
+  --color-toast-success: var(--color-success-solid);
+  --color-toast-error: var(--color-error-solid);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-elevation-1: var(--shadow-sm);
+  --shadow-elevation-2: var(--shadow-md);
+  --shadow-3: var(--shadow-lg);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --modal-overlay: rgba(0, 0, 0, 0.72);
+
+  /* Radii and typography */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-card: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 9999px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Legacy aliases kept for existing component/page CSS */
+  --bg-deep: var(--color-background-page);
+  --bg-card: var(--color-background-card);
+  --bg-surface: var(--color-background-card-secondary);
+  --bg-surface-2: var(--color-background-card-secondary);
+  --bg-surface-elevated: var(--color-background-card);
+  --bg-surface-hover: var(--color-background-hover);
+  --bg-input: var(--color-background-input);
+
+  --border-subtle: var(--color-border-light);
+  --border: var(--color-border-default);
+  --border-medium: var(--color-border-control);
+  --border-light: var(--color-border-control);
+  --border-focus: var(--color-accent-primary);
+
+  --overlay-1: var(--color-overlay-1);
+  --overlay-2: var(--color-overlay-2);
+  --overlay-3: var(--color-overlay-3);
+
+  --primary: var(--color-accent-primary);
+  --primary-strong: var(--color-accent-primary);
+  --primary-hover: var(--color-accent-primary-hover);
+  --primary-solid: var(--color-accent-solid);
+  --primary-solid-hover: var(--color-accent-solid-hover);
+  --primary-glow: rgba(77, 119, 240, 0.25);
+  --primary-text: #FFFFFF;
+
+  --accent-sky: var(--color-accent-sky);
+  --accent-blue: var(--color-accent-blue);
+  --accent-purple: var(--color-accent-purple);
+
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary: var(--color-text-tertiary);
+  --text-muted: var(--color-text-muted);
+  --text-faint: var(--color-text-faint);
+  --text-on-primary: #FFFFFF;
+
+  --success: var(--color-success);
+  --success-solid: var(--color-success-solid);
+  --success-bg: var(--color-success-light);
+  --success-border: transparent;
+  --success-text: var(--color-success-text);
+
+  --danger: var(--color-error);
+  --danger-solid: var(--color-error-solid);
+  --danger-bg: var(--color-error-light);
+  --danger-border: transparent;
+  --danger-text: var(--color-error-text);
+
+  --warning: var(--color-warning);
+  --warning-solid: var(--color-warning-solid);
+  --warning-bg: var(--color-warning-light);
+  --warning-border: transparent;
+  --warning-text: var(--color-warning-text);
+
+  --info: var(--color-info);
+  --info-bg: var(--color-info-light);
+  --info-border: transparent;
+  --info-text: var(--color-info-text);
+
+  --bg-subtle: var(--color-background-card-secondary);
+  --border-hover: var(--color-border-focus);
+  --color-primary: var(--color-accent-primary);
+
+  /* Backwards-compatible explicit aliases */
+  --color-bg-primary: var(--color-background-page);
+  --color-bg-card: var(--color-background-card);
+  --color-bg-card-secondary: var(--color-background-card-secondary);
+  --color-bg-hover: var(--color-background-hover);
+  --color-link: var(--color-accent-primary);
+  --color-accent-blue: var(--color-accent-primary);
+  --color-accent-blue-hover: var(--color-accent-primary-hover);
+  --color-border-input: var(--color-border-control);
+  --color-border-hover: var(--color-border-focus);
+}
+
+/* Light theme values.
+   AA deviations from the supplied palette:
+   - tertiary/muted/faint use #5F6773 (5.7:1 on white, 5.2:1 on #F3F4F6)
+     instead of #9CA3AF (2.5:1).
+   - semantic text uses #047857 / #B45309 / #B91C1C (4.8-5.3:1 on their
+     tinted backgrounds); #059669 / #D97706 are not used as text.
+   - form control borders use #7E889A (3.2-3.6:1 on page/card surfaces); #E5E7EB stays for
+     decorative dividers. Focus rings use #2563EB (5.2:1). */
+[data-theme="light"],
+.light-theme {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-background-page: #F3F4F6;
+  --color-background-card: #FFFFFF;
+  --color-background-card-secondary: #F9FAFB;
+  --color-background-input: #FFFFFF;
+  --color-background-hover: #F0F4F8;
+  --color-background-active: #E0E7FF;
+  --color-background-disabled: #F3F4F6;
+
+  /* Text */
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #4B5563;
+  --color-text-tertiary: #5F6773;
+  --color-text-muted: #5F6773;
+  --color-text-faint: #5F6773;
+  --color-text-placeholder: #6B7280;
+  --color-text-disabled: #D1D5DB;
+  --color-text-inverse: #FFFFFF;
+
+  /* Semantic colors */
+  --color-success: #059669;
+  --color-success-solid: #047857;
+  --color-success-light: #D1FAE5;
+  --color-success-text: #047857;
+  --color-warning: #D97706;
+  --color-warning-solid: #B45309;
+  --color-warning-light: #FEF3C7;
+  --color-warning-text: #B45309;
+  --color-error: #DC2626;
+  --color-error-solid: #B91C1C;
+  --color-error-light: #FEE2E2;
+  --color-error-text: #B91C1C;
+  --color-info: #1E40AF;
+  --color-info-light: #DBEAFE;
+  --color-info-text: #1E40AF;
+
+  /* UI elements */
+  --color-border-default: #E5E7EB;
+  --color-border-light: #F3F4F6;
+  --color-border-strong: #D1D5DB;
+  --color-border-control: #7E889A;
+  --color-border-focus: #BFDBFE;
+  --color-border-error: #FCA5A5;
+  --color-accent-primary: #2563EB;
+  --color-accent-primary-hover: #1D4ED8;
+  --color-accent-solid: #2563EB;
+  --color-accent-solid-hover: #1D4ED8;
+  --color-accent-secondary-solid: #7C3AED;
+  --color-accent-secondary: #7C3AED;
+  --color-accent-sky: #0369A1;
+  --color-accent-blue: #1D4ED8;
+  --color-accent-purple: #6D28D9;
+  --color-focus-ring: #2563EB;
+
+  /* Overlays */
+  --color-overlay-1: #F9FAFB;
+  --color-overlay-2: #F0F4F8;
+  --color-overlay-3: #E5E7EB;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.10);
+  --shadow-elevation-1: var(--shadow-sm);
+  --shadow-elevation-2: var(--shadow-md);
+  --shadow-3: var(--shadow-lg);
+  --card-shadow: var(--shadow-sm);
+  --card-shadow-hover: var(--shadow-md);
+  --modal-overlay: rgba(15, 23, 42, 0.55);
+
+  /* Legacy aliases whose values differ from dark mode */
+  --primary-glow: rgba(37, 99, 235, 0.2);
+  --bg-subtle: #F3F4F6;
+  --border-hover: #BFDBFE;
+  --color-border-input: #7E889A;
+  --color-border-hover: #BFDBFE;
+}

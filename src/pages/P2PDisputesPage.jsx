@@ -48,9 +48,9 @@ export default function P2PDisputesPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '8px',
-            background: toast.type === 'error' ? '#EF4444' : '#10B981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {toast.msg}
@@ -179,7 +179,7 @@ export default function P2PDisputesPage() {
                           alignItems: 'center',
                           gap: '6px',
                           padding: '6px 12px',
-                          background: '#dc2626',
+                          background: 'var(--danger-solid)',
                           color: '#fff',
                           border: 'none',
                           borderRadius: '6px',

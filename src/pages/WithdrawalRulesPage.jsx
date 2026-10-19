@@ -327,7 +327,7 @@ export default function WithdrawalRulesPage() {
             position: 'fixed',
             top: '24px',
             right: '24px',
-            background: toast.type === 'error' ? '#ef4444' : '#10b981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
             padding: '12px 20px',
             borderRadius: '8px',
@@ -337,7 +337,7 @@ export default function WithdrawalRulesPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <CheckCircle size={16} />
@@ -407,7 +407,7 @@ export default function WithdrawalRulesPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -458,7 +458,7 @@ export default function WithdrawalRulesPage() {
               disabled={savingThreshold}
               style={{
                 padding: '10px 20px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#fff',
@@ -482,7 +482,7 @@ export default function WithdrawalRulesPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -530,7 +530,7 @@ export default function WithdrawalRulesPage() {
               disabled={savingWhitelist}
               style={{
                 padding: '10px 20px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#fff',
@@ -554,7 +554,7 @@ export default function WithdrawalRulesPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             padding: '24px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -648,7 +648,7 @@ export default function WithdrawalRulesPage() {
               disabled={savingConversionLimits}
               style={{
                 padding: '10px 20px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#fff',
@@ -673,7 +673,7 @@ export default function WithdrawalRulesPage() {
           border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '24px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
@@ -1002,7 +1002,7 @@ export default function WithdrawalRulesPage() {
               disabled={savingAssetLimits}
               style={{
                 padding: '10px 24px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#fff',

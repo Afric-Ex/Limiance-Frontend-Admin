@@ -153,9 +153,9 @@ export default function KycDetailPage() {
             zIndex: 9999,
             padding: "12px 20px",
             borderRadius: "10px",
-            background: toast.type === "error" ? "rgba(239, 68, 68, 0.95)" : "rgba(16, 185, 129, 0.95)",
+            background: toast.type === "error" ? "var(--danger-solid)" : "var(--success-solid)",
             color: "#fff",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            boxShadow: "var(--shadow-md)",
             fontWeight: "600",
             fontSize: "14px",
           }}

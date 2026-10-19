@@ -101,9 +101,9 @@ export default function WalletsPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '10px',
-            background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
             backdropFilter: 'blur(10px)',
             fontWeight: '600',
             fontSize: '14px',
@@ -153,7 +153,7 @@ export default function WalletsPage() {
             style={{
               padding: '0 16px',
               borderRadius: '8px',
-              background: '#4d77f0',
+              background: 'var(--primary-solid)',
               color: '#fff',
               border: 'none',
               fontWeight: 600,
@@ -185,7 +185,7 @@ export default function WalletsPage() {
       </div>
 
       {/* Wallets Table */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: 'var(--shadow-md)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>

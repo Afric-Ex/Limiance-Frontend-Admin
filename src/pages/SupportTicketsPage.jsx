@@ -102,9 +102,9 @@ export default function SupportTicketsPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '8px',
-            background: toast.type === 'error' ? '#EF4444' : '#10B981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {toast.msg}
@@ -199,7 +199,7 @@ export default function SupportTicketsPage() {
                   categoryFilter === cat.key
                     ? cat.key === 'P2P_DISPUTE'
                       ? 'rgba(239, 68, 68, 0.2)'
-                      : '#2563eb'
+                      : 'var(--primary-solid)'
                     : 'var(--bg-surface-2)',
                 color: categoryFilter !== cat.key
                   ? 'var(--text-secondary)'
@@ -229,7 +229,7 @@ export default function SupportTicketsPage() {
                 fontWeight: '500',
                 border: 'none',
                 cursor: 'pointer',
-                background: statusFilter === st ? '#3b82f6' : 'var(--bg-surface-2)',
+                background: statusFilter === st ? 'var(--primary-solid)' : 'var(--bg-surface-2)',
                 color: statusFilter === st ? '#fff' : 'var(--text-secondary)',
               }}
             >
@@ -363,7 +363,7 @@ export default function SupportTicketsPage() {
                         onClick={() => navigate(`/support-tickets/${t.id}`)}
                         style={{
                           padding: '6px 12px',
-                          background: isP2PDispute ? '#dc2626' : '#374151',
+                          background: isP2PDispute ? 'var(--danger-solid)' : '#374151',
                           color: '#fff',
                           border: 'none',
                           borderRadius: '6px',

@@ -111,9 +111,9 @@ export default function RolesPage() {
             zIndex: 9999,
             padding: '12px 20px',
             borderRadius: '8px',
-            background: toast.type === 'error' ? '#EF4444' : '#10B981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {toast.msg}
@@ -178,7 +178,7 @@ export default function RolesPage() {
               style={{
                 width: '100%',
                 padding: '10px 18px',
-                background: '#2563eb',
+                background: 'var(--primary-solid)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '6px',
@@ -268,7 +268,7 @@ export default function RolesPage() {
                             fontSize: '12px',
                             border: 'none',
                             cursor: isCurrent ? 'not-allowed' : 'pointer',
-                            background: op.is_active ? '#dc2626' : '#10b981',
+                            background: op.is_active ? 'var(--danger-solid)' : 'var(--success-solid)',
                             color: '#fff',
                             opacity: isCurrent ? 0.4 : 1,
                           }}

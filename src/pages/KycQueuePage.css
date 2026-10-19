@@ -62,7 +62,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-md);
   overflow-x: auto;
 }
 
@@ -177,7 +177,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--shadow-lg);
   animation: cardFadeUp 0.3s ease-out;
 }
 
@@ -336,7 +336,7 @@
 
 .btn-approve {
   padding: 10px 22px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-success-solid) 0%, #065F46 100%);
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -348,7 +348,7 @@
 }
 
 .btn-approve:hover {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  background: linear-gradient(135deg, #047857 0%, #065F46 100%);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
@@ -395,7 +395,7 @@
   max-height: 90vh;
   object-fit: contain;
   border-radius: var(--radius-md);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  box-shadow: var(--shadow-lg);
 }
 
 .doc-viewer-content iframe {
@@ -476,6 +476,30 @@
   color: var(--text-primary);
 }
 
+[data-theme="light"] .status-badge.on_hold {
+  background: var(--color-warning-light);
+  color: var(--color-warning-text);
+  border-color: transparent;
+}
+
+[data-theme="light"] .status-badge.pending {
+  background: var(--color-info-light);
+  color: var(--color-info-text);
+  border-color: transparent;
+}
+
+[data-theme="light"] .status-badge.approved {
+  background: var(--color-success-light);
+  color: var(--color-success-text);
+  border-color: transparent;
+}
+
+[data-theme="light"] .status-badge.rejected {
+  background: var(--color-error-light);
+  color: var(--color-error-text);
+  border-color: transparent;
+}
+
 [data-theme="light"] .kyc-doc-view-btn {
   background: var(--bg-card);
   border-color: var(--border);
@@ -485,5 +509,10 @@
 [data-theme="light"] .kyc-detail-footer {
   background: var(--bg-surface);
   border-top-color: var(--border);
+}
+
+[data-theme="light"] .doc-viewer-content iframe {
+  background: var(--color-background-card-secondary);
+  border-color: var(--color-border-default);
 }
 

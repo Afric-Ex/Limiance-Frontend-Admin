@@ -5,7 +5,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 1.5rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -15,7 +15,7 @@
 
 .chart-card:hover {
   border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .chart-header {
@@ -82,8 +82,8 @@
 }
 
 .chart-timeframe-btn.active {
-  background: #4d77f0;
-  border-color: #4d77f0;
+  background: var(--color-accent-solid);
+  border-color: var(--color-accent-solid);
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(77, 119, 240, 0.4);
 }
@@ -280,7 +280,7 @@
 
 [data-theme="light"] .chart-timeframe-btn {
   background: #FFFFFF;
-  border-color: #D1D5DB;
+  border-color: var(--color-border-control);
   color: #4B5563;
 }
 

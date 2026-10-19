@@ -137,7 +137,7 @@ export default function TransactionsPage() {
             position: 'fixed',
             top: '24px',
             right: '24px',
-            background: toast.type === 'error' ? '#ef4444' : '#10b981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
             padding: '12px 20px',
             borderRadius: '8px',
@@ -147,7 +147,7 @@ export default function TransactionsPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <CheckCircle size={16} />
@@ -241,7 +241,7 @@ export default function TransactionsPage() {
                 style={{
                   padding: '6px 14px',
                   borderRadius: '6px',
-                  background: typeFilter === t ? '#4d77f0' : 'var(--overlay-2)',
+                  background: typeFilter === t ? 'var(--primary-solid)' : 'var(--overlay-2)',
                   border: 'none',
                   color: typeFilter === t ? '#fff' : 'var(--text-secondary)',
                   fontWeight: 600,
@@ -290,7 +290,7 @@ export default function TransactionsPage() {
           border: '1px solid var(--border)',
           borderRadius: '14px',
           overflowX: 'auto',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>

@@ -510,7 +510,7 @@ export default function OrdersPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: '#4d77f0',
+              background: 'var(--primary-solid)',
               border: 'none',
               color: '#fff',
               fontWeight: 600,
@@ -560,7 +560,7 @@ export default function OrdersPage() {
           border: '1px solid var(--border)',
           borderRadius: '14px',
           overflowX: 'auto',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>

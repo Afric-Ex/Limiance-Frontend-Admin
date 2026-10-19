@@ -320,9 +320,9 @@ export default function TokensPage() {
             zIndex: 9999,
             padding: '14px 22px',
             borderRadius: '10px',
-            background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
-            boxShadow: '0 12px 35px rgba(0,0,0,0.5)',
+            boxShadow: 'var(--shadow-lg)',
             backdropFilter: 'blur(10px)',
             fontWeight: 600,
             fontSize: '13px',
@@ -369,7 +369,7 @@ export default function TokensPage() {
             style={{
               padding: '9px 18px',
               borderRadius: '8px',
-              background: '#4d77f0',
+              background: 'var(--primary-solid)',
               border: 'none',
               color: '#fff',
               fontWeight: 600,
@@ -378,7 +378,7 @@ export default function TokensPage() {
               alignItems: 'center',
               gap: '8px',
               cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(77, 119, 240, 0.35)',
+              boxShadow: '0 4px 14px var(--primary-glow)',
             }}
           >
             <Plus size={15} /> List New Token
@@ -464,7 +464,7 @@ export default function TokensPage() {
       </div>
 
       {/* Tokens Table */}
-      <div className="glass-card" style={{ overflowX: 'auto', boxShadow: '0 4px 25px rgba(0,0,0,0.3)' }}>
+      <div className="glass-card" style={{ overflowX: 'auto', boxShadow: 'var(--shadow-md)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
@@ -861,7 +861,7 @@ export default function TokensPage() {
               maxHeight: '90vh',
               overflowY: 'auto',
               padding: '24px 28px',
-              boxShadow: '0 24px 70px rgba(0,0,0,0.9)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h2 style={{ margin: '0 0 14px', fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
@@ -1027,7 +1027,7 @@ export default function TokensPage() {
                     placeholder="18"
                     value={formData.decimals}
                     onChange={(e) => setFormData({ ...formData, decimals: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--primary-solid)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
               </div>
@@ -1041,7 +1041,7 @@ export default function TokensPage() {
                   placeholder="0x... or mint address or N/A"
                   value={formData.contract_address}
                   onChange={(e) => setFormData({ ...formData, contract_address: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid #4d77f0', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
+                  style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-surface)', border: '1px solid var(--primary-solid)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'var(--font-mono)' }}
                 />
               </div>
 
@@ -1149,7 +1149,7 @@ export default function TokensPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '9px 22px', background: '#4d77f0', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '9px 22px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   {editingToken ? 'Save Changes' : 'List Token'}
                 </button>

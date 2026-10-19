@@ -415,7 +415,7 @@ export default function NetworksPage() {
             position: 'fixed',
             top: '24px',
             right: '24px',
-            background: toast.type === 'error' ? '#ef4444' : '#10b981',
+            background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)',
             color: '#fff',
             padding: '12px 20px',
             borderRadius: '8px',
@@ -425,7 +425,7 @@ export default function NetworksPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <CheckCircle size={16} />
@@ -464,7 +464,7 @@ export default function NetworksPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -489,7 +489,7 @@ export default function NetworksPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -523,7 +523,7 @@ export default function NetworksPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -548,7 +548,7 @@ export default function NetworksPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -573,7 +573,7 @@ export default function NetworksPage() {
               style={{
                 padding: '8px 16px',
                 borderRadius: '8px',
-                background: '#4d77f0',
+                background: 'var(--primary-solid)',
                 border: 'none',
                 color: '#fff',
                 fontWeight: 600,
@@ -611,7 +611,7 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'networks' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'networks' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'networks' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -629,7 +629,7 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'currencies' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'currencies' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'currencies' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -647,7 +647,7 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'rpcs' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'rpcs' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'rpcs' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -665,7 +665,7 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'languages' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'languages' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'languages' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -683,7 +683,7 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'timezones' ? '#4d77f0' : 'var(--overlay-2)',
+              background: activeTab === 'timezones' ? 'var(--primary-solid)' : 'var(--overlay-2)',
               border: 'none',
               color: activeTab === 'timezones' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
@@ -755,7 +755,7 @@ export default function NetworksPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -881,7 +881,7 @@ export default function NetworksPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -980,7 +980,7 @@ export default function NetworksPage() {
             border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -1312,7 +1312,7 @@ export default function NetworksPage() {
               width: '100%',
               maxWidth: '520px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1383,7 +1383,7 @@ export default function NetworksPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Network
                 </button>
@@ -1415,7 +1415,7 @@ export default function NetworksPage() {
               width: '100%',
               maxWidth: '440px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1464,7 +1464,7 @@ export default function NetworksPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Currency
                 </button>
@@ -1496,7 +1496,7 @@ export default function NetworksPage() {
               width: '100%',
               maxWidth: '520px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1601,7 +1601,7 @@ export default function NetworksPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save RPC
                 </button>
@@ -1633,7 +1633,7 @@ export default function NetworksPage() {
               width: '100%',
               maxWidth: '480px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1704,7 +1704,7 @@ export default function NetworksPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Language
                 </button>
@@ -1736,7 +1736,7 @@ export default function NetworksPage() {
               width: '100%',
               maxWidth: '480px',
               padding: '24px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
@@ -1797,7 +1797,7 @@ export default function NetworksPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', background: '#4d77f0', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Save Timezone
                 </button>

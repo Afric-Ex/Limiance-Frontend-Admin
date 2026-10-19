@@ -456,11 +456,11 @@ export default function PricesPage() {
             borderRadius: '10px',
             background:
               toast.type === 'error'
-                ? 'rgba(239, 68, 68, 0.95)'
-                : 'rgba(16, 185, 129, 0.95)',
+                ? 'var(--danger-solid)'
+                : 'var(--success-solid)',
             color: '#fff',
             boxShadow:
-              '0 12px 35px rgba(0,0,0,0.5)',
+              'var(--shadow-lg)',
             backdropFilter: 'blur(10px)',
             fontWeight: 600,
             fontSize: '13px',
@@ -556,7 +556,7 @@ export default function PricesPage() {
             style={{
               padding: '9px 18px',
               borderRadius: '8px',
-              background: '#4d77f0',
+              background: 'var(--primary-solid)',
               border: 'none',
               color: '#fff',
               fontWeight: 600,
@@ -566,7 +566,7 @@ export default function PricesPage() {
               gap: '8px',
               cursor: 'pointer',
               boxShadow:
-                '0 4px 14px rgba(77, 119, 240, 0.35)',
+                '0 4px 14px var(--primary-glow)',
             }}
           >
             <Plus size={15} />
@@ -864,7 +864,7 @@ export default function PricesPage() {
         style={{
           overflowX: 'auto',
           boxShadow:
-            '0 4px 25px rgba(0,0,0,0.3)',
+            'var(--shadow-md)',
         }}
       >
         <table
@@ -1481,7 +1481,7 @@ export default function PricesPage() {
               padding:
                 '24px 28px',
               boxShadow:
-                '0 24px 70px rgba(0,0,0,0.9)',
+                'var(--shadow-lg)',
             }}
           >
             <div
@@ -1697,7 +1697,7 @@ export default function PricesPage() {
                     background:
                       'var(--bg-surface)',
                     border:
-                      '1px solid #4d77f0',
+                      '1px solid var(--primary-solid)',
                     borderRadius:
                       '6px',
                     color: 'var(--text-primary)',
@@ -1895,7 +1895,7 @@ export default function PricesPage() {
                     padding:
                       '9px 22px',
                     background:
-                      '#4d77f0',
+                      'var(--primary-solid)',
                     border: 'none',
                     borderRadius:
                       '6px',
@@ -1949,7 +1949,7 @@ export default function PricesPage() {
                 padding:
                   '24px 28px',
                 boxShadow:
-                  '0 24px 70px rgba(0,0,0,0.9)',
+                  'var(--shadow-lg)',
               }}
             >
               <div
@@ -2233,7 +2233,7 @@ export default function PricesPage() {
                     padding:
                       '8px 15px',
                     background:
-                      '#4d77f0',
+                      'var(--primary-solid)',
                     border: 'none',
                     borderRadius:
                       '6px',
