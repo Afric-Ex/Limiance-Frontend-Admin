@@ -86,7 +86,7 @@ export default function AdminLayout() {
       <aside className="sidebar" aria-hidden={!sidebarOpen}>
         <div className="sidebar-header">
           <img
-            src="/logo.png"
+            src={theme === 'light' ? '/logo-dark.png' : '/logo.png'}
             alt="Limiance Logo"
             className="logo-icon"
             style={{ height: '32px', objectFit: 'contain' }}
