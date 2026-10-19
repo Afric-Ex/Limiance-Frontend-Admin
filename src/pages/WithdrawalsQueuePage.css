@@ -416,3 +416,117 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ─── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] .wq-toast.success {
+  background: rgba(4, 120, 87, 0.1);
+  color: var(--success-text);
+  border-color: rgba(4, 120, 87, 0.25);
+}
+[data-theme="light"] .wq-toast.error {
+  background: rgba(185, 28, 28, 0.08);
+  color: var(--danger-text);
+  border-color: rgba(185, 28, 28, 0.2);
+}
+[data-theme="light"] .wq-title {
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-count-badge {
+  background: rgba(180, 83, 9, 0.08);
+  color: var(--warning-text);
+  border-color: rgba(180, 83, 9, 0.22);
+}
+[data-theme="light"] .wq-table th {
+  background: var(--bg-surface);
+  border-bottom-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+[data-theme="light"] .wq-table td {
+  border-bottom-color: var(--border-subtle);
+}
+[data-theme="light"] .wq-row:hover {
+  background: #e2e7f1;
+}
+[data-theme="light"] .wq-mono {
+  color: var(--text-tertiary);
+}
+[data-theme="light"] .wq-asset-badge {
+  background: rgba(67, 56, 202, 0.1);
+  color: var(--info-text);
+  border-color: rgba(67, 56, 202, 0.25);
+}
+[data-theme="light"] .wq-btn-review {
+  background: var(--bg-surface);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-btn-review:hover {
+  background: var(--bg-surface-hover);
+  border-color: rgba(49, 87, 201, 0.4);
+}
+[data-theme="light"] .wq-overlay {
+  background: rgba(15, 23, 42, 0.5);
+}
+[data-theme="light"] .wq-modal {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+[data-theme="light"] .wq-modal-header {
+  border-bottom-color: var(--border-subtle);
+}
+[data-theme="light"] .wq-modal-title {
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-modal-close {
+  background: var(--overlay-2);
+  border-color: var(--border-subtle);
+}
+[data-theme="light"] .wq-modal-close:hover {
+  background: var(--overlay-3);
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-audit-notice {
+  background: rgba(185, 28, 28, 0.06);
+  border-color: rgba(185, 28, 28, 0.22);
+  color: var(--danger-text);
+}
+[data-theme="light"] .wq-info-row strong {
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-compliance-block {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+[data-theme="light"] .wq-compliance-row strong {
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-tr-warning {
+  background: rgba(180, 83, 9, 0.08);
+  border-color: rgba(180, 83, 9, 0.2);
+  color: var(--warning-text);
+}
+[data-theme="light"] .wq-fireblocks-badge {
+  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(29, 78, 216, 0.22);
+  color: var(--accent-blue);
+}
+[data-theme="light"] .wq-decision {
+  border-top-color: var(--border-subtle);
+  background: var(--bg-surface);
+}
+[data-theme="light"] .wq-textarea {
+  background: var(--bg-card);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+[data-theme="light"] .wq-textarea:focus {
+  background: var(--bg-card);
+}
+[data-theme="light"] .wq-btn-cancel {
+  background: var(--bg-surface);
+  border-color: var(--border-medium);
+}
+[data-theme="light"] .wq-btn-cancel:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}

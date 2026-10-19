@@ -245,7 +245,7 @@ export default function KycQueuePage() {
                 <tr key={c.id}>
                   <td style={{ fontFamily: 'monospace', fontSize: '13px' }}>{c.id}</td>
                   <td style={{ fontFamily: 'monospace', fontSize: '13px' }}>{c.user_id}</td>
-                  <td style={{ fontFamily: 'monospace', fontSize: '13px', color: '#9ca3af' }}>
+                  <td style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-tertiary)' }}>
                     {c.applicant_id || '—'}
                   </td>
                   <td>{renderStatus(c.status)}</td>
@@ -272,7 +272,7 @@ export default function KycQueuePage() {
           >
             Previous
           </button>
-          <span style={{ alignSelf: 'center', color: '#9ca3af', fontSize: '0.85rem' }}>
+          <span style={{ alignSelf: 'center', color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
             Page {currentPage} of {totalPages}
           </span>
           <button

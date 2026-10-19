@@ -33,9 +33,9 @@ export default function DonutChart({
             cx={center}
             cy={center}
             r={radius}
-            fill="none"
-            stroke="rgba(255,255,255,0.06)"
-            strokeWidth={strokeWidth}
+          fill="none"
+          style={{ stroke: 'var(--border-subtle)' }}
+          strokeWidth={strokeWidth}
           />
 
           {total > 0 &&
@@ -55,7 +55,6 @@ export default function DonutChart({
                   cy={center}
                   r={radius}
                   fill="none"
-                  stroke={item.color}
                   strokeWidth={isHovered ? strokeWidth + 4 : strokeWidth}
                   strokeDasharray={strokeDasharray}
                   strokeDashoffset={strokeDashoffset}
@@ -63,9 +62,10 @@ export default function DonutChart({
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
                   style={{
+                    stroke: item.color,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    filter: isHovered ? `drop-shadow(0 0 10px ${item.color}99)` : 'none',
+                    filter: isHovered ? `drop-shadow(0 0 10px color-mix(in srgb, ${item.color} 60%, transparent))` : 'none',
                   }}
                 />
               );
@@ -93,7 +93,7 @@ export default function DonutChart({
               fontSize: '18px',
               fontWeight: 800,
               fontFamily: 'var(--font-mono, monospace)',
-              color: '#ffffff',
+              color: 'var(--text-primary)',
               lineHeight: 1.1,
             }}
           >
@@ -102,7 +102,7 @@ export default function DonutChart({
           <div
             style={{
               fontSize: '11px',
-              color: 'rgba(255,255,255,0.45)',
+              color: 'var(--text-tertiary)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               marginTop: '2px',

@@ -19,14 +19,14 @@ import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
 import './MarketOverviewPage.css';
 
 const DONUT_COLORS = [
-  '#6366f1',
-  '#10b981',
-  '#f59e0b',
+  'var(--info)',
+  'var(--success)',
+  'var(--warning)',
   '#ec4899',
   '#06b6d4',
   '#8b5cf6',
   '#14b8a6',
-  '#64748b',
+  'var(--text-muted)',
 ];
 
 export default function MarketOverviewPage() {
@@ -184,7 +184,7 @@ export default function MarketOverviewPage() {
       <div className="mo-header">
         <div className="mo-title-group">
           <h1>
-            <Coins size={26} color="#818cf8" /> Market Performance Overview
+            <Coins size={26} style={{ color: "var(--info-text)" }} /> Market Performance Overview
           </h1>
           <p>
             Real-time trade performance, volume timelines, pair price movements, and token turnover.
@@ -222,7 +222,7 @@ export default function MarketOverviewPage() {
         <div className="mo-metric-card">
           <div className="mo-metric-top">
             <span className="mo-metric-label">Total Volume ({timeframe.toUpperCase()})</span>
-            <div className="mo-metric-icon" style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8' }}>
+            <div className="mo-metric-icon" style={{ background: 'rgba(99, 102, 241, 0.15)', color: 'var(--info-text)' }}>
               <BarChart3 size={20} />
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function MarketOverviewPage() {
         <div className="mo-metric-card">
           <div className="mo-metric-top">
             <span className="mo-metric-label">Total Trades</span>
-            <div className="mo-metric-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399' }}>
+            <div className="mo-metric-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success-text)' }}>
               <Activity size={20} />
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function MarketOverviewPage() {
         <div className="mo-metric-card">
           <div className="mo-metric-top">
             <span className="mo-metric-label">Active Pairs</span>
-            <div className="mo-metric-icon" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24' }}>
+            <div className="mo-metric-icon" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--warning-text)' }}>
               <Layers size={20} />
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function MarketOverviewPage() {
             ) : (
               <>
                 {summary.active_pairs_count || 0}
-                <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500, marginLeft: '6px' }}>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', fontWeight: 500, marginLeft: '6px' }}>
                   / {pairs.length} Listed
                 </span>
               </>
@@ -280,14 +280,14 @@ export default function MarketOverviewPage() {
         <div className="mo-metric-card">
           <div className="mo-metric-top">
             <span className="mo-metric-label">Top Gainer ({timeframe.toUpperCase()})</span>
-            <div className="mo-metric-icon" style={{ background: 'rgba(52, 211, 153, 0.15)', color: '#34d399' }}>
+            <div className="mo-metric-icon" style={{ background: 'rgba(52, 211, 153, 0.15)', color: 'var(--success-text)' }}>
               <TrendingUp size={20} />
             </div>
           </div>
           <div className="mo-metric-value">
             {loading ? <Shimmer width="100px" height="26px" /> : (summary.top_gainer_pair || 'N/A')}
           </div>
-          <div className="mo-metric-sub" style={{ color: (summary.top_gainer_pct || 0) >= 0 ? '#34d399' : '#f87171', fontWeight: 600 }}>
+          <div className="mo-metric-sub" style={{ color: (summary.top_gainer_pct || 0) >= 0 ? 'var(--success-text)' : 'var(--danger-text)', fontWeight: 600 }}>
             {summary.top_gainer_pct !== undefined ? `${summary.top_gainer_pct >= 0 ? '+' : ''}${summary.top_gainer_pct.toFixed(2)}%` : '0.00%'}
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function MarketOverviewPage() {
               ? formatCurrency(summary.total_margin_volume || 0)
               : formatCurrency(summary.total_futures_volume || 0)
           }
-          badgeColor="#818cf8"
+          badgeColor="var(--info-text)"
         >
           {/* Market Type Selector Controls */}
           <div className="mo-chart-tabs-bar">
@@ -342,15 +342,15 @@ export default function MarketOverviewPage() {
             series={
               selectedMarket === 'all'
                 ? [
-                    { key: 'spot', name: 'Spot Volume', color: '#6366f1' },
-                    { key: 'margin', name: 'Margin Volume', color: '#f59e0b' },
-                    { key: 'futures', name: 'Futures Volume', color: '#10b981' },
+                    { key: 'spot', name: 'Spot Volume', color: 'var(--info-text)' },
+                    { key: 'margin', name: 'Margin Volume', color: 'var(--warning-text)' },
+                    { key: 'futures', name: 'Futures Volume', color: 'var(--success)' },
                   ]
                 : selectedMarket === 'spot'
-                ? [{ key: 'spot', name: 'Spot Volume', color: '#6366f1' }]
+                ? [{ key: 'spot', name: 'Spot Volume', color: 'var(--info-text)' }]
                 : selectedMarket === 'margin'
-                ? [{ key: 'margin', name: 'Margin Volume', color: '#f59e0b' }]
-                : [{ key: 'futures', name: 'Futures Volume', color: '#10b981' }]
+                ? [{ key: 'margin', name: 'Margin Volume', color: 'var(--warning-text)' }]
+                : [{ key: 'futures', name: 'Futures Volume', color: 'var(--success)' }]
             }
             height={280}
             valueFormatter={(v) => formatCurrency(v)}
@@ -365,7 +365,7 @@ export default function MarketOverviewPage() {
           subtitle="Top assets by traded volume dominance"
           icon={PieChart}
           badge={`${tokens.length} Assets`}
-          badgeColor="#10b981"
+          badgeColor="var(--success-text)"
         >
           <DonutChart
             data={donutData}
@@ -419,7 +419,7 @@ export default function MarketOverviewPage() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sort by:</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Sort by:</span>
               <select
                 className="mo-sort-select"
                 value={sortBy}
@@ -497,7 +497,7 @@ export default function MarketOverviewPage() {
                           </div>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 600, color: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                             {formatPrice(p.last_price)}
                           </span>
                         </td>
@@ -510,23 +510,23 @@ export default function MarketOverviewPage() {
                         </td>
                         <td>
                           <div style={{ fontSize: '0.82rem' }}>
-                            <span style={{ color: '#34d399' }}>H: {formatPrice(p.high_price)}</span>
+                            <span style={{ color: 'var(--success-text)' }}>H: {formatPrice(p.high_price)}</span>
                             <br />
-                            <span style={{ color: '#f87171' }}>L: {formatPrice(p.low_price)}</span>
+                            <span style={{ color: 'var(--danger-text)' }}>L: {formatPrice(p.low_price)}</span>
                           </div>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 600, color: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                             {formatCurrency(p.quote_volume)}
                           </span>
                         </td>
                         <td>
-                          <span style={{ color: '#94a3b8' }}>
+                          <span style={{ color: 'var(--text-tertiary)' }}>
                             {parseFloat(p.base_volume || 0).toLocaleString(undefined, { maximumFractionDigits: 4 })} {p.base}
                           </span>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 500, color: '#e2e8f0' }}>
+                          <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                             {Number(p.trades_count || 0).toLocaleString()}
                           </span>
                         </td>
@@ -535,8 +535,8 @@ export default function MarketOverviewPage() {
                             <div className="mo-ratio-bar-fill" style={{ width: `${buyPct}%` }} />
                           </div>
                           <div className="mo-ratio-text">
-                            <span style={{ color: '#34d399' }}>{buyPct}% Buy</span>
-                            <span style={{ color: '#f87171' }}>{sellPct}% Sell</span>
+                            <span style={{ color: 'var(--success-text)' }}>{buyPct}% Buy</span>
+                            <span style={{ color: 'var(--danger-text)' }}>{sellPct}% Sell</span>
                           </div>
                         </td>
                       </tr>
@@ -578,7 +578,7 @@ export default function MarketOverviewPage() {
                       <tr key={t.symbol}>
                         <td>
                           <div className="mo-pair-cell">
-                            <div className="mo-pair-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399' }}>
+                            <div className="mo-pair-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success-text)' }}>
                               {t.symbol.charAt(0)}
                             </div>
                             <div>
@@ -588,27 +588,27 @@ export default function MarketOverviewPage() {
                           </div>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 600, color: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                             {formatCurrency(t.total_volume)}
                           </span>
                         </td>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '80px', height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${Math.min(100, share)}%`, background: '#6366f1' }} />
+                            <div style={{ width: '80px', height: '6px', background: 'var(--overlay-3)', borderRadius: '4px', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${Math.min(100, share)}%`, background: 'var(--info)' }} />
                             </div>
-                            <span style={{ fontWeight: 600, fontSize: '0.82rem', color: '#a5b4fc' }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.82rem', color: 'var(--info-text)' }}>
                               {share.toFixed(2)}%
                             </span>
                           </div>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 500, color: '#e2e8f0' }}>
+                          <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                             {Number(t.trades_count || 0).toLocaleString()}
                           </span>
                         </td>
                         <td>
-                          <span style={{ color: '#94a3b8' }}>
+                          <span style={{ color: 'var(--text-tertiary)' }}>
                             {t.pairs_count || 0} pairs
                           </span>
                         </td>
@@ -621,7 +621,7 @@ export default function MarketOverviewPage() {
                                 </span>
                               ))
                             ) : (
-                              <span style={{ color: '#64748b', fontSize: '0.75rem' }}>Native</span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Native</span>
                             )}
                           </div>
                         </td>

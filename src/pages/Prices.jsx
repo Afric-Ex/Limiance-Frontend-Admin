@@ -489,7 +489,7 @@ export default function PricesPage() {
             style={{
               margin: 0,
               fontSize: '1.5rem',
-              color: '#fff',
+              color: 'var(--text-primary)',
               fontWeight: 700,
               letterSpacing: '-0.02em',
             }}
@@ -532,7 +532,7 @@ export default function PricesPage() {
               borderRadius: '8px',
               background: 'var(--bg-surface)',
               border: '1px solid var(--border)',
-              color: '#fff',
+              color: 'var(--text-primary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -619,7 +619,7 @@ export default function PricesPage() {
                   transform:
                     'translateY(-50%)',
                   color:
-                    'rgba(255,255,255,0.35)',
+                    'var(--text-faint)',
                 }}
               />
               <input
@@ -636,7 +636,7 @@ export default function PricesPage() {
                     'var(--bg-surface)',
                   border:
                     '1px solid var(--border)',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   outline: 'none',
                 }}
@@ -670,7 +670,7 @@ export default function PricesPage() {
                   'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -708,7 +708,7 @@ export default function PricesPage() {
                   'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -746,7 +746,7 @@ export default function PricesPage() {
                   'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -792,7 +792,7 @@ export default function PricesPage() {
                   'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -826,7 +826,7 @@ export default function PricesPage() {
                   'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -841,11 +841,11 @@ export default function PricesPage() {
               borderRadius: '8px',
               background: hasFilters
                 ? 'rgba(239,68,68,0.1)'
-                : 'rgba(255,255,255,0.02)',
+                : 'var(--overlay-1)',
               border:
-                '1px solid rgba(239,68,68,0.2)',
+                '1px solid var(--danger-border)',
               color: hasFilters
-                ? '#f87171'
+                ? 'var(--danger-text)'
                 : 'var(--text-muted)',
               cursor: hasFilters
                 ? 'pointer'
@@ -945,7 +945,7 @@ export default function PricesPage() {
                     key={`${price.coin}-${price.currency}-${idx}`}
                     style={{
                       borderBottom:
-                        '1px solid rgba(255,255,255,0.04)',
+                        '1px solid var(--border-subtle)',
                     }}
                   >
                     {/* Asset */}
@@ -979,7 +979,7 @@ export default function PricesPage() {
                             border: '1px solid rgba(77,119,240,0.25)',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#818cf8',
+                            color: 'var(--info-text)',
                             fontWeight: 700,
                             fontSize: '11px',
                           }}
@@ -987,7 +987,7 @@ export default function PricesPage() {
                           {(price.coin || '?').slice(0, 3).toUpperCase()}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '13px' }}>
                             {price.coin}
                           </div>
                           <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -1010,7 +1010,7 @@ export default function PricesPage() {
                           fontSize:
                             '13px',
                           fontWeight: 700,
-                          color: '#fff',
+                          color: 'var(--text-primary)',
                         }}
                       >
                         {formatPrice(
@@ -1043,12 +1043,12 @@ export default function PricesPage() {
                               ? 'rgba(16,185,129,0.1)'
                               : isNegative
                                 ? 'rgba(239,68,68,0.1)'
-                                : 'rgba(255,255,255,0.05)',
+                                : 'var(--overlay-2)',
                           color:
                             isPositive
-                              ? '#34d399'
+                              ? 'var(--success-text)'
                               : isNegative
-                                ? '#f87171'
+                                ? 'var(--danger-text)'
                                 : 'var(--text-secondary)',
                           fontSize:
                             '11px',
@@ -1084,7 +1084,7 @@ export default function PricesPage() {
                         padding:
                           '14px 18px',
                         color:
-                          '#cbd5e1',
+                          'var(--text-primary)',
                         fontSize:
                           '12px',
                         fontFamily:
@@ -1111,9 +1111,9 @@ export default function PricesPage() {
                           background:
                             'rgba(99,102,241,0.1)',
                           border:
-                            '1px solid rgba(99,102,241,0.2)',
+                            '1px solid var(--info-border)',
                           color:
-                            '#a5b4fc',
+                            'var(--info-text)',
                           fontSize:
                             '11px',
                           fontWeight: 700,
@@ -1173,7 +1173,7 @@ export default function PricesPage() {
                             borderRadius:
                               '6px',
                             color:
-                              '#94a3b8',
+                              'var(--text-tertiary)',
                             cursor:
                               'pointer',
                           }}
@@ -1199,7 +1199,7 @@ export default function PricesPage() {
                             borderRadius:
                               '6px',
                             color:
-                              '#818cf8',
+                              'var(--info-text)',
                             cursor:
                               'pointer',
                           }}
@@ -1308,7 +1308,7 @@ export default function PricesPage() {
                     'var(--bg-surface)',
                   border:
                     '1px solid var(--border)',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize:
                     '12px',
                   outline:
@@ -1372,14 +1372,14 @@ export default function PricesPage() {
                   '6px',
                 background:
                   currentPage <= 1
-                    ? 'rgba(255,255,255,0.02)'
+                    ? 'var(--overlay-1)'
                     : 'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
                 color:
                   currentPage <= 1
                     ? 'var(--text-muted)'
-                    : '#fff',
+                    : 'var(--text-primary)',
                 cursor:
                   currentPage <= 1
                     ? 'not-allowed'
@@ -1418,7 +1418,7 @@ export default function PricesPage() {
                 background:
                   currentPage >=
                     totalPages
-                    ? 'rgba(255,255,255,0.02)'
+                    ? 'var(--overlay-1)'
                     : 'var(--bg-surface)',
                 border:
                   '1px solid var(--border)',
@@ -1426,7 +1426,7 @@ export default function PricesPage() {
                   currentPage >=
                     totalPages
                     ? 'var(--text-muted)'
-                    : '#fff',
+                    : 'var(--text-primary)',
                 cursor:
                   currentPage >=
                     totalPages
@@ -1502,7 +1502,7 @@ export default function PricesPage() {
                     margin: 0,
                     fontSize:
                       '1.25rem',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontWeight: 700,
                   }}
                 >
@@ -1593,7 +1593,7 @@ export default function PricesPage() {
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border)',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '13px',
                       opacity: editingPrice ? 0.6 : 1,
                       cursor: editingPrice ? 'not-allowed' : 'pointer',
@@ -1646,7 +1646,7 @@ export default function PricesPage() {
                         '1px solid var(--border)',
                       borderRadius:
                         '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize:
                         '13px',
                       opacity:
@@ -1700,7 +1700,7 @@ export default function PricesPage() {
                       '1px solid #4d77f0',
                     borderRadius:
                       '6px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize:
                       '14px',
                     fontFamily:
@@ -1758,7 +1758,7 @@ export default function PricesPage() {
                         '1px solid var(--border)',
                       borderRadius:
                         '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize:
                         '13px',
                     }}
@@ -1806,7 +1806,7 @@ export default function PricesPage() {
                         '1px solid var(--border)',
                       borderRadius:
                         '6px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize:
                         '13px',
                     }}
@@ -1832,7 +1832,7 @@ export default function PricesPage() {
                 <strong
                   style={{
                     color:
-                      '#a5b4fc',
+                      'var(--info-text)',
                   }}
                 >
                   Redis sync:
@@ -1846,7 +1846,7 @@ export default function PricesPage() {
                   style={{
                     fontFamily:
                       'var(--font-mono)',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   {' '}
@@ -1984,7 +1984,7 @@ export default function PricesPage() {
                       margin:
                         '4px 0 0',
                       color:
-                        '#fff',
+                        'var(--text-primary)',
                       fontSize:
                         '1.35rem',
                     }}
@@ -2049,7 +2049,7 @@ export default function PricesPage() {
                     fontWeight:
                       700,
                     color:
-                      '#fff',
+                      'var(--text-primary)',
                     fontFamily:
                       'var(--font-mono)',
                   }}
@@ -2106,8 +2106,8 @@ export default function PricesPage() {
                         getChangeValue(
                           viewingPrice
                         ) >= 0
-                          ? '#34d399'
-                          : '#f87171',
+                          ? 'var(--success-text)'
+                          : 'var(--danger-text)',
                     }}
                   >
                     {getChangeValue(
@@ -2157,7 +2157,7 @@ export default function PricesPage() {
                       fontWeight:
                         700,
                       color:
-                        '#fff',
+                        'var(--text-primary)',
                     }}
                   >
                     {formatNumber(
@@ -2199,7 +2199,7 @@ export default function PricesPage() {
                   <strong
                     style={{
                       color:
-                        '#fff',
+                        'var(--text-primary)',
                     }}
                   >
                     {formatDate(

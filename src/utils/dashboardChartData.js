@@ -60,9 +60,9 @@ export function formatRevenueBreakdownData(metrics) {
   const marginInterest = parseFloat(metrics?.revenue?.marginInterest24h ?? metrics?.revenue?.margin_interest_24h ?? 0) || 0;
 
   return [
-    { label: 'Spot Trading Fees', value: spotFees, color: '#818cf8' },
-    { label: 'Withdrawal Fees', value: wdFees, color: '#38bdf8' },
-    { label: 'Margin Borrow Interest', value: marginInterest, color: '#fbbf24' },
+    { label: 'Spot Trading Fees', value: spotFees, color: 'var(--info-text)' },
+    { label: 'Withdrawal Fees', value: wdFees, color: 'var(--accent-sky)' },
+    { label: 'Margin Borrow Interest', value: marginInterest, color: 'var(--warning-text)' },
   ];
 }
 
@@ -73,9 +73,9 @@ export function formatKycTierData(metrics) {
   const breakdown = metrics?.users?.kycTierBreakdown || {};
   return [
     { label: 'Tier 0 - Unverified', value: parseInt(breakdown[0] ?? breakdown['0'] ?? 0, 10) || 0, color: '#64748b' },
-    { label: 'Tier 1 - Basic', value: parseInt(breakdown[1] ?? breakdown['1'] ?? 0, 10) || 0, color: '#38bdf8' },
-    { label: 'Tier 2 - Verified ID', value: parseInt(breakdown[2] ?? breakdown['2'] ?? 0, 10) || 0, color: '#34d399' },
-    { label: 'Tier 3 - Enhanced/VIP', value: parseInt(breakdown[3] ?? breakdown['3'] ?? 0, 10) || 0, color: '#818cf8' },
+    { label: 'Tier 1 - Basic', value: parseInt(breakdown[1] ?? breakdown['1'] ?? 0, 10) || 0, color: 'var(--accent-sky)' },
+    { label: 'Tier 2 - Verified ID', value: parseInt(breakdown[2] ?? breakdown['2'] ?? 0, 10) || 0, color: 'var(--success-text)' },
+    { label: 'Tier 3 - Enhanced/VIP', value: parseInt(breakdown[3] ?? breakdown['3'] ?? 0, 10) || 0, color: 'var(--info-text)' },
   ];
 }
 
@@ -119,9 +119,9 @@ export function formatChainDistributionData(metrics) {
 export function formatSupportPriorityData(metrics) {
   const byPriority = metrics?.support?.byPriority || {};
   return [
-    { label: 'Urgent', value: parseInt(byPriority.URGENT ?? byPriority.urgent ?? 0, 10) || 0, color: '#ef4444' },
-    { label: 'High', value: parseInt(byPriority.HIGH ?? byPriority.high ?? 0, 10) || 0, color: '#f59e0b' },
-    { label: 'Medium', value: parseInt(byPriority.MEDIUM ?? byPriority.medium ?? 0, 10) || 0, color: '#38bdf8' },
-    { label: 'Low', value: parseInt(byPriority.LOW ?? byPriority.low ?? 0, 10) || 0, color: '#94a3b8' },
+    { label: 'Urgent', value: parseInt(byPriority.URGENT ?? byPriority.urgent ?? 0, 10) || 0, color: 'var(--danger-text)' },
+    { label: 'High', value: parseInt(byPriority.HIGH ?? byPriority.high ?? 0, 10) || 0, color: 'var(--warning-text)' },
+    { label: 'Medium', value: parseInt(byPriority.MEDIUM ?? byPriority.medium ?? 0, 10) || 0, color: 'var(--accent-sky)' },
+    { label: 'Low', value: parseInt(byPriority.LOW ?? byPriority.low ?? 0, 10) || 0, color: 'var(--text-tertiary)' },
   ];
 }

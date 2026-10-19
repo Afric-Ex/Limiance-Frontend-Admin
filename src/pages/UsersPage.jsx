@@ -102,12 +102,12 @@ export default function UsersPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", color: "#fff", fontWeight: 700 }}>User Accounts & 360 Ops</h1>
-          <p style={{ margin: "4px 0 0", color: "rgba(255,255,255,0.6)", fontSize: "0.875rem" }}>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", color: "var(--text-primary)", fontWeight: 700 }}>User Accounts & 360 Ops</h1>
+          <p style={{ margin: "4px 0 0", color: "var(--text-secondary)", fontSize: "0.875rem" }}>
             Comprehensive account profiles, multi-chain custodial wallets, portfolio asset balances, trade logs, and security kill-switches.
           </p>
         </div>
-        <div style={{ color: "#818cf8", fontSize: "13px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(99, 102, 241, 0.25)", padding: "6px 14px", borderRadius: "9999px", fontWeight: 600 }}>
+        <div style={{ color: "var(--info-text)", fontSize: "13px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid var(--info-border)", padding: "6px 14px", borderRadius: "9999px", fontWeight: 600 }}>
           {totalRecords.toLocaleString()} Registered Users
         </div>
       </div>
@@ -120,16 +120,16 @@ export default function UsersPage() {
           alignItems: "center",
           gap: "16px",
           marginBottom: "20px",
-          background: "#13151c",
+          background: "var(--bg-card)",
           padding: "14px 18px",
           borderRadius: "12px",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid var(--border)",
           flexWrap: "wrap",
         }}
       >
         <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "10px", flex: 1, maxWidth: "480px" }}>
           <div style={{ position: "relative", flex: 1 }}>
-            <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }} />
+            <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input
               type="text"
               placeholder="Search by User ID, email, username..."
@@ -138,10 +138,10 @@ export default function UsersPage() {
               style={{
                 width: "100%",
                 padding: "8px 12px 8px 36px",
-                background: "#181a22",
-                border: "1px solid rgba(255,255,255,0.1)",
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border-medium)",
                 borderRadius: "8px",
-                color: "#fff",
+                color: "var(--text-primary)",
                 fontSize: "13px",
                 outline: "none",
               }}
@@ -169,11 +169,11 @@ export default function UsersPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{
-              background: "#181a22",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border-medium)",
               borderRadius: "8px",
               padding: "8px 12px",
-              color: "#fff",
+              color: "var(--text-primary)",
               fontSize: "13px",
               cursor: "pointer",
               outline: "none",
@@ -191,10 +191,10 @@ export default function UsersPage() {
             onClick={() => fetchUsers(currentPage)}
             style={{
               padding: "8px 12px",
-              background: "#181a22",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border-medium)",
               borderRadius: "8px",
-              color: "#fff",
+              color: "var(--text-primary)",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
@@ -210,15 +210,15 @@ export default function UsersPage() {
       {/* Users Table Card */}
       <div
         style={{
-          background: "#13151c",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
           borderRadius: "12px",
           overflow: "hidden",
         }}
       >
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
           <thead>
-            <tr style={{ background: "#181a22", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <tr style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)", color: "var(--text-tertiary)", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               <th style={{ padding: "14px 18px", fontWeight: 700 }}>User Identity</th>
               <th style={{ padding: "14px 18px", fontWeight: 700 }}>Account Status</th>
               <th style={{ padding: "14px 18px", fontWeight: 700 }}>Operational Flags</th>
@@ -231,7 +231,7 @@ export default function UsersPage() {
               <ShimmerTableRows rows={6} cols={5} colWidths={['65%', '45%', '50%', '40%', '35%']} />
             ) : filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan="5" style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.4)" }}>
+                <td colSpan="5" style={{ padding: "60px 0", textAlign: "center", color: "var(--text-muted)" }}>
                   No users found matching current filters
                 </td>
               </tr>
@@ -246,20 +246,20 @@ export default function UsersPage() {
                     key={u.id}
                     onClick={() => navigate("/users/" + u.id)}
                     style={{
-                      borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      borderBottom: "1px solid var(--border-subtle)",
                       transition: "background 0.15s ease",
                       cursor: "pointer",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--overlay-1)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                   >
                     <td style={{ padding: "14px 18px" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                        <span style={{ fontWeight: 600, color: "#fff", fontSize: "14px" }}>
+                        <span style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "14px" }}>
                           {u.email || u.username || "Anonymous"}
                         </span>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#818cf8" }}>
+                          <span style={{ fontFamily: "monospace", fontSize: "12px", color: "var(--info-text)" }}>
                             {shortId}
                           </span>
                           <button
@@ -267,7 +267,7 @@ export default function UsersPage() {
                               e.stopPropagation();
                               copyToClipboard(u.id);
                             }}
-                            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", padding: 0 }}
+                            style={{ background: "none", border: "none", color: "var(--text-faint)", cursor: "pointer", padding: 0 }}
                           >
                             <Copy size={11} />
                           </button>
@@ -277,15 +277,15 @@ export default function UsersPage() {
 
                     <td style={{ padding: "14px 18px" }}>
                       {isFrozen ? (
-                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "rgba(239, 68, 68, 0.15)", color: "#f87171", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
+                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "rgba(239, 68, 68, 0.15)", color: "var(--danger-text)", border: "1px solid var(--danger-border)" }}>
                           ❄️ FROZEN
                         </span>
                       ) : u.is_active ? (
-                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "rgba(16, 185, 129, 0.12)", color: "#34d399", border: "1px solid rgba(16, 185, 129, 0.25)" }}>
+                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "rgba(16, 185, 129, 0.12)", color: "var(--success-text)", border: "1px solid var(--success-border)" }}>
                           ACTIVE
                         </span>
                       ) : (
-                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}>
+                        <span style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, background: "var(--overlay-3)", color: "var(--text-tertiary)" }}>
                           SUSPENDED
                         </span>
                       )}
@@ -293,13 +293,13 @@ export default function UsersPage() {
 
                     <td style={{ padding: "14px 18px" }}>
                       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.trading_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.trading_enabled ? "#34d399" : "#f87171" }}>
+                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.trading_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.trading_enabled ? "var(--success-text)" : "var(--danger-text)" }}>
                           Trade: {u.trading_enabled ? "ON" : "OFF"}
                         </span>
-                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.withdrawals_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.withdrawals_enabled ? "#34d399" : "#f87171" }}>
+                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.withdrawals_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.withdrawals_enabled ? "var(--success-text)" : "var(--danger-text)" }}>
                           WD: {u.withdrawals_enabled ? "ON" : "OFF"}
                         </span>
-                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.deposits_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.deposits_enabled ? "#34d399" : "#f87171" }}>
+                        <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, background: u.deposits_enabled ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.1)", color: u.deposits_enabled ? "var(--success-text)" : "var(--danger-text)" }}>
                           Dep: {u.deposits_enabled ? "ON" : "OFF"}
                         </span>
                       </div>
@@ -307,14 +307,14 @@ export default function UsersPage() {
 
                     <td style={{ padding: "14px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ padding: "2px 8px", borderRadius: "4px", background: "rgba(99, 102, 241, 0.14)", color: "#a5b4fc", fontSize: "11px", fontWeight: 600 }}>
+                        <span style={{ padding: "2px 8px", borderRadius: "4px", background: "rgba(99, 102, 241, 0.14)", color: "var(--info-text)", fontSize: "11px", fontWeight: 600 }}>
                           Tier {u.kyc_tier || 0}
                         </span>
-                        <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "12px" }}>
+                        <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>
                           {u.kyc_status || "UNVERIFIED"}
                         </span>
                       </div>
-                      <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>
                         ID Verified: {u.is_id_verified ? "✅ Yes" : "No"}
                       </div>
                     </td>
@@ -327,9 +327,9 @@ export default function UsersPage() {
                         }}
                         style={{
                           padding: "6px 14px",
-                          background: "#1c1e28",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          color: "#fff",
+                          background: "var(--bg-surface-2)",
+                          border: "1px solid var(--border-medium)",
+                          color: "var(--text-primary)",
                           borderRadius: "6px",
                           fontSize: "12px",
                           fontWeight: 600,
@@ -348,8 +348,8 @@ export default function UsersPage() {
         </table>
 
         {/* Pagination Bar */}
-        <div style={{ padding: "14px 20px", borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#181a22" }}>
-          <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+        <div style={{ padding: "14px 20px", borderTop: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-surface)" }}>
+          <div style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>
             Page {currentPage} of {totalPages}
           </div>
           <div style={{ display: "flex", gap: "8px" }}>
@@ -359,9 +359,9 @@ export default function UsersPage() {
               style={{
                 padding: "6px 12px",
                 borderRadius: "6px",
-                background: "#1c1e28",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: currentPage <= 1 ? "rgba(255,255,255,0.2)" : "#fff",
+                background: "var(--bg-surface-2)",
+                border: "1px solid var(--border-medium)",
+                color: currentPage <= 1 ? "var(--text-faint)" : "var(--text-primary)",
                 cursor: currentPage <= 1 ? "not-allowed" : "pointer",
                 display: "flex",
                 alignItems: "center",
@@ -377,9 +377,9 @@ export default function UsersPage() {
               style={{
                 padding: "6px 12px",
                 borderRadius: "6px",
-                background: "#1c1e28",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: currentPage >= totalPages ? "rgba(255,255,255,0.2)" : "#fff",
+                background: "var(--bg-surface-2)",
+                border: "1px solid var(--border-medium)",
+                color: currentPage >= totalPages ? "var(--text-faint)" : "var(--text-primary)",
                 cursor: currentPage >= totalPages ? "not-allowed" : "pointer",
                 display: "flex",
                 alignItems: "center",

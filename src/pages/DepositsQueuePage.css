@@ -410,3 +410,113 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ─── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] .dq-toast.success {
+  background: rgba(4, 120, 87, 0.1);
+  color: var(--success-text);
+  border-color: rgba(4, 120, 87, 0.25);
+}
+[data-theme="light"] .dq-toast.error {
+  background: rgba(185, 28, 28, 0.08);
+  color: var(--danger-text);
+  border-color: rgba(185, 28, 28, 0.2);
+}
+[data-theme="light"] .dq-title {
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-count-badge {
+  background: rgba(49, 87, 201, 0.1);
+  color: var(--info-text);
+  border-color: rgba(49, 87, 201, 0.25);
+}
+[data-theme="light"] .dq-table th {
+  background: var(--bg-surface);
+  border-bottom-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+[data-theme="light"] .dq-table td {
+  border-bottom-color: var(--border-subtle);
+}
+[data-theme="light"] .dq-row:hover {
+  background: #e2e7f1;
+}
+[data-theme="light"] .dq-mono {
+  color: var(--text-tertiary);
+}
+[data-theme="light"] .dq-asset-badge {
+  background: rgba(67, 56, 202, 0.1);
+  color: var(--info-text);
+  border-color: rgba(67, 56, 202, 0.25);
+}
+[data-theme="light"] .dq-btn-review {
+  background: var(--bg-surface);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-btn-review:hover {
+  background: var(--bg-surface-hover);
+  border-color: rgba(49, 87, 201, 0.4);
+}
+[data-theme="light"] .dq-overlay {
+  background: rgba(15, 23, 42, 0.5);
+}
+[data-theme="light"] .dq-modal {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+[data-theme="light"] .dq-modal-header {
+  border-bottom-color: var(--border-subtle);
+}
+[data-theme="light"] .dq-modal-title {
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-modal-close {
+  background: var(--overlay-2);
+  border-color: var(--border-subtle);
+}
+[data-theme="light"] .dq-modal-close:hover {
+  background: var(--overlay-3);
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-audit-notice {
+  background: rgba(180, 83, 9, 0.06);
+  border-color: rgba(180, 83, 9, 0.25);
+  color: var(--warning-text);
+}
+[data-theme="light"] .dq-info-row strong {
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-risk-score-block {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+[data-theme="light"] .dq-risk-score-label {
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-flag-item {
+  background: rgba(180, 83, 9, 0.08);
+  border-color: rgba(180, 83, 9, 0.2);
+  color: var(--warning-text);
+}
+[data-theme="light"] .dq-decision {
+  border-top-color: var(--border-subtle);
+  background: var(--bg-surface);
+}
+[data-theme="light"] .dq-input {
+  background: var(--bg-card);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+[data-theme="light"] .dq-input:focus {
+  background: var(--bg-card);
+}
+[data-theme="light"] .dq-btn-reject {
+  background: rgba(185, 28, 28, 0.08);
+  border-color: rgba(185, 28, 28, 0.25);
+  color: var(--danger-text);
+}
+[data-theme="light"] .dq-btn-reject:hover:not(:disabled) {
+  background: rgba(185, 28, 28, 0.16);
+  color: var(--danger-text);
+}

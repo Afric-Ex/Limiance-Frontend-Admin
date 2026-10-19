@@ -61,15 +61,15 @@ export default function DepositDetailPage() {
   if (!detail) {
     return (
       <div style={{ padding: "60px 0", textAlign: "center" }}>
-        <h2 style={{ color: "#fff" }}>Deposit Transaction Not Found</h2>
+        <h2 style={{ color: "var(--text-primary)" }}>Deposit Transaction Not Found</h2>
         <button
           onClick={() => navigate("/deposits-queue")}
           style={{
             marginTop: "16px",
             padding: "8px 16px",
-            background: "#1c1e28",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             borderRadius: "8px",
             cursor: "pointer",
           }}
@@ -109,9 +109,9 @@ export default function DepositDetailPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            background: "#181a22",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             padding: "8px 16px",
             borderRadius: "8px",
             cursor: "pointer",
@@ -212,7 +212,7 @@ export default function DepositDetailPage() {
                       {detail.failed_at && (
                         <div className="dq-info-row">
                           <span>Failed At</span>
-                          <strong style={{ fontSize: '12px', color: '#ef4444' }}>
+                          <strong style={{ fontSize: '12px', color: 'var(--danger-text)' }}>
                             {new Date(detail.failed_at).toLocaleString()}
                           </strong>
                         </div>
@@ -220,7 +220,7 @@ export default function DepositDetailPage() {
                       {detail.failure_reason && (
                         <div className="dq-info-row">
                           <span>Failure Reason</span>
-                          <strong style={{ color: '#ef4444' }}>{detail.failure_reason}</strong>
+                          <strong style={{ color: 'var(--danger-text)' }}>{detail.failure_reason}</strong>
                         </div>
                       )}
                     </div>

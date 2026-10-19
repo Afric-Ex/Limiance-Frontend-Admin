@@ -436,10 +436,10 @@ export default function NetworksPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#fff' }}>
+          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Networks, Currencies & Nodes
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-tertiary)', fontSize: '13px' }}>
             Manage blockchain networks, base fiat quote currencies, and high-availability Web3 RPC providers.
           </p>
         </div>
@@ -593,8 +593,8 @@ export default function NetworksPage() {
       {/* Tabs & Search */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '16px 20px',
           marginBottom: '20px',
@@ -611,9 +611,9 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'networks' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'networks' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'networks' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'networks' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -629,9 +629,9 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'currencies' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'currencies' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'currencies' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'currencies' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -647,9 +647,9 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'rpcs' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'rpcs' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'rpcs' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'rpcs' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -665,9 +665,9 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'languages' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'languages' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'languages' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'languages' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -683,9 +683,9 @@ export default function NetworksPage() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: activeTab === 'timezones' ? '#4d77f0' : 'rgba(255,255,255,0.05)',
+              background: activeTab === 'timezones' ? '#4d77f0' : 'var(--overlay-2)',
               border: 'none',
-              color: activeTab === 'timezones' ? '#fff' : 'rgba(255,255,255,0.6)',
+              color: activeTab === 'timezones' ? '#fff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '13px',
               display: 'flex',
@@ -707,7 +707,7 @@ export default function NetworksPage() {
                 left: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--text-muted)',
               }}
             />
             <input
@@ -719,9 +719,9 @@ export default function NetworksPage() {
                 width: '100%',
                 padding: '8px 12px 8px 36px',
                 borderRadius: '8px',
-                background: '#181a22',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#fff',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -731,10 +731,10 @@ export default function NetworksPage() {
             onClick={fetchAll}
             style={{
               padding: '8px 14px',
-              background: '#1c1e28',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-surface-2)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '8px',
-              color: '#fff',
+              color: 'var(--text-primary)',
               fontSize: '13px',
               display: 'flex',
               alignItems: 'center',
@@ -751,8 +751,8 @@ export default function NetworksPage() {
       {activeTab === 'networks' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -760,14 +760,14 @@ export default function NetworksPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Symbol</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Network Name</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Blockchain</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Decimals</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Standard</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Explorer</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Symbol</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Network Name</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Blockchain</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Decimals</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Standard</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Explorer</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -775,23 +775,23 @@ export default function NetworksPage() {
                 <ShimmerTableRows rows={6} cols={7} colWidths={['15%', '25%', '20%', '15%', '15%', '25%', '15%']} />
               ) : filteredNetworks.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No blockchain networks found.
                   </td>
                 </tr>
               ) : (
                 filteredNetworks.map((net) => (
-                  <tr key={net.symbol} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#818cf8', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={net.symbol} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--info-text)', fontFamily: 'var(--font-mono)' }}>
                       {net.symbol}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#fff', fontWeight: 500 }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontWeight: 500 }}>
                       {net.name}
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.7)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-secondary)' }}>
                       {net.blockchain}
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
                       {net.decimals}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -801,8 +801,8 @@ export default function NetworksPage() {
                           borderRadius: '4px',
                           fontSize: '11px',
                           fontWeight: 600,
-                          background: 'rgba(255,255,255,0.06)',
-                          color: '#a5b4fc',
+                          background: 'var(--overlay-2)',
+                          color: 'var(--info-text)',
                         }}
                       >
                         {net.standard || 'Native'}
@@ -814,12 +814,12 @@ export default function NetworksPage() {
                           href={net.explorer_url}
                           target="_blank"
                           rel="noreferrer"
-                          style={{ color: '#4d77f0', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}
+                          style={{ color: 'var(--primary-strong)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}
                         >
                           View <ExternalLink size={12} />
                         </a>
                       ) : (
-                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>—</span>
+                        <span style={{ color: 'var(--text-faint)', fontSize: '12px' }}>—</span>
                       )}
                     </td>
                     <td style={{ padding: '14px 18px', textAlign: 'right' }}>
@@ -842,9 +842,9 @@ export default function NetworksPage() {
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                           }}
                         >
@@ -856,8 +856,8 @@ export default function NetworksPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                         >
@@ -877,8 +877,8 @@ export default function NetworksPage() {
       {activeTab === 'currencies' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -886,11 +886,11 @@ export default function NetworksPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Symbol</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Currency Name</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Country Code</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Symbol</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Currency Name</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Country Code</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -898,17 +898,17 @@ export default function NetworksPage() {
                 <ShimmerTableRows rows={5} cols={4} colWidths={['20%', '35%', '25%', '20%']} />
               ) : filteredCurrencies.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="4" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No fiat currencies found.
                   </td>
                 </tr>
               ) : (
                 filteredCurrencies.map((cur) => (
-                  <tr key={cur.symbol} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#34d399', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={cur.symbol} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--success-text)', fontFamily: 'var(--font-mono)' }}>
                       {cur.symbol}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#fff', fontWeight: 500 }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontWeight: 500 }}>
                       {cur.name}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -919,8 +919,8 @@ export default function NetworksPage() {
                           fontSize: '11px',
                           fontWeight: 700,
                           background: 'rgba(16, 185, 129, 0.1)',
-                          color: '#34d399',
-                          border: '1px solid rgba(16, 185, 129, 0.2)',
+                          color: 'var(--success-text)',
+                          border: '1px solid var(--success-border)',
                         }}
                       >
                         {cur.country}
@@ -941,9 +941,9 @@ export default function NetworksPage() {
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                           }}
                         >
@@ -955,8 +955,8 @@ export default function NetworksPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                         >
@@ -976,8 +976,8 @@ export default function NetworksPage() {
       {activeTab === 'rpcs' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflowX: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -985,14 +985,14 @@ export default function NetworksPage() {
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Canonical Name</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Chain ID</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Kind / Native</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Confirmations</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Endpoints</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>Status</th>
-                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Canonical Name</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Chain ID</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Kind / Native</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Confirmations</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Endpoints</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>Status</th>
+                <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1000,29 +1000,29 @@ export default function NetworksPage() {
                 <ShimmerTableRows rows={6} cols={7} colWidths={['20%', '15%', '15%', '15%', '20%', '15%', '10%']} />
               ) : filteredRpcs.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="7" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No RPC nodes registered.
                   </td>
                 </tr>
               ) : (
                 filteredRpcs.map((rpc) => (
-                  <tr key={rpc.canonicalName} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#a5b4fc', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={rpc.canonicalName} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--info-text)', fontFamily: 'var(--font-mono)' }}>
                       {rpc.canonicalName}
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
                       {rpc.chainId}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#fff', fontSize: '13px' }}>
-                      <span style={{ textTransform: 'uppercase', color: '#60a5fa', fontWeight: 600 }}>{rpc.kind}</span>
-                      <span style={{ color: 'rgba(255,255,255,0.4)', margin: '0 4px' }}>•</span>
-                      <span style={{ color: '#fbbf24', fontWeight: 600 }}>{rpc.nativeSymbol}</span>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontSize: '13px' }}>
+                      <span style={{ textTransform: 'uppercase', color: 'var(--accent-blue)', fontWeight: 600 }}>{rpc.kind}</span>
+                      <span style={{ color: 'var(--text-muted)', margin: '0 4px' }}>•</span>
+                      <span style={{ color: 'var(--warning-text)', fontWeight: 600 }}>{rpc.nativeSymbol}</span>
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
                       {rpc.confirmations} blocks
                     </td>
                     <td style={{ padding: '14px 18px', maxWidth: '260px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      <code style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px' }}>
+                      <code style={{ fontSize: '11px', color: 'var(--text-tertiary)', background: 'var(--bg-deep)', padding: '2px 6px', borderRadius: '4px' }}>
                         {JSON.stringify(rpc.endpoints || {})}
                       </code>
                     </td>
@@ -1034,8 +1034,8 @@ export default function NetworksPage() {
                           fontSize: '11px',
                           fontWeight: 600,
                           background: rpc.isActive !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                          color: rpc.isActive !== false ? '#34d399' : '#f87171',
-                          border: `1px solid ${rpc.isActive !== false ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                          color: rpc.isActive !== false ? 'var(--success-text)' : 'var(--danger-text)',
+                          border: `1px solid ${rpc.isActive !== false ? 'var(--success-border)' : 'var(--danger-border)'}`,
                         }}
                       >
                         {rpc.isActive !== false ? 'ACTIVE' : 'DISABLED'}
@@ -1049,8 +1049,8 @@ export default function NetworksPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                         >
@@ -1070,15 +1070,15 @@ export default function NetworksPage() {
       {activeTab === 'languages' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflow: 'hidden',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', background: 'var(--overlay-1)' }}>
                 <th style={{ padding: '14px 18px' }}>Locale Code</th>
                 <th style={{ padding: '14px 18px' }}>Language Name</th>
                 <th style={{ padding: '14px 18px' }}>Native Name</th>
@@ -1092,20 +1092,20 @@ export default function NetworksPage() {
                 <ShimmerTableRows rows={6} cols={6} colWidths={['15%', '25%', '25%', '15%', '10%', '10%']} />
               ) : filteredLanguages.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="6" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No language locales configured.
                   </td>
                 </tr>
               ) : (
                 filteredLanguages.map((l) => (
-                  <tr key={l.code} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#818cf8', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={l.code} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--info-text)', fontFamily: 'var(--font-mono)' }}>
                       {l.code}
                     </td>
-                    <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {l.name}
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.8)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)' }}>
                       {l.nativename || '—'}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -1116,7 +1116,7 @@ export default function NetworksPage() {
                           fontSize: '11px',
                           fontWeight: 700,
                           background: l.direction === 'rtl' ? 'rgba(168, 85, 247, 0.12)' : 'rgba(77, 119, 240, 0.12)',
-                          color: l.direction === 'rtl' ? '#c084fc' : '#818cf8',
+                          color: l.direction === 'rtl' ? 'var(--accent-purple)' : 'var(--info-text)',
                         }}
                       >
                         {(l.direction || 'ltr').toUpperCase()}
@@ -1130,7 +1130,7 @@ export default function NetworksPage() {
                           fontSize: '11px',
                           fontWeight: 700,
                           background: l.isactive !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                          color: l.isactive !== false ? '#34d399' : '#f87171',
+                          color: l.isactive !== false ? 'var(--success-text)' : 'var(--danger-text)',
                         }}
                       >
                         {l.isactive !== false ? 'ACTIVE' : 'DISABLED'}
@@ -1153,9 +1153,9 @@ export default function NetworksPage() {
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                           }}
                           title="Edit Language"
@@ -1168,8 +1168,8 @@ export default function NetworksPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                           title="Delete Language"
@@ -1190,15 +1190,15 @@ export default function NetworksPage() {
       {activeTab === 'timezones' && (
         <div
           style={{
-            background: '#13151c',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
             borderRadius: '14px',
             overflow: 'hidden',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.02)' }}>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', background: 'var(--overlay-1)' }}>
                 <th style={{ padding: '14px 18px' }}>Identifier / Code</th>
                 <th style={{ padding: '14px 18px' }}>Timezone Name</th>
                 <th style={{ padding: '14px 18px' }}>UTC Offset</th>
@@ -1211,20 +1211,20 @@ export default function NetworksPage() {
                 <ShimmerTableRows rows={6} cols={5} colWidths={['20%', '35%', '20%', '15%', '10%']} />
               ) : filteredTimezones.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                  <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No timezones configured.
                   </td>
                 </tr>
               ) : (
                 filteredTimezones.map((tz) => (
-                  <tr key={tz.code} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fbbf24', fontFamily: 'var(--font-mono)' }}>
+                  <tr key={tz.code} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--warning-text)', fontFamily: 'var(--font-mono)' }}>
                       {tz.code}
                     </td>
-                    <td style={{ padding: '14px 18px', fontWeight: 600, color: '#fff' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {tz.name}
                     </td>
-                    <td style={{ padding: '14px 18px', fontFamily: 'var(--font-mono)', color: '#34d399', fontWeight: 600 }}>
+                    <td style={{ padding: '14px 18px', fontFamily: 'var(--font-mono)', color: 'var(--success-text)', fontWeight: 600 }}>
                       UTC {tz.offset}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -1235,7 +1235,7 @@ export default function NetworksPage() {
                           fontSize: '11px',
                           fontWeight: 700,
                           background: tz.isactive !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                          color: tz.isactive !== false ? '#34d399' : '#f87171',
+                          color: tz.isactive !== false ? 'var(--success-text)' : 'var(--danger-text)',
                         }}
                       >
                         {tz.isactive !== false ? 'ACTIVE' : 'DISABLED'}
@@ -1257,9 +1257,9 @@ export default function NetworksPage() {
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: '#fff',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                           }}
                           title="Edit Timezone"
@@ -1272,8 +1272,8 @@ export default function NetworksPage() {
                             padding: '6px 10px',
                             borderRadius: '6px',
                             background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: '#f87171',
+                            border: '1px solid var(--danger-border)',
+                            color: 'var(--danger-text)',
                             cursor: 'pointer',
                           }}
                           title="Delete Timezone"
@@ -1306,8 +1306,8 @@ export default function NetworksPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '520px',
@@ -1315,69 +1315,69 @@ export default function NetworksPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               {editingItem ? `Edit Network: ${editingItem.symbol}` : 'Add Blockchain Network'}
             </h3>
             <form onSubmit={handleSaveNetwork}>
               {!editingItem && (
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Network Symbol (e.g. ETH, BSC, ARB)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Network Symbol (e.g. ETH, BSC, ARB)</label>
                   <input
                     type="text"
                     required
                     value={networkForm.symbol}
                     onChange={(e) => setNetworkForm({ ...networkForm, symbol: e.target.value.toUpperCase() })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               )}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Network Display Name</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Network Display Name</label>
                 <input
                   type="text"
                   required
                   value={networkForm.name}
                   onChange={(e) => setNetworkForm({ ...networkForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Blockchain Family</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Blockchain Family</label>
                   <input
                     type="text"
                     required
                     value={networkForm.blockchain}
                     onChange={(e) => setNetworkForm({ ...networkForm, blockchain: e.target.value })}
                     placeholder="e.g. ethereum, solana"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Decimals</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Decimals</label>
                   <input
                     type="number"
                     value={networkForm.decimals}
                     onChange={(e) => setNetworkForm({ ...networkForm, decimals: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Block Explorer URL</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Block Explorer URL</label>
                 <input
                   type="text"
                   value={networkForm.explorer_url}
                   onChange={(e) => setNetworkForm({ ...networkForm, explorer_url: e.target.value })}
                   placeholder="https://etherscan.io"
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setNetworkModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1409,8 +1409,8 @@ export default function NetworksPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '440px',
@@ -1418,47 +1418,47 @@ export default function NetworksPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               {editingItem ? `Edit Currency: ${editingItem.symbol}` : 'Add Fiat Currency'}
             </h3>
             <form onSubmit={handleSaveCurrency}>
               {!editingItem && (
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Symbol (e.g. USD, EUR, GBP)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Symbol (e.g. USD, EUR, GBP)</label>
                   <input
                     type="text"
                     required
                     value={currencyForm.symbol}
                     onChange={(e) => setCurrencyForm({ ...currencyForm, symbol: e.target.value.toUpperCase() })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               )}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Currency Name</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Currency Name</label>
                 <input
                   type="text"
                   required
                   value={currencyForm.name}
                   onChange={(e) => setCurrencyForm({ ...currencyForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Country / Region Code (e.g. US, EU, GB)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Country / Region Code (e.g. US, EU, GB)</label>
                 <input
                   type="text"
                   required
                   value={currencyForm.country}
                   onChange={(e) => setCurrencyForm({ ...currencyForm, country: e.target.value.toUpperCase() })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setCurrencyModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1490,8 +1490,8 @@ export default function NetworksPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '520px',
@@ -1499,41 +1499,41 @@ export default function NetworksPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               Configure Blockchain RPC Node
             </h3>
             <form onSubmit={handleSaveRpc}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Canonical Name</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Canonical Name</label>
                   <input
                     type="text"
                     required
                     value={rpcForm.canonicalName}
                     onChange={(e) => setRpcForm({ ...rpcForm, canonicalName: e.target.value })}
                     placeholder="e.g. eth-mainnet"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Chain ID</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Chain ID</label>
                   <input
                     type="number"
                     required
                     value={rpcForm.chainId}
                     onChange={(e) => setRpcForm({ ...rpcForm, chainId: e.target.value })}
                     placeholder="1"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Kind</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Kind</label>
                   <select
                     value={rpcForm.kind}
                     onChange={(e) => setRpcForm({ ...rpcForm, kind: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   >
                     <option value="evm">EVM</option>
                     <option value="solana">Solana</option>
@@ -1542,44 +1542,44 @@ export default function NetworksPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Native Symbol</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Native Symbol</label>
                   <input
                     type="text"
                     required
                     value={rpcForm.nativeSymbol}
                     onChange={(e) => setRpcForm({ ...rpcForm, nativeSymbol: e.target.value.toUpperCase() })}
                     placeholder="ETH"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Decimals</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Decimals</label>
                   <input
                     type="number"
                     value={rpcForm.decimals}
                     onChange={(e) => setRpcForm({ ...rpcForm, decimals: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Confirmation Blocks</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Confirmation Blocks</label>
                   <input
                     type="number"
                     value={rpcForm.confirmations}
                     onChange={(e) => setRpcForm({ ...rpcForm, confirmations: e.target.value })}
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Endpoints (JSON key-value mapping)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Endpoints (JSON key-value mapping)</label>
                 <textarea
                   rows={3}
                   value={rpcForm.endpoints}
                   onChange={(e) => setRpcForm({ ...rpcForm, endpoints: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#818cf8', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--info-text)', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
@@ -1589,13 +1589,13 @@ export default function NetworksPage() {
                   checked={rpcForm.isActive}
                   onChange={(e) => setRpcForm({ ...rpcForm, isActive: e.target.checked })}
                 />
-                <label htmlFor="rpcActive" style={{ fontSize: '13px', color: '#fff' }}>Enable this RPC node for live polling</label>
+                <label htmlFor="rpcActive" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>Enable this RPC node for live polling</label>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setRpcModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1627,8 +1627,8 @@ export default function NetworksPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '480px',
@@ -1636,50 +1636,50 @@ export default function NetworksPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               {editingItem ? `Edit Language: ${editingItem.code}` : 'Add Supported Language'}
             </h3>
             <form onSubmit={handleSaveLanguage}>
               {!editingItem && (
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Locale Code (e.g. en, es, fr, zh, ar)</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Locale Code (e.g. en, es, fr, zh, ar)</label>
                   <input
                     type="text"
                     required
                     value={languageForm.code}
                     onChange={(e) => setLanguageForm({ ...languageForm, code: e.target.value.toLowerCase().trim() })}
                     placeholder="e.g. en"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               )}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Language English Name</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Language English Name</label>
                 <input
                   type="text"
                   required
                   value={languageForm.name}
                   onChange={(e) => setLanguageForm({ ...languageForm, name: e.target.value })}
                   placeholder="e.g. English"
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Native Script Name</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Native Script Name</label>
                 <input
                   type="text"
                   value={languageForm.nativename}
                   onChange={(e) => setLanguageForm({ ...languageForm, nativename: e.target.value })}
                   placeholder="e.g. Español, Français, العربية"
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Text Layout Direction</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Text Layout Direction</label>
                 <select
                   value={languageForm.direction}
                   onChange={(e) => setLanguageForm({ ...languageForm, direction: e.target.value })}
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 >
                   <option value="ltr">Left-to-Right (LTR)</option>
                   <option value="rtl">Right-to-Left (RTL)</option>
@@ -1692,13 +1692,13 @@ export default function NetworksPage() {
                   checked={languageForm.isactive}
                   onChange={(e) => setLanguageForm({ ...languageForm, isactive: e.target.checked })}
                 />
-                <label htmlFor="langActive" style={{ fontSize: '13px', color: '#fff' }}>Enable language in platform selector</label>
+                <label htmlFor="langActive" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>Enable language in platform selector</label>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setLanguageModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1730,8 +1730,8 @@ export default function NetworksPage() {
         >
           <div
             style={{
-              background: '#13151c',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
               borderRadius: '16px',
               width: '100%',
               maxWidth: '480px',
@@ -1739,43 +1739,43 @@ export default function NetworksPage() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}
           >
-            <h3 style={{ margin: '0 0 16px', color: '#fff', fontSize: '18px' }}>
+            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
               {editingItem ? `Edit Timezone: ${editingItem.code}` : 'Add Supported Timezone'}
             </h3>
             <form onSubmit={handleSaveTimezone}>
               {!editingItem && (
                 <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Timezone Identifier / Code</label>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Timezone Identifier / Code</label>
                   <input
                     type="text"
                     required
                     value={timezoneForm.code}
                     onChange={(e) => setTimezoneForm({ ...timezoneForm, code: e.target.value.trim() })}
                     placeholder="e.g. UTC, WAT, Africa/Lagos, America/New_York"
-                    style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               )}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Timezone Display Name</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Timezone Display Name</label>
                 <input
                   type="text"
                   required
                   value={timezoneForm.name}
                   onChange={(e) => setTimezoneForm({ ...timezoneForm, name: e.target.value })}
                   placeholder="e.g. West Africa Time (Lagos)"
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>UTC Offset Format (e.g. +01:00, -05:00)</label>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>UTC Offset Format (e.g. +01:00, -05:00)</label>
                 <input
                   type="text"
                   required
                   value={timezoneForm.offset}
                   onChange={(e) => setTimezoneForm({ ...timezoneForm, offset: e.target.value.trim() })}
                   placeholder="e.g. +01:00"
-                  style={{ width: '100%', padding: '10px', background: '#181a22', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontFamily: 'var(--font-mono)', outline: 'none' }}
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', outline: 'none' }}
                 />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
@@ -1785,13 +1785,13 @@ export default function NetworksPage() {
                   checked={timezoneForm.isactive}
                   onChange={(e) => setTimezoneForm({ ...timezoneForm, isactive: e.target.checked })}
                 />
-                <label htmlFor="tzActive" style={{ fontSize: '13px', color: '#fff' }}>Enable timezone in platform preferences</label>
+                <label htmlFor="tzActive" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>Enable timezone in platform preferences</label>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
                   onClick={() => setTimezoneModalOpen(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

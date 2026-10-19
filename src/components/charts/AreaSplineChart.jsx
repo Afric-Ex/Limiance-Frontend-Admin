@@ -134,9 +134,9 @@ export default function AreaSplineChart({
         <defs>
           {series.map((s) => (
             <linearGradient key={`grad-${s.key}`} id={`grad-${s.key}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={s.color} stopOpacity={0.4} />
-              <stop offset="90%" stopColor={s.color} stopOpacity={0.02} />
-              <stop offset="100%" stopColor={s.color} stopOpacity={0} />
+              <stop offset="0%" style={{ stopColor: s.color }} stopOpacity={0.4} />
+              <stop offset="90%" style={{ stopColor: s.color }} stopOpacity={0.02} />
+              <stop offset="100%" style={{ stopColor: s.color }} stopOpacity={0} />
             </linearGradient>
           ))}
         </defs>
@@ -159,13 +159,13 @@ export default function AreaSplineChart({
                 y1={y}
                 x2={width - margins.right}
                 y2={y}
-                stroke="rgba(255,255,255,0.06)"
+                style={{ stroke: 'var(--border-subtle)' }}
                 strokeDasharray="3 3"
               />
               <text
                 x={margins.left - 10}
                 y={y + 4}
-                fill="rgba(255,255,255,0.4)"
+                style={{ fill: 'var(--text-muted)' }}
                 fontSize="11"
                 fontFamily="var(--font-mono, monospace)"
                 textAnchor="end"
@@ -192,7 +192,7 @@ export default function AreaSplineChart({
               key={`xlabel-${i}`}
               x={x}
               y={height - 10}
-              fill="rgba(255,255,255,0.45)"
+              style={{ fill: 'var(--text-tertiary)' }}
               fontSize="11"
               fontFamily="var(--font-mono, monospace)"
               textAnchor="middle"
@@ -225,11 +225,10 @@ export default function AreaSplineChart({
               <path
                 d={linePath}
                 fill="none"
-                stroke={s.color}
                 strokeWidth={2.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                style={{ filter: `drop-shadow(0 2px 8px ${s.color}40)` }}
+                style={{ stroke: s.color, filter: `drop-shadow(0 2px 8px color-mix(in srgb, ${s.color} 25%, transparent))` }}
               />
             </g>
           );
@@ -243,7 +242,7 @@ export default function AreaSplineChart({
               y1={margins.top}
               x2={hoverX}
               y2={margins.top + plotHeight}
-              stroke="rgba(255, 255, 255, 0.3)"
+              style={{ stroke: 'var(--text-faint)' }}
               strokeDasharray="4 4"
               strokeWidth={1}
             />
@@ -256,9 +255,9 @@ export default function AreaSplineChart({
               return (
                 <g key={`marker-${s.key}`}>
                   {/* Outer pulse */}
-                  <circle cx={hoverX} cy={y} r={7} fill={s.color} opacity={0.25} />
+                  <circle cx={hoverX} cy={y} r={7} style={{ fill: s.color }} opacity={0.25} />
                   {/* Inner solid */}
-                  <circle cx={hoverX} cy={y} r={4} fill={s.color} stroke="#13151c" strokeWidth={2} />
+                  <circle cx={hoverX} cy={y} r={4} style={{ fill: s.color, stroke: 'var(--bg-card)' }} strokeWidth={2} />
                 </g>
               );
             })}
@@ -306,7 +305,7 @@ export default function AreaSplineChart({
                 onClick={() => toggleSeries(s.key)}
                 title={legendToggleable ? 'Click to toggle visibility' : undefined}
               >
-                <span className="chart-legend-dot" style={{ background: isEnabled ? s.color : '#555' }} />
+                <span className="chart-legend-dot" style={{ background: isEnabled ? s.color : 'var(--text-faint)' }} />
                 <span>{s.name}</span>
               </div>
             );

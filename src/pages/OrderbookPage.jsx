@@ -544,7 +544,7 @@ export default function OrderbookPage() {
       <div className="ob-header">
         <div className="ob-title-group">
           <h1>
-            <Layers size={26} color="#818cf8" /> Live Market Order Book
+            <Layers size={26} style={{ color: "var(--info-text)" }} /> Live Market Order Book
           </h1>
           <p>
             Real-time level-2 market depth, resting limit orders, liquidity curve, and live order book stream.
@@ -635,7 +635,7 @@ export default function OrderbookPage() {
               className="ob-stat-value"
               style={{
                 textTransform: 'uppercase',
-                color: marketType === 'futures' ? '#f59e0b' : marketType === 'margin' ? '#a78bfa' : '#818cf8',
+                color: marketType === 'futures' ? 'var(--warning-text)' : marketType === 'margin' ? 'var(--accent-purple)' : 'var(--info-text)',
               }}
             >
               {marketType}
@@ -659,8 +659,8 @@ export default function OrderbookPage() {
           <div className="ob-stat-item">
             <span className="ob-stat-label">Best Bid / Ask</span>
             <span className="ob-stat-value">
-              <span style={{ color: '#34d399' }}>{formatPrice(bestBid)}</span> /{' '}
-              <span style={{ color: '#f87171' }}>{formatPrice(bestAsk)}</span>
+              <span style={{ color: 'var(--success-text)' }}>{formatPrice(bestBid)}</span> /{' '}
+              <span style={{ color: 'var(--danger-text)' }}>{formatPrice(bestAsk)}</span>
             </span>
           </div>
 
@@ -679,7 +679,7 @@ export default function OrderbookPage() {
         <div className="ob-panel">
           <div className="ob-panel-header">
             <div className="ob-panel-title">
-              <Activity size={16} color="#818cf8" /> Order Book Depth
+              <Activity size={16} style={{ color: "var(--info-text)" }} /> Order Book Depth
             </div>
 
             <div className="ob-view-controls">
@@ -696,7 +696,7 @@ export default function OrderbookPage() {
                 className={`ob-view-btn ${viewMode === 'bids' ? 'active' : ''}`}
                 onClick={() => setViewMode('bids')}
                 title="Bids Only"
-                style={{ color: viewMode === 'bids' ? '#34d399' : undefined }}
+                style={{ color: viewMode === 'bids' ? 'var(--success-text)' : undefined }}
               >
                 Bids
               </button>
@@ -705,7 +705,7 @@ export default function OrderbookPage() {
                 className={`ob-view-btn ${viewMode === 'asks' ? 'active' : ''}`}
                 onClick={() => setViewMode('asks')}
                 title="Asks Only"
-                style={{ color: viewMode === 'asks' ? '#f87171' : undefined }}
+                style={{ color: viewMode === 'asks' ? 'var(--danger-text)' : undefined }}
               >
                 Asks
               </button>
@@ -768,7 +768,7 @@ export default function OrderbookPage() {
                 className="ob-spread-price"
                 style={{
                   color:
-                    priceDirection === 'up' ? '#34d399' : priceDirection === 'down' ? '#f87171' : '#f8fafc',
+                    priceDirection === 'up' ? 'var(--success-text)' : priceDirection === 'down' ? 'var(--danger-text)' : 'var(--text-primary)',
                 }}
               >
                 {formatPrice(lastPrice || midPrice)}
@@ -802,8 +802,8 @@ export default function OrderbookPage() {
           {/* Buy/Sell Volume Imbalance Bar */}
           <div className="ob-pressure-wrap">
             <div className="ob-pressure-labels">
-              <span style={{ color: '#34d399' }}>Buy Depth: {buyPct}%</span>
-              <span style={{ color: '#f87171' }}>Sell Depth: {sellPct}%</span>
+              <span style={{ color: 'var(--success-text)' }}>Buy Depth: {buyPct}%</span>
+              <span style={{ color: 'var(--danger-text)' }}>Sell Depth: {sellPct}%</span>
             </div>
             <div className="ob-pressure-bar">
               <div className="ob-pressure-fill" style={{ width: `${buyPct}%` }} />
@@ -816,9 +816,9 @@ export default function OrderbookPage() {
           <div className="ob-depth-card">
             <div className="ob-card-header">
               <div className="ob-card-title">
-                <BarChart2 size={16} color="#818cf8" /> Market Depth Liquidity
+                <BarChart2 size={16} style={{ color: "var(--info-text)" }} /> Market Depth Liquidity
               </div>
-              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Cumulative Curves</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Cumulative Curves</span>
             </div>
 
             <div style={{ width: '100%', height: '220px', position: 'relative' }}>
@@ -829,7 +829,7 @@ export default function OrderbookPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#64748b',
+                    color: 'var(--text-muted)',
                     fontSize: '0.85rem',
                   }}
                 >
@@ -839,25 +839,25 @@ export default function OrderbookPage() {
                 <svg width="100%" height="220" viewBox="0 0 400 220" style={{ overflow: 'visible' }}>
                   <defs>
                     <linearGradient id="bidGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.02" />
+                      <stop offset="0%" style={{ stopColor: 'var(--success-text)' }} stopOpacity="0.4" />
+                      <stop offset="100%" style={{ stopColor: 'var(--success-text)' }} stopOpacity="0.02" />
                     </linearGradient>
                     <linearGradient id="askGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#ef4444" stopOpacity="0.02" />
+                      <stop offset="0%" style={{ stopColor: 'var(--danger-text)' }} stopOpacity="0.4" />
+                      <stop offset="100%" style={{ stopColor: 'var(--danger-text)' }} stopOpacity="0.02" />
                     </linearGradient>
                   </defs>
 
                   {/* Grid lines */}
-                  <line x1="0" y1="200" x2="400" y2="200" stroke="rgba(255,255,255,0.06)" />
-                  <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-                  <line x1="200" y1="0" x2="200" y2="200" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                  <line x1="0" y1="200" x2="400" y2="200" style={{ stroke: 'var(--border-subtle)' }} />
+                  <line x1="0" y1="100" x2="400" y2="100" style={{ stroke: 'var(--border-subtle)' }} strokeDasharray="3 3" />
+                  <line x1="200" y1="0" x2="200" y2="200" style={{ stroke: 'var(--border)' }} strokeDasharray="4 4" />
 
                   {/* Bid liquidity curve (green, left of centre) */}
                   {depthChartData.bidLine && (
                     <>
                       <path d={depthChartData.bidArea} fill="url(#bidGradient)" />
-                      <path d={depthChartData.bidLine} fill="none" stroke="#10b981" strokeWidth="2" />
+                      <path d={depthChartData.bidLine} fill="none" style={{ stroke: 'var(--success-text)' }} strokeWidth="2" />
                     </>
                   )}
 
@@ -865,13 +865,13 @@ export default function OrderbookPage() {
                   {depthChartData.askLine && (
                     <>
                       <path d={depthChartData.askArea} fill="url(#askGradient)" />
-                      <path d={depthChartData.askLine} fill="none" stroke="#ef4444" strokeWidth="2" />
+                      <path d={depthChartData.askLine} fill="none" style={{ stroke: 'var(--danger-text)' }} strokeWidth="2" />
                     </>
                   )}
 
                   {/* Centre mid price marker */}
-                  <circle cx="200" cy="195" r="4" fill="#818cf8" />
-                  <text x="200" y="215" fill="#94a3b8" fontSize="10" textAnchor="middle">
+                  <circle cx="200" cy="195" r="4" style={{ fill: 'var(--info-text)' }} />
+                  <text x="200" y="215" style={{ fill: 'var(--text-tertiary)' }} fontSize="10" textAnchor="middle">
                     Mid: {formatPrice(midPrice)}
                   </text>
                 </svg>
@@ -881,13 +881,13 @@ export default function OrderbookPage() {
             <div className="ob-stats-grid">
               <div className="ob-stat-box">
                 <div className="ob-stat-box-label">Total Bid Volume</div>
-                <div className="ob-stat-box-value" style={{ color: '#34d399' }}>
+                <div className="ob-stat-box-value" style={{ color: 'var(--success-text)' }}>
                   ${Number(buyVol).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </div>
               </div>
               <div className="ob-stat-box">
                 <div className="ob-stat-box-label">Total Ask Volume</div>
-                <div className="ob-stat-box-value" style={{ color: '#f87171' }}>
+                <div className="ob-stat-box-value" style={{ color: 'var(--danger-text)' }}>
                   ${Number(sellVol).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </div>
               </div>
@@ -903,7 +903,7 @@ export default function OrderbookPage() {
                   className="ob-stat-box-value"
                   style={{
                     textTransform: 'capitalize',
-                    color: wsStatus === 'connected' ? '#34d399' : '#fbbf24',
+                    color: wsStatus === 'connected' ? 'var(--success-text)' : 'var(--warning-text)',
                   }}
                 >
                   {wsStatus}
@@ -912,11 +912,11 @@ export default function OrderbookPage() {
             </div>
           </div>
 
-          <div className="ob-depth-card" style={{ background: 'rgba(15, 23, 42, 0.5)' }}>
+          <div className="ob-depth-card">
             <div className="ob-card-title" style={{ fontSize: '0.88rem', marginBottom: '8px' }}>
-              <SlidersHorizontal size={14} color="#818cf8" /> Operator Insights
+              <SlidersHorizontal size={14} style={{ color: "var(--info-text)" }} /> Operator Insights
             </div>
-            <p style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', lineHeight: 1.5, margin: 0 }}>
               The order book continuously streams from the matching engine via WebSocket. You can switch
               between <strong>Spot</strong>, <strong>Margin</strong>, and <strong>Futures</strong> order
               engines in real time without refreshing.
@@ -927,19 +927,19 @@ export default function OrderbookPage() {
 
       {/* Scrollable Open Positions Table (Futures & Margin) */}
       {marketType !== 'spot' && (
-        <div style={{ marginTop: '24px', background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ marginTop: '24px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {marketType === 'futures' ? (
-                <TrendingUp size={20} color="#f59e0b" />
+                <TrendingUp size={20} style={{ color: "var(--warning-text)" }} />
               ) : (
-                <ShieldAlert size={20} color="#a78bfa" />
+                <ShieldAlert size={20} style={{ color: "var(--accent-purple)" }} />
               )}
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                   {marketType === 'futures' ? 'Open Futures Positions & Live PnL' : 'Active Margin Positions & Borrowing'}
                 </h3>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
                   {marketType === 'futures'
                     ? 'Streaming all active leverage positions, entry prices, mark prices, and unrealized PnL'
                     : 'Active margin collateral accounts, borrowed balances, and liquidation risk exposure'}
@@ -949,55 +949,55 @@ export default function OrderbookPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ position: 'relative' }}>
-                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
                   type="text"
                   placeholder="Filter user or symbol..."
                   value={positionsSearch}
                   onChange={(e) => setPositionsSearch(e.target.value)}
                   style={{
-                    background: '#181a22',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-medium)',
                     borderRadius: '6px',
                     padding: '6px 10px 6px 30px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.8rem',
                     outline: 'none',
                   }}
                 />
               </div>
 
-              <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '6px', background: 'var(--overlay-2)', color: 'var(--text-secondary)', fontWeight: 600 }}>
                 {positions.length} active position{positions.length !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
 
-          <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+          <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
               <thead>
-                <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'sticky', top: 0, zIndex: 5 }}>
+                <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 5 }}>
                   {marketType === 'futures' ? (
                     <>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Position ID</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Symbol</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Side</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Size</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Entry Price</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Mark Price</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Leverage</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Unrealized PnL</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Liquidation Price</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Position ID</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Symbol</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Side</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Size</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Entry Price</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Mark Price</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Leverage</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Unrealized PnL</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Liquidation Price</th>
                     </>
                   ) : (
                     <>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Asset</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Borrowed Amount</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Spot Collateral</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Locked Balance</th>
-                      <th style={{ padding: '10px 14px', color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: '0.75rem' }}>Risk Status</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>User ID</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Asset</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Borrowed Amount</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Spot Collateral</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Locked Balance</th>
+                      <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Risk Status</th>
                     </>
                   )}
                 </tr>
@@ -1005,13 +1005,13 @@ export default function OrderbookPage() {
               <tbody>
                 {positionsLoading && positions.length === 0 ? (
                   <tr>
-                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
                       Loading active {marketType} positions...
                     </td>
                   </tr>
                 ) : positions.length === 0 ? (
                   <tr>
-                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
                       No active open {marketType} positions found for {selectedPair || 'all markets'}.
                     </td>
                   </tr>
@@ -1031,57 +1031,57 @@ export default function OrderbookPage() {
                         const pnl = Number(pos.unrealized_pnl ?? pos.pnl_percent ?? 0);
                         const isProfitable = pnl >= 0;
                         return (
-                          <tr key={pos.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                          <tr key={pos.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {pos.id ? `${pos.id.slice(0, 8)}...` : `#${idx + 1}`}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {pos.user_id ? `${pos.user_id.slice(0, 8)}...` : 'N/A'}
                             </td>
-                            <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{pos.symbol}</td>
+                            <td style={{ padding: '10px 14px', fontWeight: 700, color: 'var(--text-primary)' }}>{pos.symbol}</td>
                             <td style={{ padding: '10px 14px' }}>
-                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: String(pos.side).toUpperCase() === 'LONG' ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.12)', color: String(pos.side).toUpperCase() === 'LONG' ? '#34d399' : '#f87171' }}>
+                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: String(pos.side).toUpperCase() === 'LONG' ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.12)', color: String(pos.side).toUpperCase() === 'LONG' ? 'var(--success-text)' : 'var(--danger-text)' }}>
                                 {pos.side}
                               </span>
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#fff' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-primary)' }}>
                               {Number(pos.size).toLocaleString()}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.8)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
                               ${Number(pos.entry_price).toLocaleString()}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.8)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
                               ${Number(pos.mark_price).toLocaleString()}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#f59e0b', fontWeight: 700 }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--warning-text)', fontWeight: 700 }}>
                               {pos.leverage}x
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: isProfitable ? '#34d399' : '#f87171' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: isProfitable ? 'var(--success-text)' : 'var(--danger-text)' }}>
                               {isProfitable ? '+' : ''}${pnl.toFixed(2)}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#f87171' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--danger-text)' }}>
                               ${Number(pos.liquidation_price).toLocaleString()}
                             </td>
                           </tr>
                         );
                       } else {
                         return (
-                          <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>
+                          <tr key={idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {pos.user_id ? `${pos.user_id.slice(0, 8)}...` : 'N/A'}
                             </td>
-                            <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{pos.symbol}</td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#f87171' }}>
+                            <td style={{ padding: '10px 14px', fontWeight: 700, color: 'var(--text-primary)' }}>{pos.symbol}</td>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--danger-text)' }}>
                               {Number(pos.borrowed_amount).toLocaleString()} {pos.symbol}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: '#34d399' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--success-text)' }}>
                               {Number(pos.spot_balance).toLocaleString()} {pos.symbol}
                             </td>
-                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.6)' }}>
+                            <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
                               {Number(pos.locked_balance).toLocaleString()} {pos.symbol}
                             </td>
                             <td style={{ padding: '10px 14px' }}>
-                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(167,139,250,0.12)', color: '#a78bfa' }}>
+                              <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(167,139,250,0.12)', color: 'var(--accent-purple)' }}>
                                 BORROWED
                               </span>
                             </td>

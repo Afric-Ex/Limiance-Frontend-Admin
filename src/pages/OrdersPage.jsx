@@ -163,9 +163,9 @@ const shorten = (s, n) => (s ? `${s.slice(0, n)}...` : 'N/A');
 
 const inputBase = {
   borderRadius: '8px',
-  background: '#181a22',
-  border: '1px solid rgba(255,255,255,0.1)',
-  color: '#fff',
+  background: 'var(--bg-surface)',
+  border: '1px solid var(--border-medium)',
+  color: 'var(--text-primary)',
   fontSize: '13px',
   outline: 'none',
 };
@@ -174,7 +174,7 @@ const thStyle = {
   padding: '12px 18px',
   fontSize: '11px',
   fontWeight: 700,
-  color: 'rgba(255,255,255,0.4)',
+  color: 'var(--text-muted)',
 };
 
 const alertStyle = {
@@ -187,7 +187,7 @@ const alertStyle = {
   borderRadius: '10px',
   background: 'rgba(239, 68, 68, 0.12)',
   border: '1px solid rgba(239, 68, 68, 0.3)',
-  color: '#fca5a5',
+  color: 'var(--danger-text)',
   fontSize: '13px',
 };
 
@@ -195,9 +195,9 @@ const alertButtonStyle = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: '6px',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-  color: '#fff',
+  background: 'var(--overlay-2)',
+  border: '1px solid var(--border-medium)',
+  color: 'var(--text-primary)',
   borderRadius: '8px',
   padding: '5px 10px',
   fontSize: '12px',
@@ -349,7 +349,7 @@ export default function OrdersPage() {
     if (status === 'FILLED' || status === 'COMPLETED') {
       return {
         bg: 'rgba(16, 185, 129, 0.12)',
-        color: '#34d399',
+        color: 'var(--success-text)',
         border: 'rgba(16, 185, 129, 0.25)',
         icon: <CheckCircle size={12} />,
       };
@@ -357,14 +357,14 @@ export default function OrdersPage() {
     if (status === 'OPEN' || status === 'PENDING' || status === 'PARTIALLY_FILLED') {
       return {
         bg: 'rgba(59, 130, 246, 0.12)',
-        color: '#60a5fa',
+        color: 'var(--accent-blue)',
         border: 'rgba(59, 130, 246, 0.25)',
         icon: <Clock size={12} />,
       };
     }
     return {
       bg: 'rgba(239, 68, 68, 0.12)',
-      color: '#f87171',
+      color: 'var(--danger-text)',
       border: 'rgba(239, 68, 68, 0.25)',
       icon: <XCircle size={12} />,
     };
@@ -382,10 +382,10 @@ export default function OrdersPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: '#fff' }}>
+          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Exchange Orders & Trades Explorer
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-tertiary)', fontSize: '13px' }}>
             Inspect platform-wide order execution, matching engine fills, sides, fee collections, and user counterparties.
           </p>
         </div>
@@ -395,10 +395,10 @@ export default function OrdersPage() {
           onClick={refresh}
           style={{
             padding: '8px 14px',
-            background: '#1c1e28',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-medium)',
             borderRadius: '8px',
-            color: '#fff',
+            color: 'var(--text-primary)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -431,8 +431,8 @@ export default function OrdersPage() {
       {/* Filter Bar */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           padding: '18px 20px',
           marginBottom: '20px',
@@ -464,7 +464,7 @@ export default function OrdersPage() {
                 left: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--text-muted)',
               }}
             />
             <input
@@ -529,8 +529,8 @@ export default function OrdersPage() {
                 padding: '8px 14px',
                 borderRadius: '8px',
                 background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.15)',
-                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid var(--border-light)',
+                color: 'var(--text-secondary)',
                 fontSize: '13px',
                 cursor: 'pointer',
               }}
@@ -543,7 +543,7 @@ export default function OrdersPage() {
             style={{
               marginLeft: 'auto',
               fontSize: '12px',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'var(--text-tertiary)',
               fontFamily: 'var(--font-mono)',
             }}
           >
@@ -556,8 +556,8 @@ export default function OrdersPage() {
       {/* Orders Table */}
       <div
         style={{
-          background: '#13151c',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '14px',
           overflowX: 'auto',
           boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
@@ -565,7 +565,7 @@ export default function OrdersPage() {
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
               {COLUMNS.map((col, i) => (
                 <th key={col} style={{ ...thStyle, textAlign: i === COLUMNS.length - 1 ? 'right' : 'left' }}>
                   {col}
@@ -578,7 +578,7 @@ export default function OrdersPage() {
               <ShimmerTableRows rows={7} cols={COLUMNS.length} colWidths={['25%', '35%', '20%', '20%', '25%', '20%', '25%', '15%']} />
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                <td colSpan={COLUMNS.length} style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                   {ordersError ? 'Orders could not be loaded.' : 'No orders match the current filter criteria.'}
                 </td>
               </tr>
@@ -588,22 +588,22 @@ export default function OrdersPage() {
                 const isBuy = ord.side === 'BUY';
                 const isSell = ord.side === 'SELL';
                 const sideColors = isBuy
-                  ? { bg: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: 'rgba(16, 185, 129, 0.25)' }
+                  ? { bg: 'rgba(16, 185, 129, 0.12)', color: 'var(--success-text)', border: 'rgba(16, 185, 129, 0.25)' }
                   : isSell
-                  ? { bg: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: 'rgba(239, 68, 68, 0.25)' }
-                  : { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', border: 'rgba(255,255,255,0.12)' };
+                  ? { bg: 'rgba(239, 68, 68, 0.12)', color: 'var(--danger-text)', border: 'rgba(239, 68, 68, 0.25)' }
+                  : { bg: 'var(--overlay-2)', color: 'var(--text-secondary)', border: 'var(--border-medium)' };
 
                 return (
-                  <tr key={ord.id || `row-${idx}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <tr key={ord.id || `row-${idx}`} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                     <td style={{ padding: '14px 18px' }}>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: '#fff' }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                         {ord.id ? shorten(ord.id, 10) : 'ORD...'}
                       </div>
-                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                         User: {shorten(ord.userId, 8)}
                       </div>
                     </td>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {ord.symbol}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -626,16 +626,16 @@ export default function OrdersPage() {
                         {ord.side || '—'}
                       </span>
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#fff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                       ${ord.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
                     </td>
-                    <td style={{ padding: '14px 18px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {ord.quantity}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#818cf8', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--info-text)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                       ${ord.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: '14px 18px', color: '#fbbf24', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ padding: '14px 18px', color: 'var(--warning-text)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
                       {ord.fee} {ord.feeAsset}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
@@ -662,7 +662,7 @@ export default function OrdersPage() {
                         padding: '14px 18px',
                         textAlign: 'right',
                         fontSize: '12px',
-                        color: 'rgba(255,255,255,0.4)',
+                        color: 'var(--text-muted)',
                         fontFamily: 'var(--font-mono)',
                       }}
                     >
@@ -679,14 +679,14 @@ export default function OrdersPage() {
         <div
           style={{
             padding: '14px 20px',
-            background: '#181a22',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--bg-surface)',
+            borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
             Page {page}
             {totalKnown ? ` of ${totalPages}` : ''}
           </div>
@@ -698,9 +698,9 @@ export default function OrdersPage() {
               style={{
                 padding: '6px 14px',
                 borderRadius: '6px',
-                background: page <= 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: page <= 1 ? 'rgba(255,255,255,0.2)' : '#fff',
+                background: page <= 1 ? 'var(--overlay-1)' : 'var(--overlay-2)',
+                border: '1px solid var(--border-medium)',
+                color: page <= 1 ? 'var(--text-faint)' : 'var(--text-primary)',
                 cursor: page <= 1 || loading ? 'not-allowed' : 'pointer',
                 fontSize: '12px',
               }}
@@ -714,9 +714,9 @@ export default function OrdersPage() {
               style={{
                 padding: '6px 14px',
                 borderRadius: '6px',
-                background: !canGoNext ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: !canGoNext ? 'rgba(255,255,255,0.2)' : '#fff',
+                background: !canGoNext ? 'var(--overlay-1)' : 'var(--overlay-2)',
+                border: '1px solid var(--border-medium)',
+                color: !canGoNext ? 'var(--text-faint)' : 'var(--text-primary)',
                 cursor: !canGoNext || loading ? 'not-allowed' : 'pointer',
                 fontSize: '12px',
               }}

@@ -107,15 +107,15 @@ export default function WithdrawalDetailPage() {
   if (!detail) {
     return (
       <div style={{ padding: "60px 0", textAlign: "center" }}>
-        <h2 style={{ color: "#fff" }}>Withdrawal Request Not Found</h2>
+        <h2 style={{ color: "var(--text-primary)" }}>Withdrawal Request Not Found</h2>
         <button
           onClick={() => navigate("/withdrawals-queue")}
           style={{
             marginTop: "16px",
             padding: "8px 16px",
-            background: "#1c1e28",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             borderRadius: "8px",
             cursor: "pointer",
           }}
@@ -155,9 +155,9 @@ export default function WithdrawalDetailPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            background: "#181a22",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             padding: "8px 16px",
             borderRadius: "8px",
             cursor: "pointer",
@@ -242,11 +242,11 @@ export default function WithdrawalDetailPage() {
                     <h3 className="wq-section-title">Raw Payload Inspection</h3>
                     <pre
                       style={{
-                        background: '#111827',
+                        background: 'var(--bg-surface-2)',
                         padding: '12px',
                         borderRadius: '6px',
                         fontSize: '12px',
-                        color: '#34d399',
+                        color: 'var(--success-text)',
                         overflowX: 'auto',
                         maxHeight: '220px',
                       }}
@@ -272,9 +272,9 @@ export default function WithdrawalDetailPage() {
                           width: '100%',
                           padding: '10px 12px',
                           borderRadius: '6px',
-                          border: '1px solid #4b5563',
-                          background: '#1f2937',
-                          color: '#fff',
+                          border: '1px solid var(--border-light)',
+                          background: 'var(--bg-surface-2)',
+                          color: 'var(--text-primary)',
                         }}
                       />
                     </div>

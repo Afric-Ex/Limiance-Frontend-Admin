@@ -123,15 +123,15 @@ export default function KycDetailPage() {
   if (!submission) {
     return (
       <div style={{ padding: "60px 0", textAlign: "center" }}>
-        <h2 style={{ color: "#fff" }}>KYC Submission Not Found</h2>
+        <h2 style={{ color: "var(--text-primary)" }}>KYC Submission Not Found</h2>
         <button
           onClick={() => navigate("/kyc-queue")}
           style={{
             marginTop: "16px",
             padding: "8px 16px",
-            background: "#1c1e28",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             borderRadius: "8px",
             cursor: "pointer",
           }}
@@ -171,9 +171,9 @@ export default function KycDetailPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            background: "#181a22",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
             padding: "8px 16px",
             borderRadius: "8px",
             cursor: "pointer",
@@ -196,14 +196,14 @@ export default function KycDetailPage() {
         <div
           style={{
             background: "rgba(245, 158, 11, 0.1)",
-            border: "1px solid rgba(245, 158, 11, 0.3)",
+            border: "1px solid var(--warning-border)",
             padding: "12px 16px",
             borderRadius: "8px",
             display: "flex",
             alignItems: "center",
             gap: "12px",
             margin: "20px 28px 0",
-            color: "#F59E0B",
+            color: "var(--warning-text)",
             fontSize: "13px",
           }}
         >
@@ -253,7 +253,7 @@ export default function KycDetailPage() {
                       {submission.rejection_reason && (
                         <div className="kyc-info-item" style={{ gridColumn: 'span 2' }}>
                           <span className="kyc-info-label">Previous Rejection / Note</span>
-                          <span className="kyc-info-value" style={{ color: '#EF4444' }}>
+                          <span className="kyc-info-value" style={{ color: 'var(--danger-text)' }}>
                             {submission.rejection_reason}
                           </span>
                         </div>
@@ -274,7 +274,7 @@ export default function KycDetailPage() {
                               </svg>
                               <div>
                                 <div className="kyc-doc-name">{doc.idDocType || doc.type || 'DOCUMENT'}</div>
-                                <div style={{ fontSize: '11px', color: '#9ca3af' }}>
+                                <div style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
                                   Country: {doc.country || 'N/A'} · Answer: {doc.reviewResult?.reviewAnswer || 'UNREVIEWED'}
                                 </div>
                               </div>
@@ -295,23 +295,23 @@ export default function KycDetailPage() {
                         ))}
                       </div>
                     ) : (
-                      <div style={{ color: '#9ca3af', fontSize: '13px', background: '#1f2937', padding: '12px', borderRadius: '6px' }}>
+                      <div style={{ color: 'var(--text-tertiary)', fontSize: '13px', background: 'var(--bg-surface-2)', padding: '12px', borderRadius: '6px' }}>
                         No direct documents synced from Sumsub or applicant is still completing the flow.
                       </div>
                     )}
                   </div>
 
                   {/* Decision Controls */}
-                  <div style={{ marginTop: '28px', borderTop: '1px solid #374151', paddingTop: '20px' }}>
+                  <div style={{ marginTop: '28px', borderTop: '1px solid var(--border-light)', paddingTop: '20px' }}>
                     <h3 style={{ margin: '0 0 14px 0', fontSize: '15px' }}>Operator Compliance Action</h3>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <label style={{ fontSize: '13px', color: '#d1d5db', minWidth: '120px' }}>Approval Tier:</label>
+                        <label style={{ fontSize: '13px', color: 'var(--text-primary)', minWidth: '120px' }}>Approval Tier:</label>
                         <select
                           value={approveTier}
                           onChange={(e) => setApproveTier(e.target.value)}
-                          style={{ padding: '8px 12px', background: '#1f2937', border: '1px solid #4b5563', color: '#fff', borderRadius: '6px' }}
+                          style={{ padding: '8px 12px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-light)', color: 'var(--text-primary)', borderRadius: '6px' }}
                         >
                           <option value="1">Tier 1 (Basic Trading & Standard Limits)</option>
                           <option value="2">Tier 2 (Higher Volume & Unlimited Fiat/Crypto)</option>
@@ -319,7 +319,7 @@ export default function KycDetailPage() {
                       </div>
 
                       <div>
-                        <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#d1d5db' }}>
+                        <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: 'var(--text-primary)' }}>
                           Reason / Instructions (Required for Rejection or Requesting Resubmission):
                         </label>
                         <input
@@ -327,7 +327,7 @@ export default function KycDetailPage() {
                           value={actionReason}
                           onChange={(e) => setActionReason(e.target.value)}
                           placeholder="e.g. Document expired, please provide valid passport with visible MRZ..."
-                          style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #4b5563', background: '#1f2937', color: '#fff', boxSizing: 'border-box' }}
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-light)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', boxSizing: 'border-box' }}
                         />
                       </div>
                     </div>

@@ -116,21 +116,21 @@ export default function WalletsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#fff', fontWeight: 700 }}>Platform Custodial Wallets</h1>
-          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)', fontWeight: 700 }}>Platform Custodial Wallets</h1>
+          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             Inspect on-chain custodial addresses across networks, monitoring addresses, and apply administrative locks.
           </p>
         </div>
-        <div style={{ color: '#818cf8', fontSize: '13px', background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.25)', padding: '6px 14px', borderRadius: '9999px', fontWeight: 600 }}>
+        <div style={{ color: 'var(--info-text)', fontSize: '13px', background: 'rgba(99, 102, 241, 0.12)', border: '1px solid var(--info-border)', padding: '6px 14px', borderRadius: '9999px', fontWeight: 600 }}>
           {totalRecords.toLocaleString()} Total Wallets
         </div>
       </div>
 
       {/* Search Bar */}
-      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
         <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '10px', flex: 1, maxWidth: '500px' }}>
           <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
               placeholder="Search by user ID, chain, or on-chain address..."
@@ -140,9 +140,9 @@ export default function WalletsPage() {
                 width: '100%',
                 padding: '9px 12px 9px 36px',
                 borderRadius: '8px',
-                background: '#181a22',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#fff',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-primary)',
                 fontSize: '14px',
                 outline: 'none',
               }}
@@ -170,9 +170,9 @@ export default function WalletsPage() {
           style={{
             padding: '8px 16px',
             borderRadius: '8px',
-            background: '#181a22',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-medium)',
+            color: 'var(--text-primary)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -185,15 +185,15 @@ export default function WalletsPage() {
       </div>
 
       {/* Wallets Table */}
-      <div style={{ background: '#13151c', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflowX: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: '#181a22', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Blockchain Network</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Custodial Address</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Assigned User ID</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Status</th>
-              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Actions</th>
+            <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Blockchain Network</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Custodial Address</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Assigned User ID</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Status</th>
+              <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -201,7 +201,7 @@ export default function WalletsPage() {
               <ShimmerTableRows rows={6} cols={5} colWidths={['35%', '50%', '35%', '25%', '20%']} />
             ) : wallets.length === 0 ? (
               <tr>
-                <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                <td colSpan="5" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
                   No custodial wallets found
                 </td>
               </tr>
@@ -211,42 +211,42 @@ export default function WalletsPage() {
                 const net = getBlockchainNetwork(w, w.address);
 
                 return (
-                  <tr key={w.id || Math.random()} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <tr key={w.id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                     <td style={{ padding: '14px 18px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ padding: '3px 8px', borderRadius: '4px', background: net.bg, color: net.color, fontWeight: 700, fontSize: '11px', letterSpacing: '0.04em' }}>
                           {net.symbol}
                         </span>
-                        <span style={{ fontSize: '13px', color: '#fff', fontWeight: 600 }}>{net.name}</span>
+                        <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>{net.name}</span>
                       </div>
                     </td>
 
                     <td style={{ padding: '14px 18px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: '#e2e8f0' }}>
+                        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: 'var(--text-primary)' }}>
                           {w.address || 'Pending HD Derivation'}
                         </span>
                         {w.address && (
-                          <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
+                          <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                             <Copy size={12} />
                           </button>
                         )}
                       </div>
                       {w.tag && (
-                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>
                           Tag: {w.tag}
                         </div>
                       )}
                     </td>
 
                     <td style={{ padding: '14px 18px' }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: '#94a3b8' }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '12px', color: 'var(--text-tertiary)' }}>
                         {w.user_id}
                       </span>
                     </td>
 
                     <td style={{ padding: '14px 18px' }}>
-                      <span style={{ padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: isWalletActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isWalletActive ? '#34d399' : '#f87171' }}>
+                      <span style={{ padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: isWalletActive ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: isWalletActive ? 'var(--success-text)' : 'var(--danger-text)' }}>
                         {w.status || (isWalletActive ? 'ACTIVE' : 'SUSPENDED')}
                       </span>
                     </td>
@@ -256,21 +256,21 @@ export default function WalletsPage() {
                         {isWalletActive ? (
                           <button
                             onClick={() => handleWalletAction(w.id, 'suspend', 'suspend')}
-                            style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                            style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--danger-border)', color: 'var(--danger-text)', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                           >
                             Suspend
                           </button>
                         ) : (
                           <button
                             onClick={() => handleWalletAction(w.id, 'reactivate', 'reactivate')}
-                            style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#34d399', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                            style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(16,185,129,0.15)', border: '1px solid var(--success-border)', color: 'var(--success-text)', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                           >
                             Reactivate
                           </button>
                         )}
                         <button
                           onClick={() => handleWalletAction(w.id, 'deactivate', 'deactivate')}
-                          style={{ padding: '4px 10px', borderRadius: '4px', background: '#1c1e28', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', fontSize: '11px', cursor: 'pointer' }}
+                          style={{ padding: '4px 10px', borderRadius: '4px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-medium)', color: 'var(--text-secondary)', fontSize: '11px', cursor: 'pointer' }}
                         >
                           Deactivate
                         </button>
@@ -284,8 +284,8 @@ export default function WalletsPage() {
         </table>
 
         {/* Pagination Bar */}
-        <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#181a22' }}>
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ padding: '14px 20px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-surface)' }}>
+          <div style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>
             Page {currentPage} of {totalPages}
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -295,9 +295,9 @@ export default function WalletsPage() {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                background: '#1c1e28',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: currentPage <= 1 ? 'rgba(255,255,255,0.2)' : '#fff',
+                background: 'var(--bg-surface-2)',
+                border: '1px solid var(--border-medium)',
+                color: currentPage <= 1 ? 'var(--text-faint)' : 'var(--text-primary)',
                 cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -313,9 +313,9 @@ export default function WalletsPage() {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                background: '#1c1e28',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: currentPage >= totalPages ? 'rgba(255,255,255,0.2)' : '#fff',
+                background: 'var(--bg-surface-2)',
+                border: '1px solid var(--border-medium)',
+                color: currentPage >= totalPages ? 'var(--text-faint)' : 'var(--text-primary)',
                 cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',

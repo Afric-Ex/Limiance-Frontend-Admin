@@ -64,13 +64,13 @@ export default function DepositsQueuePage() {
 
   const statusBadge = (status) => {
     const s = (status || 'pending').toLowerCase();
-    const bg = s === 'completed' ? '#059669' : s === 'failed' ? '#DC2626' : '#D97706';
+    const bg = s === 'completed' ? 'var(--success)' : s === 'failed' ? 'var(--danger)' : 'var(--warning)';
     return (
       <span
         style={{
-          background: bg + '22',
+          background: `color-mix(in srgb, ${bg} 13%, transparent)`,
           color: bg,
-          border: `1px solid ${bg}55`,
+          border: `1px solid color-mix(in srgb, ${bg} 33%, transparent)`,
           padding: '2px 8px',
           borderRadius: '9999px',
           fontSize: '11px',
@@ -111,8 +111,8 @@ export default function DepositsQueuePage() {
                   fontWeight: '500',
                   border: 'none',
                   cursor: 'pointer',
-                  background: statusFilter === st ? '#3b82f6' : '#1f2937',
-                  color: '#fff',
+                  background: statusFilter === st ? '#3b82f6' : 'var(--bg-surface-2)',
+                  color: statusFilter === st ? '#fff' : 'var(--text-secondary)',
                 }}
               >
                 {st}
@@ -163,10 +163,10 @@ export default function DepositsQueuePage() {
                   <td className="dq-amount">
                     {dep.amount} {dep.asset}
                   </td>
-                  <td style={{ color: '#9ca3af', fontSize: '13px' }}>{dep.fee || '0'}</td>
+                  <td style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>{dep.fee || '0'}</td>
                   <td>{statusBadge(dep.status)}</td>
                   <td>{dep.confirmations ?? 0}</td>
-                  <td style={{ fontSize: '12px', color: '#9ca3af' }}>
+                  <td style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
                     {dep.created_at ? new Date(dep.created_at).toLocaleString() : '—'}
                   </td>
                   <td>
@@ -190,7 +190,7 @@ export default function DepositsQueuePage() {
           >
             Previous
           </button>
-          <span style={{ alignSelf: 'center', color: '#9ca3af', fontSize: '0.85rem' }}>
+          <span style={{ alignSelf: 'center', color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
             Page {currentPage} of {totalPages}
           </span>
           <button

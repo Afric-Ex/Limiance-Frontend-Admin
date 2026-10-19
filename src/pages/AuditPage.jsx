@@ -63,12 +63,12 @@ export default function AuditPage() {
   const actionColor = (action = '') => {
     const a = action.toLowerCase();
     if (a.includes('reject') || a.includes('halt') || a.includes('suspend') || a.includes('freeze') || a.includes('deactivate')) {
-      return '#DC2626';
+      return 'var(--danger-text)';
     }
     if (a.includes('approve') || a.includes('resume') || a.includes('create') || a.includes('unfreeze') || a.includes('enable')) {
-      return '#059669';
+      return 'var(--success-text)';
     }
-    return '#3B82F6';
+    return 'var(--accent-blue)';
   };
 
   const totalPages = Math.ceil(totalRecords / 20) || 1;
@@ -82,7 +82,7 @@ export default function AuditPage() {
             Cryptographically signed and tamper-evident audit record of every administrative action on the Limiance platform.
           </p>
         </div>
-        <div style={{ color: '#9ca3af', fontSize: '14px', background: '#1f2937', padding: '8px 14px', borderRadius: '6px' }}>
+        <div style={{ color: 'var(--text-tertiary)', fontSize: '14px', background: 'var(--bg-surface-2)', padding: '8px 14px', borderRadius: '6px' }}>
           {totalRecords} Total Recorded Events
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function AuditPage() {
                       {event.action}
                     </div>
                     <div className="al-event-meta">
-                      <span style={{ fontWeight: '500', color: '#f3f4f6' }}>{event.actor}</span>
+                      <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{event.actor}</span>
                       <span className="al-sep">·</span>
                       <span className="al-resource-type">{event.target_type}</span>
                       <span className="al-sep">·</span>
@@ -221,7 +221,7 @@ export default function AuditPage() {
           >
             Previous
           </button>
-          <span style={{ alignSelf: 'center', color: '#9ca3af', fontSize: '0.85rem' }}>
+          <span style={{ alignSelf: 'center', color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
             Page {currentPage} of {totalPages}
           </span>
           <button
