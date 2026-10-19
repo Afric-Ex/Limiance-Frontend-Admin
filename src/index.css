@@ -78,74 +78,101 @@
 }
 
 /* ─── Light Mode Tokens ─────────────────────────────────────────────────── */
+/*
+ * WCAG AA reference (against #FFFFFF):
+ *   #0F172A 19.0:1 · #4B5563 7.5:1 · #6B7280 4.8:1 · #2563EB 5.1:1
+ *   #047857 5.5:1 · #B45309 5.0:1 · #B91C1C 6.4:1
+ * #9CA3AF (2.5:1) is intentionally reserved for placeholders / disabled text,
+ * never for body copy or functional labels.
+ */
 [data-theme="light"],
 .light-theme {
-  --bg-deep: #e9edf4;
-  --bg-card: #ffffff;
-  --bg-surface: #dce2ee;
-  --bg-surface-2: #d5dcea;
-  --bg-surface-elevated: #cfd7e5;
-  --bg-surface-hover: #c4cee0;
-  --bg-input: #ffffff;
+  --bg-deep: #F3F4F6;
+  --bg-card: #FFFFFF;
+  --bg-surface: #F9FAFB;
+  --bg-surface-2: #F3F4F6;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-hover: #F0F4F8;
+  --bg-input: #FFFFFF;
 
-  --border-subtle: rgba(15, 23, 42, 0.08);
-  --border: rgba(15, 23, 42, 0.14);
-  --border-medium: rgba(15, 23, 42, 0.16);
-  --border-light: rgba(15, 23, 42, 0.22);
-  --border-focus: rgba(77, 119, 240, 0.5);
+  --border-subtle: #E5E7EB;
+  --border: #E5E7EB;
+  --border-medium: #D1D5DB;
+  --border-light: #BFDBFE;
+  --border-focus: #2563EB;
 
-  --overlay-1: rgba(15, 23, 42, 0.035);
-  --overlay-2: rgba(15, 23, 42, 0.055);
-  --overlay-3: rgba(15, 23, 42, 0.09);
+  --overlay-1: #F9FAFB;
+  --overlay-2: #F0F4F8;
+  --overlay-3: #E5E7EB;
 
-  --primary: #4d77f0;
-  --primary-strong: #3157c9;
-  --primary-hover: #3b65db;
-  --primary-glow: rgba(77, 119, 240, 0.2);
-  --primary-text: #ffffff;
+  --primary: #2563EB;
+  --primary-strong: #1D4ED8;
+  --primary-hover: #1D4ED8;
+  --primary-glow: rgba(37, 99, 235, 0.2);
+  --primary-text: #FFFFFF;
 
-  --accent-sky: #0369a1;
-  --accent-blue: #1d4ed8;
-  --accent-purple: #6d28d9;
+  --accent-sky: #0369A1;
+  --accent-blue: #1D4ED8;
+  --accent-purple: #6D28D9;
 
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-tertiary: #475569;
-  --text-muted: #556377;
-  --text-faint: #64748b;
-  --text-on-primary: #ffffff;
+  --text-primary: #0F172A;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-muted: #6B7280;
+  --text-faint: #9CA3AF;
+  --text-on-primary: #FFFFFF;
 
-  --success: #047857;
-  --success-bg: #ecfdf5;
-  --success-border: #a7f3d0;
+  --success: #059669;
+  --success-bg: #D1FAE5;
+  --success-border: transparent;
   --success-text: #047857;
 
-  --danger: #dc2626;
-  --danger-bg: #fef2f2;
-  --danger-border: #fecaca;
-  --danger-text: #b91c1c;
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+  --danger-border: transparent;
+  --danger-text: #B91C1C;
 
-  --warning: #d97706;
-  --warning-bg: #fffbeb;
-  --warning-border: #fde68a;
-  --warning-text: #b45309;
+  --warning: #D97706;
+  --warning-bg: #FEF3C7;
+  --warning-border: transparent;
+  --warning-text: #B45309;
 
-  --info: #4f46e5;
-  --info-bg: #eef2ff;
-  --info-border: #c7d2fe;
-  --info-text: #4338ca;
+  --info: #2563EB;
+  --info-bg: #DBEAFE;
+  --info-border: transparent;
+  --info-text: #1E40AF;
 
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --card-shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.07);
   --modal-overlay: rgba(15, 23, 42, 0.55);
 
+  /* Explicit palette aliases (component / design-token contract) */
+  --color-bg-primary: #F3F4F6;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-secondary: #F9FAFB;
+  --color-bg-hover: #F0F4F8;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #4B5563;
+  --color-text-tertiary: #6B7280;
+  --color-link: #2563EB;
+  --color-accent-blue: #2563EB;
+  --color-accent-blue-hover: #1D4ED8;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
+  --color-border-default: #E5E7EB;
+  --color-border-input: #D1D5DB;
+  --color-border-hover: #BFDBFE;
+  --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-elevation-2: 0 4px 6px rgba(0, 0, 0, 0.07);
+
   /* Legacy tokens (light-only usages in page CSS) */
-  --bg-subtle: rgba(15, 23, 42, 0.05);
-  --border-hover: rgba(15, 23, 42, 0.24);
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
-  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.14);
-  --color-primary: #3157c9;
+  --bg-subtle: #F3F4F6;
+  --border-hover: #BFDBFE;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
+  --color-primary: #2563EB;
 }
 
 /* ─── Global Reset & Box Sizing ─────────────────────────────────────────── */
@@ -261,9 +288,9 @@ code, .mono {
 
 [data-theme="light"] code,
 [data-theme="light"] .mono {
-  background: #dbe2ee;
-  color: #312e81;
-  border-color: #cbd5e1;
+  background: #F0F4F8;
+  color: #1E3A8A;
+  border-color: #E5E7EB;
 }
 
 /* ─── Text Fitting & Ellipsis Helpers ───────────────────────────────────── */
@@ -359,6 +386,13 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 1px #2563EB, 0 0 0 4px rgba(37, 99, 235, 0.18);
+}
+
 /* ─── Cards & Containers ────────────────────────────────────────────────── */
 .glass-card,
 .card {
@@ -368,7 +402,93 @@ textarea:focus {
   box-shadow: var(--card-shadow);
   box-sizing: border-box;
   min-width: 0;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+[data-theme="light"] .glass-card,
+[data-theme="light"] .card {
+  border-color: #E5E7EB;
+  box-shadow: var(--shadow-elevation-1);
+}
+
+/* Interactive cards get a clear hover affordance in light mode */
+[data-theme="light"] .card-interactive:hover,
+[data-theme="light"] .glass-card:hover {
+  background: #F0F4F8;
+  border-color: #BFDBFE;
+  box-shadow: var(--shadow-elevation-2);
+}
+
+/* ─── Global Buttons ────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-light);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.btn-icon {
+  padding: 0.45rem;
+  border-radius: var(--radius-md);
+}
+
+/* Consistent visible keyboard focus across interactive elements */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* ─── Badges & Status Chips ─────────────────────────────────────────────── */
@@ -435,6 +555,25 @@ td {
   vertical-align: middle;
 }
 
+[data-theme="light"] th {
+  background-color: #F3F4F6;
+  color: #0F172A;
+  border-bottom-color: #E5E7EB;
+}
+
+[data-theme="light"] td {
+  color: #0F172A;
+  border-bottom-color: #E5E7EB;
+}
+
+[data-theme="light"] tbody tr:nth-child(even) {
+  background-color: #F9FAFB;
+}
+
+[data-theme="light"] tbody tr:hover {
+  background-color: #F0F4F8 !important;
+}
+
 /* ─── Light Mode Safeguards ────────────────────────────────────────────────
    Inline styles now consume theme tokens directly (var(--...)), so the old
    hex-matching override engine was removed. What remains are generic element
@@ -459,19 +598,21 @@ td {
 [data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 [data-theme="light"] select,
 [data-theme="light"] textarea {
-  background-color: #ffffff;
-  color: var(--text-primary);
-  border-color: #cbd5e1;
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border-color: #D1D5DB;
 }
 
 [data-theme="light"] input::placeholder,
 [data-theme="light"] textarea::placeholder {
-  color: var(--text-muted);
+  color: #9CA3AF;
 }
 
-/* Light Mode Tables */
-[data-theme="light"] tbody tr:hover {
-  background-color: #e2e7f1 !important;
+[data-theme="light"] .badge-success,
+[data-theme="light"] .badge-danger,
+[data-theme="light"] .badge-warning,
+[data-theme="light"] .badge-info {
+  border-color: transparent;
 }
 
 /* Light Mode Modals & Overlays */

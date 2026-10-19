@@ -271,8 +271,8 @@
 }
 
 [data-theme="light"] .al-event-expanded {
-  background: #dce2ee;
-  border-top-color: #cbd5e1;
+  background: #F9FAFB;
+  border-top-color: #E5E7EB;
 }
 
 [data-theme="light"] .al-note {
@@ -282,9 +282,9 @@
 }
 
 [data-theme="light"] .al-payload-json {
-  background: #ffffff;
+  background: #FFFFFF;
   color: #047857;
-  border-color: #cbd5e1;
+  border-color: #D1D5DB;
 }
 
 [data-theme="light"] .al-expanded-meta strong {
@@ -292,9 +292,9 @@
 }
 
 [data-theme="light"] .al-event-row {
-  border-bottom-color: rgba(15, 23, 42, 0.08);
+  border-bottom-color: #E5E7EB;
 }
 
 [data-theme="light"] .al-event-row:hover {
-  background: #e2e7f1;
+  background: #F0F4F8;
 }

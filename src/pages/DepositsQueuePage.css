@@ -439,7 +439,7 @@
   border-bottom-color: var(--border-subtle);
 }
 [data-theme="light"] .dq-row:hover {
-  background: #e2e7f1;
+  background: #F0F4F8;
 }
 [data-theme="light"] .dq-mono {
   color: var(--text-tertiary);

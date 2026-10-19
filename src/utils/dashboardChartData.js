@@ -72,10 +72,10 @@ export function formatRevenueBreakdownData(metrics) {
 export function formatKycTierData(metrics) {
   const breakdown = metrics?.users?.kycTierBreakdown || {};
   return [
-    { label: 'Tier 0 - Unverified', value: parseInt(breakdown[0] ?? breakdown['0'] ?? 0, 10) || 0, color: '#64748b' },
-    { label: 'Tier 1 - Basic', value: parseInt(breakdown[1] ?? breakdown['1'] ?? 0, 10) || 0, color: 'var(--accent-sky)' },
-    { label: 'Tier 2 - Verified ID', value: parseInt(breakdown[2] ?? breakdown['2'] ?? 0, 10) || 0, color: 'var(--success-text)' },
-    { label: 'Tier 3 - Enhanced/VIP', value: parseInt(breakdown[3] ?? breakdown['3'] ?? 0, 10) || 0, color: 'var(--info-text)' },
+    { label: 'Tier 0 - Unverified', value: parseInt(breakdown[0] ?? breakdown['0'] ?? 0, 10) || 0, color: '#6B7280' },
+    { label: 'Tier 1 - Basic', value: parseInt(breakdown[1] ?? breakdown['1'] ?? 0, 10) || 0, color: '#D97706' },
+    { label: 'Tier 2 - Verified ID', value: parseInt(breakdown[2] ?? breakdown['2'] ?? 0, 10) || 0, color: '#059669' },
+    { label: 'Tier 3 - Enhanced/VIP', value: parseInt(breakdown[3] ?? breakdown['3'] ?? 0, 10) || 0, color: '#2563EB' },
   ];
 }
 
@@ -85,17 +85,17 @@ export function formatKycTierData(metrics) {
 export function formatChainDistributionData(metrics) {
   const walletsMap = metrics?.treasury?.walletsByChain || {};
   const chainColors = {
-    ethereum: '#627eea',
-    eth: '#627eea',
-    bitcoin: '#f7931a',
-    btc: '#f7931a',
-    solana: '#14f195',
-    sol: '#14f195',
-    bsc: '#f3ba2f',
-    binance: '#f3ba2f',
-    polygon: '#8247e5',
-    arbitrum: '#28a0f0',
-    tron: '#eb0029',
+    ethereum: '#4F46E5',
+    eth: '#4F46E5',
+    bitcoin: '#C2410C',
+    btc: '#C2410C',
+    solana: '#047857',
+    sol: '#047857',
+    bsc: '#B45309',
+    binance: '#B45309',
+    polygon: '#7E22CE',
+    arbitrum: '#0369A1',
+    tron: '#B91C1C',
   };
 
   const entries = Object.entries(walletsMap);
@@ -108,7 +108,7 @@ export function formatChainDistributionData(metrics) {
     return {
       label: chain.toUpperCase(),
       value: parseInt(count, 10) || 0,
-      color: chainColors[key] || '#818cf8',
+      color: chainColors[key] || '#4F46E5',
     };
   });
 }
