@@ -17,24 +17,6 @@ import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import { ShimmerTableRows } from '../components/Shimmer';
 
-const DEFAULT_COIN_LOGOS = {
-  BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
-  ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-  SOL: 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
-  BNB: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
-  USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
-  USDC: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png',
-  LIM: '/logo.png',
-  ADA: 'https://assets.coingecko.com/coins/images/975/small/cardano.png',
-  DOGE: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png',
-  XRP: 'https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png',
-  MATIC: 'https://assets.coingecko.com/coins/images/4713/small/polygon.png',
-  DOT: 'https://assets.coingecko.com/coins/images/12171/small/polkadot.png',
-  LTC: 'https://assets.coingecko.com/coins/images/2/small/litecoin.png',
-  AVAX: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png',
-  LINK: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
-};
-
 function FormattedPriceCell({
   value,
   currency = 'USD',
@@ -168,17 +150,32 @@ export default function PricesPage() {
       setToast(null);
     }, 4500);
   };
-  const getTokenLogo = (coin, customImage) => {
+  const getTokenLogo = (coin, customImage, unifier) => {
+    // If customImage is present and not a coingecko URL, use it
     if (customImage && typeof customImage === 'string' && customImage.trim() !== '') {
-      return customImage;
+      if (!customImage.includes('coingecko.com')) {
+        return customImage.trim();
+      }
     }
     const clean = coin?.toUpperCase()?.trim();
+    const cleanUni = unifier?.toLowerCase()?.trim();
     if (availableTokens && availableTokens.length > 0) {
-      const match = availableTokens.find((t) => t.symbol?.toUpperCase() === clean);
-      if (match?.image) return match.image;
-      if (match?.logo_url) return match.logo_url;
+      const match = availableTokens.find((t) => {
+        const sym = t.symbol?.toUpperCase()?.trim();
+        const uni = t.unifier?.toLowerCase()?.trim();
+        return (clean && sym === clean) || (cleanUni && uni === cleanUni);
+      });
+      const matchImg = match?.image || match?.logo_url;
+      if (matchImg && typeof matchImg === 'string' && matchImg.trim() !== '') {
+        if (!matchImg.includes('coingecko.com')) {
+          return matchImg.trim();
+        }
+      }
     }
-    return DEFAULT_COIN_LOGOS[clean] || '';
+    if (clean === 'LIM') {
+      return '/logo.png';
+    }
+    return '';
   };
 
   const formatNumber = (value, maximumFractionDigits = 6) => {
@@ -1177,7 +1174,7 @@ export default function PricesPage() {
                 const change = getChangeValue(price);
                 const isPositive = change > 0;
                 const isNegative = change < 0;
-                const logoSrc = getTokenLogo(price.coin, price.image);
+                const logoSrc = getTokenLogo(price.coin, price.image, price.unifier);
                 return (
                   <tr
                     key={`${price.coin}-${price.currency}-${idx}`}
@@ -2226,25 +2223,49 @@ export default function PricesPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {(() => {
-                  const logoSrc = getTokenLogo(viewingPrice.coin, viewingPrice.image);
-                  return logoSrc ? (
-                    <img
-                      src={logoSrc}
-                      alt={viewingPrice.coin}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        objectFit: 'contain',
-                        border: '1px solid rgba(77,119,240,0.25)',
-                        background: 'rgba(77,119,240,0.15)',
-                        padding: '3px',
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  ) : null;
+                  const logoSrc = getTokenLogo(viewingPrice.coin, viewingPrice.image, viewingPrice.unifier);
+                  return (
+                    <>
+                      {logoSrc ? (
+                        <img
+                          src={logoSrc}
+                          alt={viewingPrice.coin}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            objectFit: 'contain',
+                            border: '1px solid rgba(77,119,240,0.25)',
+                            background: 'rgba(77,119,240,0.15)',
+                            padding: '3px',
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            if (e.currentTarget.nextSibling) {
+                              e.currentTarget.nextSibling.style.display = 'flex';
+                            }
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        style={{
+                          display: logoSrc ? 'none' : 'flex',
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: 'rgba(77,119,240,0.15)',
+                          border: '1px solid rgba(77,119,240,0.3)',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: '13px',
+                          color: 'var(--primary-color, #4d77f0)',
+                        }}
+                      >
+                        {viewingPrice.coin?.slice(0, 3)}
+                      </div>
+                    </>
+                  );
                 })()}
                 <div>
                   <div

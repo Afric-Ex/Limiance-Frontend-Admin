@@ -1095,7 +1095,7 @@ export default function TokensPage() {
                 </label>
                 <input
                   type="url"
-                  placeholder="https://coin-images.coingecko.com/..."
+                  placeholder="https://... or /logo.png"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   style={{
