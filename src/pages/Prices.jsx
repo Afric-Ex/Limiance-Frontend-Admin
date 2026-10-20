@@ -37,6 +37,8 @@ export default function PricesPage() {
   const [viewingPrice, setViewingPrice] = useState(null);
   const [toast, setToast] = useState(null);
   const [availableTokens, setAvailableTokens] = useState([]);
+  const [sseConnected, setSseConnected] = useState(false);
+  const [flashingPrices, setFlashingPrices] = useState({});
   const [formData, setFormData] = useState({
     coin: '',
     currency: 'USD',
@@ -201,6 +203,94 @@ export default function PricesPage() {
     updatedAfter,
     updatedBefore,
   ]);
+
+  useEffect(() => {
+    let es = null;
+    let reconnectTimeout = null;
+
+    const connectSSE = () => {
+      try {
+        const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+        const token = localStorage.getItem('admin_token') || '';
+        const sseUrl = `${baseURL}/api/prices/stream?token=${encodeURIComponent(token)}`;
+        es = new EventSource(sseUrl);
+
+        es.onopen = () => {
+          setSseConnected(true);
+        };
+
+        es.onmessage = (event) => {
+          try {
+            const liveData = JSON.parse(event.data);
+            if (!Array.isArray(liveData)) return;
+
+            setPrices((prevPrices) => {
+              const liveMap = new Map();
+              liveData.forEach((item) => {
+                liveMap.set(`${item.coin?.toUpperCase()}-${(item.currency || 'USD')?.toUpperCase()}`, item);
+              });
+
+              const flashes = {};
+              const updated = prevPrices.map((p) => {
+                const key = `${p.coin?.toUpperCase()}-${(p.currency || 'USD')?.toUpperCase()}`;
+                const live = liveMap.get(key);
+                if (!live) return p;
+
+                const oldPrice = Number(p.price);
+                const newPrice = Number(live.price);
+                if (Number.isFinite(oldPrice) && Number.isFinite(newPrice) && oldPrice !== newPrice) {
+                  flashes[p.coin] = newPrice > oldPrice ? 'up' : 'down';
+                }
+
+                return {
+                  ...p,
+                  ...live,
+                  index_price: live.index_price ?? p.index_price,
+                  mark_price: live.mark_price ?? p.mark_price,
+                  index_status: live.index_status ?? p.index_status,
+                  sources_count: live.sources_count ?? p.sources_count,
+                  is_internal: live.is_internal ?? p.is_internal,
+                };
+              });
+
+              if (Object.keys(flashes).length > 0) {
+                setFlashingPrices((prev) => ({ ...prev, ...flashes }));
+                setTimeout(() => {
+                  setFlashingPrices((prev) => {
+                    const next = { ...prev };
+                    Object.keys(flashes).forEach((k) => delete next[k]);
+                    return next;
+                  });
+                }, 800);
+              }
+
+              return updated;
+            });
+          } catch (e) {
+            console.error('SSE parse error:', e);
+          }
+        };
+
+        es.onerror = () => {
+          setSseConnected(false);
+          if (es) {
+            es.close();
+          }
+          reconnectTimeout = setTimeout(connectSSE, 3000);
+        };
+      } catch (err) {
+        setSseConnected(false);
+        reconnectTimeout = setTimeout(connectSSE, 5000);
+      }
+    };
+
+    connectSSE();
+
+    return () => {
+      if (es) es.close();
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+    };
+  }, []);
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
@@ -485,17 +575,44 @@ export default function PricesPage() {
         }}
       >
         <div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: '1.5rem',
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Market Prices
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '1.5rem',
+                color: 'var(--text-primary)',
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Market Prices
+            </h1>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: 600,
+                background: sseConnected ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                color: sseConnected ? '#34d399' : '#fbbf24',
+                border: sseConnected ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(245, 158, 11, 0.3)',
+              }}
+            >
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: sseConnected ? '#10b981' : '#f59e0b',
+                  boxShadow: sseConnected ? '0 0 8px #10b981' : 'none',
+                }}
+              />
+              {sseConnected ? 'Live SSE Active' : 'Connecting Feed...'}
+            </span>
+          </div>
           <p
             style={{
               margin: '6px 0 0',
@@ -503,8 +620,7 @@ export default function PricesPage() {
               color: 'var(--text-secondary)',
             }}
           >
-            Manage asset prices, 24h market statistics and
-            currency-specific pricing.
+            Manage asset prices, live external index & mark prices, and 24h market statistics.
           </p>
         </div>
         <div
@@ -885,10 +1001,12 @@ export default function PricesPage() {
             >
               {[
                 'Asset',
-                'Price',
+                'Base Price',
+                'Index Price',
+                'Mark Price',
+                'Oracle Health',
                 '24h Change',
                 '24h Volume',
-                'Currency',
                 'Last Updated',
                 'Actions',
               ].map((heading, index) => (
@@ -904,7 +1022,7 @@ export default function PricesPage() {
                     color:
                       'var(--text-muted)',
                     textAlign:
-                      index === 6
+                      index === 8
                         ? 'right'
                         : 'left',
                   }}
@@ -916,11 +1034,11 @@ export default function PricesPage() {
           </thead>
           <tbody>
             {loading ? (
-              <ShimmerTableRows rows={8} cols={7} colWidths={['35%', '25%', '25%', '20%', '20%', '30%', '15%']} />
+              <ShimmerTableRows rows={8} cols={9} colWidths={['22%', '12%', '12%', '12%', '14%', '10%', '10%', '10%', '8%']} />
             ) : prices.length === 0 ? (
               <tr>
                 <td
-                  colSpan="7"
+                  colSpan="9"
                   style={{
                     padding: '60px 0',
                     textAlign: 'center',
@@ -996,29 +1114,139 @@ export default function PricesPage() {
                         </div>
                       </div>
                     </td>
-                    {/* Price */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                      }}
-                    >
+                    {/* Base Price with Live Flash */}
+                    <td style={{ padding: '14px 18px' }}>
                       <span
                         style={{
-                          fontFamily:
-                            'var(--font-mono)',
-                          fontSize:
-                            '13px',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '13px',
                           fontWeight: 700,
-                          color: 'var(--text-primary)',
+                          padding: '3px 7px',
+                          borderRadius: '4px',
+                          transition: 'background-color 0.4s ease, color 0.4s ease',
+                          backgroundColor:
+                            flashingPrices[price.coin] === 'up'
+                              ? 'rgba(16, 185, 129, 0.3)'
+                              : flashingPrices[price.coin] === 'down'
+                              ? 'rgba(239, 68, 68, 0.3)'
+                              : 'transparent',
+                          color:
+                            flashingPrices[price.coin] === 'up'
+                              ? '#34d399'
+                              : flashingPrices[price.coin] === 'down'
+                              ? '#f87171'
+                              : 'var(--text-primary)',
                         }}
                       >
                         {formatPrice(
                           price.price,
-                          price.currency ||
-                          'USD'
+                          price.currency || 'USD'
                         )}
                       </span>
+                    </td>
+                    {/* Index Price */}
+                    <td style={{ padding: '14px 18px' }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          color: '#e2e8f0',
+                        }}
+                      >
+                        {price.index_price ? formatPrice(price.index_price, price.currency || 'USD') : '—'}
+                      </span>
+                    </td>
+                    {/* Mark Price */}
+                    <td style={{ padding: '14px 18px' }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          color: '#38bdf8',
+                        }}
+                      >
+                        {price.mark_price ? formatPrice(price.mark_price, price.currency || 'USD') : '—'}
+                      </span>
+                    </td>
+                    {/* Oracle Health */}
+                    <td style={{ padding: '14px 18px' }}>
+                      {price.is_internal || price.coin?.toUpperCase() === 'LIM' ? (
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '3px 8px',
+                            borderRadius: '5px',
+                            background: 'rgba(168, 85, 247, 0.15)',
+                            border: '1px solid rgba(168, 85, 247, 0.3)',
+                            color: '#c084fc',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#c084fc' }} />
+                          LIVE (Internal)
+                        </span>
+                      ) : price.index_status === 'LIVE' ? (
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '3px 8px',
+                            borderRadius: '5px',
+                            background: 'rgba(16, 185, 129, 0.15)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            color: '#34d399',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+                          LIVE ({price.sources_count || 1} {price.sources_count === 1 ? 'src' : 'srcs'})
+                        </span>
+                      ) : price.index_status === 'DEGRADED' ? (
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '3px 8px',
+                            borderRadius: '5px',
+                            background: 'rgba(245, 158, 11, 0.15)',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                            color: '#fbbf24',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b' }} />
+                          DEGRADED ({price.sources_count || 1} src)
+                        </span>
+                      ) : price.index_status === 'STALE' ? (
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '3px 8px',
+                            borderRadius: '5px',
+                            background: 'rgba(239, 68, 68, 0.15)',
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                            color: '#f87171',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
+                          STALE
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>—</span>
+                      )}
                     </td>
                     {/* 24h Change */}
                     <td
@@ -1094,34 +1322,6 @@ export default function PricesPage() {
                       {formatNumber(
                         price.twenty_four_hour_volume
                       )}
-                    </td>
-                    {/* Currency */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          padding:
-                            '3px 8px',
-                          borderRadius:
-                            '5px',
-                          background:
-                            'rgba(99,102,241,0.1)',
-                          border:
-                            '1px solid var(--info-border)',
-                          color:
-                            'var(--info-text)',
-                          fontSize:
-                            '11px',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {price.currency ||
-                          'USD'}
-                      </span>
                     </td>
                     {/* Updated */}
                     <td
