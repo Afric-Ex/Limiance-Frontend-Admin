@@ -16,6 +16,120 @@ import {
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import { ShimmerTableRows } from '../components/Shimmer';
+
+const DEFAULT_COIN_LOGOS = {
+  BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
+  ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+  SOL: 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
+  BNB: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
+  USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
+  USDC: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png',
+  LIM: '/logo.png',
+  ADA: 'https://assets.coingecko.com/coins/images/975/small/cardano.png',
+  DOGE: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png',
+  XRP: 'https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png',
+  MATIC: 'https://assets.coingecko.com/coins/images/4713/small/polygon.png',
+  DOT: 'https://assets.coingecko.com/coins/images/12171/small/polkadot.png',
+  LTC: 'https://assets.coingecko.com/coins/images/2/small/litecoin.png',
+  AVAX: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png',
+  LINK: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
+};
+
+function FormattedPriceCell({
+  value,
+  currency = 'USD',
+  isPrice = true,
+  decimals = 6,
+  color,
+}) {
+  if (value === null || value === undefined || value === '') {
+    return <span style={{ color: 'var(--text-muted)' }}>—</span>;
+  }
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return <span>{String(value)}</span>;
+  }
+
+  // Exact 6-decimal representation with thousands separators
+  const fullAmount = number.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+
+  const fullDisplay = isPrice
+    ? currency === 'USD'
+      ? `US$${fullAmount}`
+      : `${currency} ${fullAmount}`
+    : fullAmount;
+
+  // Compact representation for large numbers (e.g. 201M or 201K)
+  let compactText = '';
+  let isAbbreviated = false;
+  const abs = Math.abs(number);
+
+  if (abs >= 1_000_000_000) {
+    compactText = `${(number / 1e9).toFixed(2)}B`;
+    isAbbreviated = true;
+  } else if (abs >= 1_000_000) {
+    compactText = `${(number / 1e6).toFixed(2)}M`;
+    isAbbreviated = true;
+  } else if (abs >= 100_000) {
+    compactText = `${(number / 1e3).toFixed(2)}K`;
+    isAbbreviated = true;
+  } else {
+    compactText = fullAmount;
+    isAbbreviated = false;
+  }
+
+  const renderedDisplay = isPrice
+    ? currency === 'USD'
+      ? `US$${compactText}`
+      : `${currency} ${compactText}`
+    : compactText;
+
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        position: 'relative',
+        fontFamily: 'var(--font-mono)',
+        fontSize: '13px',
+        fontWeight: 600,
+        color: color || 'var(--text-primary)',
+        whiteSpace: 'nowrap',
+      }}
+      title={`Full Amount: ${fullDisplay}`}
+    >
+      <span>{renderedDisplay}</span>
+      {isAbbreviated && (
+        <span
+          title={`Full Amount: ${fullDisplay}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '15px',
+            height: '15px',
+            borderRadius: '50%',
+            background: 'rgba(56, 189, 248, 0.2)',
+            border: '1px solid rgba(56, 189, 248, 0.4)',
+            color: '#38bdf8',
+            fontSize: '10px',
+            fontWeight: 800,
+            cursor: 'help',
+            lineHeight: 1,
+            flexShrink: 0,
+          }}
+        >
+          !
+        </span>
+      )}
+    </div>
+  );
+}
+
 export default function PricesPage() {
   const confirm = useConfirm();
   const [prices, setPrices] = useState([]);
@@ -54,7 +168,20 @@ export default function PricesPage() {
       setToast(null);
     }, 4500);
   };
-  const formatNumber = (value, maximumFractionDigits = 8) => {
+  const getTokenLogo = (coin, customImage) => {
+    if (customImage && typeof customImage === 'string' && customImage.trim() !== '') {
+      return customImage;
+    }
+    const clean = coin?.toUpperCase()?.trim();
+    if (availableTokens && availableTokens.length > 0) {
+      const match = availableTokens.find((t) => t.symbol?.toUpperCase() === clean);
+      if (match?.image) return match.image;
+      if (match?.logo_url) return match.logo_url;
+    }
+    return DEFAULT_COIN_LOGOS[clean] || '';
+  };
+
+  const formatNumber = (value, maximumFractionDigits = 6) => {
     if (value === null || value === undefined || value === '') {
       return '—';
     }
@@ -63,9 +190,11 @@ export default function PricesPage() {
       return String(value);
     }
     return number.toLocaleString(undefined, {
-      maximumFractionDigits,
+      minimumFractionDigits: maximumFractionDigits,
+      maximumFractionDigits: maximumFractionDigits,
     });
   };
+
   const formatPrice = (value, currency = 'USD') => {
     if (value === null || value === undefined || value === '') {
       return '—';
@@ -74,15 +203,11 @@ export default function PricesPage() {
     if (!Number.isFinite(number)) {
       return String(value);
     }
-    try {
-      return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency,
-        maximumFractionDigits: number >= 1 ? 2 : 8,
-      }).format(number);
-    } catch {
-      return `${currency} ${formatNumber(number)}`;
-    }
+    const formatted = number.toLocaleString(undefined, {
+      minimumFractionDigits: 6,
+      maximumFractionDigits: 6,
+    });
+    return currency === 'USD' ? `US$${formatted}` : `${currency} ${formatted}`;
   };
   const formatDate = (value) => {
     if (!value) return '—';
@@ -389,10 +514,8 @@ export default function PricesPage() {
     setModalOpen(true);
   };
   const openViewModal = async (price) => {
-    /*
-     * Use the dedicated GET /prices/:coin endpoint so the
-     * UI exercises the full API surface.
-     */
+    setViewingPrice({ ...price });
+    setViewModalOpen(true);
     try {
       const currency = price.currency || 'USD';
       const res = await api(
@@ -400,13 +523,14 @@ export default function PricesPage() {
           price.coin
         )}?currency=${encodeURIComponent(currency)}`
       );
-      setViewingPrice(res.price || res.data || res);
-      setViewModalOpen(true);
-    } catch (err) {
-      showToast(
-        err.message || 'Failed to load price details',
-        'error'
-      );
+      if (res && !res.error) {
+        setViewingPrice((prev) => ({
+          ...prev,
+          ...(res.price || res.data || res),
+        }));
+      }
+    } catch {
+      // Keep viewingPrice as initialized from table row
     }
   };
   const validateForm = () => {
@@ -979,15 +1103,18 @@ export default function PricesPage() {
         className="glass-card"
         style={{
           overflowX: 'auto',
-          boxShadow:
-            'var(--shadow-md)',
+          WebkitOverflowScrolling: 'touch',
+          boxShadow: 'var(--shadow-md)',
+          borderRadius: '12px',
         }}
       >
         <table
           style={{
             width: '100%',
+            minWidth: 'max-content',
             borderCollapse: 'collapse',
             textAlign: 'left',
+            whiteSpace: 'nowrap',
           }}
         >
           <thead>
@@ -1013,18 +1140,13 @@ export default function PricesPage() {
                 <th
                   key={heading}
                   style={{
-                    padding:
-                      '13px 18px',
+                    padding: '13px 18px',
                     fontSize: '11px',
                     fontWeight: 700,
-                    textTransform:
-                      'uppercase',
-                    color:
-                      'var(--text-muted)',
-                    textAlign:
-                      index === 8
-                        ? 'right'
-                        : 'left',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                    whiteSpace: 'nowrap',
+                    textAlign: index === 8 ? 'right' : 'left',
                   }}
                 >
                   {heading}
@@ -1034,7 +1156,7 @@ export default function PricesPage() {
           </thead>
           <tbody>
             {loading ? (
-              <ShimmerTableRows rows={8} cols={9} colWidths={['22%', '12%', '12%', '12%', '14%', '10%', '10%', '10%', '8%']} />
+              <ShimmerTableRows rows={8} cols={9} colWidths={['200px', '140px', '140px', '140px', '150px', '120px', '130px', '160px', '100px']} />
             ) : prices.length === 0 ? (
               <tr>
                 <td
@@ -1052,44 +1174,44 @@ export default function PricesPage() {
               </tr>
             ) : (
               prices.map((price, idx) => {
-                const change =
-                  getChangeValue(price);
-                const isPositive =
-                  change > 0;
-                const isNegative =
-                  change < 0;
+                const change = getChangeValue(price);
+                const isPositive = change > 0;
+                const isNegative = change < 0;
+                const logoSrc = getTokenLogo(price.coin, price.image);
                 return (
                   <tr
                     key={`${price.coin}-${price.currency}-${idx}`}
                     style={{
-                      borderBottom:
-                        '1px solid var(--border-subtle)',
+                      borderBottom: '1px solid var(--border-subtle)',
                     }}
                   >
                     {/* Asset */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {price.image ? (
+                        {logoSrc ? (
                           <img
-                            src={price.image}
+                            src={logoSrc}
                             alt={price.coin}
                             style={{
                               width: '32px',
                               height: '32px',
                               borderRadius: '50%',
-                              objectFit: 'cover',
+                              objectFit: 'contain',
                               border: '1px solid rgba(77,119,240,0.25)',
                               background: 'rgba(77,119,240,0.15)',
+                              padding: '2px',
                             }}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextSibling.style.display = 'flex';
+                              if (e.currentTarget.nextSibling) {
+                                e.currentTarget.nextSibling.style.display = 'flex';
+                              }
                             }}
                           />
                         ) : null}
                         <div
                           style={{
-                            display: price.image ? 'none' : 'flex',
+                            display: logoSrc ? 'none' : 'flex',
                             width: '32px',
                             height: '32px',
                             borderRadius: '50%',
@@ -1115,12 +1237,10 @@ export default function PricesPage() {
                       </div>
                     </td>
                     {/* Base Price with Live Flash */}
-                    <td style={{ padding: '14px 18px' }}>
-                      <span
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
+                      <div
                         style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '13px',
-                          fontWeight: 700,
+                          display: 'inline-block',
                           padding: '3px 7px',
                           borderRadius: '4px',
                           transition: 'background-color 0.4s ease, color 0.4s ease',
@@ -1130,48 +1250,39 @@ export default function PricesPage() {
                               : flashingPrices[price.coin] === 'down'
                               ? 'rgba(239, 68, 68, 0.3)'
                               : 'transparent',
-                          color:
+                        }}
+                      >
+                        <FormattedPriceCell
+                          value={price.price}
+                          currency={price.currency || 'USD'}
+                          color={
                             flashingPrices[price.coin] === 'up'
                               ? '#34d399'
                               : flashingPrices[price.coin] === 'down'
                               ? '#f87171'
-                              : 'var(--text-primary)',
-                        }}
-                      >
-                        {formatPrice(
-                          price.price,
-                          price.currency || 'USD'
-                        )}
-                      </span>
+                              : 'var(--text-primary)'
+                          }
+                        />
+                      </div>
                     </td>
                     {/* Index Price */}
-                    <td style={{ padding: '14px 18px' }}>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          color: '#e2e8f0',
-                        }}
-                      >
-                        {price.index_price ? formatPrice(price.index_price, price.currency || 'USD') : '—'}
-                      </span>
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
+                      <FormattedPriceCell
+                        value={price.index_price}
+                        currency={price.currency || 'USD'}
+                        color="#e2e8f0"
+                      />
                     </td>
                     {/* Mark Price */}
-                    <td style={{ padding: '14px 18px' }}>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          color: '#38bdf8',
-                        }}
-                      >
-                        {price.mark_price ? formatPrice(price.mark_price, price.currency || 'USD') : '—'}
-                      </span>
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
+                      <FormattedPriceCell
+                        value={price.mark_price}
+                        currency={price.currency || 'USD'}
+                        color="#38bdf8"
+                      />
                     </td>
                     {/* Oracle Health */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
                       {price.is_internal || price.coin?.toUpperCase() === 'LIM' ? (
                         <span
                           style={{
@@ -1249,91 +1360,51 @@ export default function PricesPage() {
                       )}
                     </td>
                     {/* 24h Change */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                      }}
-                    >
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
                       <div
                         style={{
-                          display:
-                            'inline-flex',
-                          alignItems:
-                            'center',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                           gap: '5px',
-                          padding:
-                            '4px 8px',
-                          borderRadius:
-                            '6px',
-                          background:
-                            isPositive
-                              ? 'rgba(16,185,129,0.1)'
-                              : isNegative
-                                ? 'rgba(239,68,68,0.1)'
-                                : 'var(--overlay-2)',
-                          color:
-                            isPositive
-                              ? 'var(--success-text)'
-                              : isNegative
-                                ? 'var(--danger-text)'
-                                : 'var(--text-secondary)',
-                          fontSize:
-                            '11px',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          background: isPositive
+                            ? 'rgba(16,185,129,0.1)'
+                            : isNegative
+                            ? 'rgba(239,68,68,0.1)'
+                            : 'var(--overlay-2)',
+                          color: isPositive
+                            ? 'var(--success-text)'
+                            : isNegative
+                            ? 'var(--danger-text)'
+                            : 'var(--text-secondary)',
+                          fontSize: '11px',
                           fontWeight: 700,
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         {isPositive ? (
-                          <TrendingUp
-                            size={12}
-                          />
+                          <TrendingUp size={12} />
                         ) : isNegative ? (
-                          <TrendingDown
-                            size={12}
-                          />
+                          <TrendingDown size={12} />
                         ) : (
-                          <Activity
-                            size={12}
-                          />
+                          <Activity size={12} />
                         )}
-                        {change > 0
-                          ? '+'
-                          : ''}
-                        {formatNumber(
-                          change,
-                          4
-                        )}
-                        %
+                        {change > 0 ? '+' : ''}
+                        {Number(change).toFixed(4)}%
                       </div>
                     </td>
                     {/* Volume */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                        color:
-                          'var(--text-primary)',
-                        fontSize:
-                          '12px',
-                        fontFamily:
-                          'var(--font-mono)',
-                      }}
-                    >
-                      {formatNumber(
-                        price.twenty_four_hour_volume
-                      )}
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
+                      <FormattedPriceCell
+                        value={price.twenty_four_hour_volume}
+                        isPrice={false}
+                        decimals={4}
+                        color="var(--text-primary)"
+                      />
                     </td>
                     {/* Updated */}
-                    <td
-                      style={{
-                        padding:
-                          '14px 18px',
-                        color:
-                          'var(--text-secondary)',
-                        fontSize:
-                          '11px',
-                      }}
-                    >
+                    <td style={{ padding: '14px 18px', whiteSpace: 'nowrap', color: 'var(--text-secondary)', fontSize: '11px' }}>
                       {formatDate(
                         price.updated_at ||
                         price.updatedAt
@@ -1342,10 +1413,9 @@ export default function PricesPage() {
                     {/* Actions */}
                     <td
                       style={{
-                        padding:
-                          '14px 18px',
-                        textAlign:
-                          'right',
+                        padding: '14px 18px',
+                        textAlign: 'right',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       <div
@@ -2121,343 +2191,324 @@ export default function PricesPage() {
         </div>
       )}
       {/* View Price Modal */}
-      {viewModalOpen &&
-        viewingPrice && (
+      {viewModalOpen && viewingPrice && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px',
+          }}
+        >
           <div
+            className="glass-card"
             style={{
-              position: 'fixed',
-              inset: 0,
-              background:
-                'rgba(0,0,0,0.8)',
-              backdropFilter:
-                'blur(10px)',
-              display: 'flex',
-              alignItems:
-                'center',
-              justifyContent:
-                'center',
-              zIndex: 1000,
-              padding: '20px',
+              width: '100%',
+              maxWidth: '540px',
+              padding: '24px 28px',
+              boxShadow: 'var(--shadow-lg)',
+              borderRadius: '14px',
             }}
           >
+            {/* Header */}
             <div
-              className="glass-card"
               style={{
-                width: '100%',
-                maxWidth:
-                  '500px',
-                padding:
-                  '24px 28px',
-                boxShadow:
-                  'var(--shadow-lg)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px',
               }}
             >
-              <div
-                style={{
-                  display:
-                    'flex',
-                  justifyContent:
-                    'space-between',
-                  alignItems:
-                    'center',
-                  marginBottom:
-                    '20px',
-                }}
-              >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {(() => {
+                  const logoSrc = getTokenLogo(viewingPrice.coin, viewingPrice.image);
+                  return logoSrc ? (
+                    <img
+                      src={logoSrc}
+                      alt={viewingPrice.coin}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        objectFit: 'contain',
+                        border: '1px solid rgba(77,119,240,0.25)',
+                        background: 'rgba(77,119,240,0.15)',
+                        padding: '3px',
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : null;
+                })()}
                 <div>
                   <div
                     style={{
-                      fontSize:
-                        '11px',
-                      color:
-                        'var(--text-muted)',
-                      textTransform:
-                        'uppercase',
-                      fontWeight:
-                        700,
+                      fontSize: '11px',
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      fontWeight: 700,
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    Price Details
+                    Token Price Details
                   </div>
                   <h2
                     style={{
-                      margin:
-                        '4px 0 0',
-                      color:
-                        'var(--text-primary)',
-                      fontSize:
-                        '1.35rem',
+                      margin: '2px 0 0',
+                      color: 'var(--text-primary)',
+                      fontSize: '1.4rem',
+                      fontWeight: 800,
                     }}
                   >
                     {viewingPrice.coin}
-                    /
-                    {viewingPrice.currency ||
-                      'USD'}
+                    <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500 }}>
+                      {' '}/ {viewingPrice.currency || 'USD'}
+                    </span>
                   </h2>
                 </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setViewModalOpen(
-                      false
-                    )
-                  }
-                  style={{
-                    background:
-                      'none',
-                    border:
-                      'none',
-                    color:
-                      'var(--text-secondary)',
-                    cursor:
-                      'pointer',
-                  }}
-                >
-                  <X size={18} />
-                </button>
               </div>
-              <div
+              <button
+                type="button"
+                onClick={() => setViewModalOpen(false)}
                 style={{
-                  padding:
-                    '18px',
-                  borderRadius:
-                    '10px',
-                  background:
-                    'rgba(77,119,240,0.08)',
-                  border:
-                    '1px solid rgba(77,119,240,0.18)',
-                  marginBottom:
-                    '14px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
                 }}
               >
-                <div
-                  style={{
-                    fontSize:
-                      '11px',
-                    color:
-                      'var(--text-muted)',
-                    marginBottom:
-                      '5px',
-                  }}
-                >
-                  Current Price
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Price Cards Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+              {/* Base Price */}
+              <div
+                style={{
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'rgba(77,119,240,0.08)',
+                  border: '1px solid rgba(77,119,240,0.22)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                  Base Price
+                </div>
+                <FormattedPriceCell
+                  value={viewingPrice.price}
+                  currency={viewingPrice.currency || 'USD'}
+                />
+              </div>
+
+              {/* Index Price */}
+              <div
+                style={{
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                  Index Price
+                </div>
+                <FormattedPriceCell
+                  value={viewingPrice.index_price || viewingPrice.price}
+                  currency={viewingPrice.currency || 'USD'}
+                  color="#e2e8f0"
+                />
+              </div>
+
+              {/* Mark Price */}
+              <div
+                style={{
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'rgba(56,189,248,0.06)',
+                  border: '1px solid rgba(56,189,248,0.2)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                  Mark Price
+                </div>
+                <FormattedPriceCell
+                  value={viewingPrice.mark_price || viewingPrice.price}
+                  currency={viewingPrice.currency || 'USD'}
+                  color="#38bdf8"
+                />
+              </div>
+            </div>
+
+            {/* Stats Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+              {/* 24h Change */}
+              <div
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: '8px',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 700 }}>
+                  24h Change
                 </div>
                 <div
                   style={{
-                    fontSize:
-                      '25px',
-                    fontWeight:
-                      700,
-                    color:
-                      'var(--text-primary)',
-                    fontFamily:
-                      'var(--font-mono)',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    color: getChangeValue(viewingPrice) > 0
+                      ? 'var(--success-text)'
+                      : getChangeValue(viewingPrice) < 0
+                      ? 'var(--danger-text)'
+                      : 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
                   }}
                 >
-                  {formatPrice(
-                    viewingPrice.price,
-                    viewingPrice.currency ||
-                    'USD'
+                  {getChangeValue(viewingPrice) > 0 ? (
+                    <TrendingUp size={14} />
+                  ) : getChangeValue(viewingPrice) < 0 ? (
+                    <TrendingDown size={14} />
+                  ) : (
+                    <Activity size={14} />
+                  )}
+                  {getChangeValue(viewingPrice) > 0 ? '+' : ''}
+                  {Number(getChangeValue(viewingPrice)).toFixed(4)}%
+                </div>
+              </div>
+
+              {/* 24h Volume */}
+              <div
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: '8px',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 700 }}>
+                  24h Volume
+                </div>
+                <FormattedPriceCell
+                  value={viewingPrice.twenty_four_hour_volume}
+                  isPrice={false}
+                  decimals={4}
+                  color="var(--text-primary)"
+                />
+              </div>
+            </div>
+
+            {/* Metadata breakdown */}
+            <div
+              style={{
+                padding: '14px',
+                borderRadius: '8px',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                fontSize: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Oracle Health</span>
+                <div>
+                  {viewingPrice.is_internal || viewingPrice.coin?.toUpperCase() === 'LIM' ? (
+                    <span style={{ color: '#c084fc', fontWeight: 700, fontSize: '11px' }}>LIVE (Internal)</span>
+                  ) : viewingPrice.index_status === 'LIVE' || viewingPrice.index_status === 'OK' ? (
+                    <span style={{ color: '#34d399', fontWeight: 700, fontSize: '11px' }}>
+                      LIVE ({viewingPrice.sources_count || 1} {viewingPrice.sources_count === 1 ? 'src' : 'srcs'})
+                    </span>
+                  ) : viewingPrice.index_status === 'DEGRADED' ? (
+                    <span style={{ color: '#fbbf24', fontWeight: 700, fontSize: '11px' }}>
+                      DEGRADED ({viewingPrice.sources_count || 1} {viewingPrice.sources_count === 1 ? 'src' : 'srcs'})
+                    </span>
+                  ) : (
+                    <span style={{ color: '#f87171', fontWeight: 700, fontSize: '11px' }}>STALE</span>
                   )}
                 </div>
               </div>
-              <div
-                style={{
-                  display:
-                    'grid',
-                  gridTemplateColumns:
-                    '1fr 1fr',
-                  gap: '10px',
-                }}
-              >
-                <div
-                  style={{
-                    padding:
-                      '12px',
-                    borderRadius:
-                      '8px',
-                    background:
-                      'var(--bg-surface)',
-                    border:
-                      '1px solid var(--border)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize:
-                        '10px',
-                      color:
-                        'var(--text-muted)',
-                      marginBottom:
-                        '5px',
-                      textTransform:
-                        'uppercase',
-                    }}
-                  >
-                    24h Change
-                  </div>
-                  <div
-                    style={{
-                      fontSize:
-                        '15px',
-                      fontWeight:
-                        700,
-                      color:
-                        getChangeValue(
-                          viewingPrice
-                        ) >= 0
-                          ? 'var(--success-text)'
-                          : 'var(--danger-text)',
-                    }}
-                  >
-                    {getChangeValue(
-                      viewingPrice
-                    ) > 0
-                      ? '+'
-                      : ''}
-                    {formatNumber(
-                      getChangeValue(
-                        viewingPrice
-                      ),
-                      4
-                    )}
-                    %
-                  </div>
-                </div>
-                <div
-                  style={{
-                    padding:
-                      '12px',
-                    borderRadius:
-                      '8px',
-                    background:
-                      'var(--bg-surface)',
-                    border:
-                      '1px solid var(--border)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize:
-                        '10px',
-                      color:
-                        'var(--text-muted)',
-                      marginBottom:
-                        '5px',
-                      textTransform:
-                        'uppercase',
-                    }}
-                  >
-                    24h Volume
-                  </div>
-                  <div
-                    style={{
-                      fontSize:
-                        '15px',
-                      fontWeight:
-                        700,
-                      color:
-                        'var(--text-primary)',
-                    }}
-                  >
-                    {formatNumber(
-                      viewingPrice.twenty_four_hour_volume
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div
-                style={{
-                  marginTop:
-                    '14px',
-                  padding:
-                    '12px',
-                  borderRadius:
-                    '8px',
-                  background:
-                    'var(--bg-surface)',
-                  border:
-                    '1px solid var(--border)',
-                  fontSize:
-                    '11px',
-                  color:
-                    'var(--text-secondary)',
-                }}
-              >
-                <div
-                  style={{
-                    display:
-                      'flex',
-                    justifyContent:
-                      'space-between',
-                    gap: '10px',
-                  }}
-                >
-                  <span>
-                    Updated
+              {viewingPrice.unifier && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Unifier ID</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-primary)' }}>
+                    {viewingPrice.unifier}
                   </span>
-                  <strong
-                    style={{
-                      color:
-                        'var(--text-primary)',
-                    }}
-                  >
-                    {formatDate(
-                      viewingPrice.updated_at ||
-                      viewingPrice.updatedAt
-                    )}
-                  </strong>
                 </div>
-              </div>
-              <div
-                style={{
-                  display:
-                    'flex',
-                  justifyContent:
-                    'flex-end',
-                  marginTop:
-                    '18px',
-                  gap: '8px',
-                }}
-              >
-                <button
-                  onClick={() => {
-                    setViewModalOpen(
-                      false
-                    );
-                    openEditModal(
-                      viewingPrice
-                    );
-                  }}
-                  style={{
-                    padding:
-                      '8px 15px',
-                    background:
-                      'var(--primary-solid)',
-                    border: 'none',
-                    borderRadius:
-                      '6px',
-                    color: '#fff',
-                    fontWeight:
-                      600,
-                    cursor:
-                      'pointer',
-                    display:
-                      'flex',
-                    alignItems:
-                      'center',
-                    gap: '6px',
-                  }}
-                >
-                  <Edit
-                    size={13}
-                  />
-                  Edit
-                </button>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Last Updated</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
+                  {formatDate(viewingPrice.updated_at || viewingPrice.updatedAt)}
+                </span>
               </div>
             </div>
+
+            {/* Actions Footer */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginTop: '18px',
+                gap: '8px',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setViewModalOpen(false)}
+                style={{
+                  padding: '8px 15px',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  color: 'var(--text-secondary)',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setViewModalOpen(false);
+                  openEditModal(viewingPrice);
+                }}
+                style={{
+                  padding: '8px 15px',
+                  background: 'var(--primary-solid)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Edit size={14} />
+                Edit Price
+              </button>
+            </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
