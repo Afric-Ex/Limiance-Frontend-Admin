@@ -124,7 +124,7 @@ export default function PricesPage() {
   const [updatedAfter, setUpdatedAfter] = useState('');
   const [updatedBefore, setUpdatedBefore] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(50);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
