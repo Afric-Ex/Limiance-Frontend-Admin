@@ -1190,7 +1190,7 @@ export default function PricesPage() {
                           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#c084fc' }} />
                           LIVE (Internal)
                         </span>
-                      ) : price.index_status === 'LIVE' ? (
+                      ) : price.index_status === 'LIVE' || price.index_status === 'OK' ? (
                         <span
                           style={{
                             display: 'inline-flex',
@@ -1224,7 +1224,7 @@ export default function PricesPage() {
                           }}
                         >
                           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b' }} />
-                          DEGRADED ({price.sources_count || 1} src)
+                          DEGRADED ({price.sources_count || 1} {price.sources_count === 1 ? 'src' : 'srcs'})
                         </span>
                       ) : price.index_status === 'STALE' ? (
                         <span
