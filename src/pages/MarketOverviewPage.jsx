@@ -287,8 +287,8 @@ export default function MarketOverviewPage() {
           <div className="mo-metric-value">
             {loading ? <Shimmer width="100px" height="26px" /> : (summary.top_gainer_pair || 'N/A')}
           </div>
-          <div className="mo-metric-sub" style={{ color: (summary.top_gainer_pct || 0) >= 0 ? 'var(--success-text)' : 'var(--danger-text)', fontWeight: 600 }}>
-            {summary.top_gainer_pct !== undefined ? `${summary.top_gainer_pct >= 0 ? '+' : ''}${summary.top_gainer_pct.toFixed(2)}%` : '0.00%'}
+          <div className="mo-metric-sub" style={{ color: (Number(summary.top_gainer_pct) || 0) >= 0 ? 'var(--success-text)' : 'var(--danger-text)', fontWeight: 600 }}>
+            {summary.top_gainer_pct !== undefined ? `${Number(summary.top_gainer_pct) >= 0 ? '+' : ''}${Number(summary.top_gainer_pct || 0).toFixed(2)}%` : '0.00%'}
           </div>
         </div>
       </div>
@@ -475,7 +475,7 @@ export default function MarketOverviewPage() {
               <tbody>
                 {filteredPairs.length > 0 ? (
                   filteredPairs.map((p) => {
-                    const chg = p.price_change_pct || 0;
+                    const chg = Number(p.price_change_pct) || 0;
                     const isPos = chg > 0;
                     const isNeg = chg < 0;
                     const buyPct = Math.round(p.buy_ratio || 50);
@@ -573,7 +573,7 @@ export default function MarketOverviewPage() {
               <tbody>
                 {filteredTokens.length > 0 ? (
                   filteredTokens.map((t) => {
-                    const share = t.market_share_pct || 0;
+                    const share = Number(t.market_share_pct) || 0;
                     return (
                       <tr key={t.symbol}>
                         <td>

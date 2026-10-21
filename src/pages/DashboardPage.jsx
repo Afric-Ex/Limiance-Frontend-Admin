@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -79,49 +79,49 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Normalize camelCase / snake_case responses
-  const kycPending = metrics?.kyc?.pending ?? 0;
-  const kycApproved = metrics?.kyc?.approved ?? 0;
-  const kycRejected = metrics?.kyc?.rejected ?? 0;
+  // Normalize camelCase / snake_case responses & ensure numeric types
+  const kycPending = Number(metrics?.kyc?.pending ?? metrics?.kyc?.pending_count ?? 0) || 0;
+  const kycApproved = Number(metrics?.kyc?.approved ?? metrics?.kyc?.approved_count ?? 0) || 0;
+  const kycRejected = Number(metrics?.kyc?.rejected ?? metrics?.kyc?.rejected_count ?? 0) || 0;
 
-  const pendingWd = metrics?.treasury?.pendingWithdrawals ?? metrics?.treasury?.pending_withdrawals ?? 0;
-  const depCount24h = metrics?.treasury?.depositCount24h ?? metrics?.treasury?.deposit_count_24h ?? 0;
+  const pendingWd = Number(metrics?.treasury?.pendingWithdrawals ?? metrics?.treasury?.pending_withdrawals ?? 0) || 0;
+  const depCount24h = Number(metrics?.treasury?.depositCount24h ?? metrics?.treasury?.deposit_count_24h ?? 0) || 0;
   const depVol24h = metrics?.treasury?.depositVolume24h ?? metrics?.treasury?.deposit_volume_24h ?? '0';
   const wdVol24h = metrics?.treasury?.withdrawalVolume24h ?? metrics?.treasury?.withdrawal_volume_24h ?? '0';
 
-  const openTickets = metrics?.support?.openTickets ?? metrics?.support?.open_tickets ?? 0;
-  const activeUsers = metrics?.users?.totalActive ?? metrics?.users?.total_active ?? 0;
-  const signupsToday = metrics?.users?.signupsToday ?? metrics?.users?.signups_today ?? 0;
-  const signups7d = metrics?.users?.signups7d ?? metrics?.users?.signups_7d ?? 0;
-  const frozenUsers = metrics?.users?.frozenAccounts ?? metrics?.users?.frozen_accounts ?? 0;
-  const failedLogins = metrics?.users?.failedLogins24h ?? metrics?.users?.failed_logins_24h ?? 0;
-  const totalLogins = metrics?.users?.totalLogins24h ?? metrics?.users?.total_logins_24h ?? 0;
+  const openTickets = Number(metrics?.support?.openTickets ?? metrics?.support?.open_tickets ?? 0) || 0;
+  const activeUsers = Number(metrics?.users?.totalActive ?? metrics?.users?.total_active ?? 0) || 0;
+  const signupsToday = Number(metrics?.users?.signupsToday ?? metrics?.users?.signups_today ?? 0) || 0;
+  const signups7d = Number(metrics?.users?.signups7d ?? metrics?.users?.signups_7d ?? 0) || 0;
+  const frozenUsers = Number(metrics?.users?.frozenAccounts ?? metrics?.users?.frozen_accounts ?? 0) || 0;
+  const failedLogins = Number(metrics?.users?.failedLogins24h ?? metrics?.users?.failed_logins_24h ?? 0) || 0;
+  const totalLogins = Number(metrics?.users?.totalLogins24h ?? metrics?.users?.total_logins_24h ?? 0) || 0;
 
   const spotVol24h = metrics?.spot?.volume24h ?? metrics?.spot?.volume_24h ?? '0';
-  const spotTrades24h = metrics?.spot?.tradeCount24h ?? metrics?.spot?.trade_count_24h ?? 0;
+  const spotTrades24h = Number(metrics?.spot?.tradeCount24h ?? metrics?.spot?.trade_count_24h ?? 0) || 0;
   const topPairs = metrics?.spot?.topPairs24h ?? metrics?.spot?.top_pairs_24h ?? [];
 
-  const futuresOpenPos = metrics?.futures?.openPositions ?? metrics?.futures?.open_positions ?? 0;
+  const futuresOpenPos = Number(metrics?.futures?.openPositions ?? metrics?.futures?.open_positions ?? 0) || 0;
   const futuresExposure = metrics?.futures?.notionalExposure ?? metrics?.futures?.notional_exposure ?? '0';
-  const futuresLiquidations = metrics?.futures?.liquidations24h ?? metrics?.futures?.liquidations_24h ?? 0;
+  const futuresLiquidations = Number(metrics?.futures?.liquidations24h ?? metrics?.futures?.liquidations_24h ?? 0) || 0;
   const futuresRealizedPnl = metrics?.futures?.realizedPnl24h ?? metrics?.futures?.realized_pnl_24h ?? '0';
 
   const marginDebt = metrics?.margin?.totalDebt ?? metrics?.margin?.total_debt ?? '0';
-  const marginNearLiq = metrics?.margin?.accountsNearLiquidation ?? metrics?.margin?.accounts_near_liquidation ?? 0;
-  const marginLiquidations = metrics?.margin?.liquidations24h ?? metrics?.margin?.liquidations_24h ?? 0;
+  const marginNearLiq = Number(metrics?.margin?.accountsNearLiquidation ?? metrics?.margin?.accounts_near_liquidation ?? 0) || 0;
+  const marginLiquidations = Number(metrics?.margin?.liquidations24h ?? metrics?.margin?.liquidations_24h ?? 0) || 0;
   const marginInterest24h = metrics?.revenue?.marginInterest24h ?? metrics?.revenue?.margin_interest_24h ?? '0';
 
-  const p2pActiveListings = metrics?.p2p?.activeListings ?? metrics?.p2p?.active_listings ?? 0;
-  const p2pDisputes = metrics?.p2p?.activeDisputes ?? metrics?.p2p?.active_disputes ?? 0;
+  const p2pActiveListings = Number(metrics?.p2p?.activeListings ?? metrics?.p2p?.active_listings ?? 0) || 0;
+  const p2pDisputes = Number(metrics?.p2p?.activeDisputes ?? metrics?.p2p?.active_disputes ?? 0) || 0;
   const p2pVol24h = metrics?.p2p?.volume24h ?? metrics?.p2p?.volume_24h ?? '0';
-  const p2pCompleted24h = metrics?.p2p?.completedCount24h ?? metrics?.p2p?.completed_count_24h ?? 0;
-  const p2pAvgResHrs = metrics?.p2p?.avgDisputeResolutionHrs ?? metrics?.p2p?.avg_dispute_resolution_hrs ?? 0;
+  const p2pCompleted24h = Number(metrics?.p2p?.completedCount24h ?? metrics?.p2p?.completed_count_24h ?? 0) || 0;
+  const p2pAvgResHrs = Number(metrics?.p2p?.avgDisputeResolutionHrs ?? metrics?.p2p?.avg_dispute_resolution_hrs ?? 0) || 0;
 
   const rev24h = metrics?.revenue?.total24h ?? metrics?.revenue?.total_24h ?? '0';
 
-  const failedTxs = metrics?.treasury?.failedTransactions24h ?? metrics?.treasury?.failed_transactions_24h ?? 0;
-  const totalTxs = metrics?.treasury?.totalTransactions24h ?? metrics?.treasury?.total_transactions_24h ?? 0;
-  const supportAvgResHrs = metrics?.support?.avgResolutionHrs ?? metrics?.support?.avg_resolution_hrs ?? 0;
+  const failedTxs = Number(metrics?.treasury?.failedTransactions24h ?? metrics?.treasury?.failed_transactions_24h ?? 0) || 0;
+  const totalTxs = Number(metrics?.treasury?.totalTransactions24h ?? metrics?.treasury?.total_transactions_24h ?? 0) || 0;
+  const supportAvgResHrs = Number(metrics?.support?.avgResolutionHrs ?? metrics?.support?.avg_resolution_hrs ?? 0) || 0;
 
   // Historical time-series data state keyed by range ('24h', '7d', '30d', '12m')
   const [historyCache, setHistoryCache] = useState({});
@@ -470,8 +470,8 @@ export default function DashboardPage() {
               <Shimmer width="110px" height="12px" />
             ) : (
               <>
-                <span>{supportAvgResHrs > 0 ? `${supportAvgResHrs.toFixed(1)}h` : '< 2h'} turnaround</span>
-                <span>Â·</span>
+                <span>{Number(supportAvgResHrs) > 0 ? `${Number(supportAvgResHrs).toFixed(1)}h` : '< 2h'} turnaround</span>
+                <span>·</span>
                 <span>Triage queue active</span>
               </>
             )}
@@ -898,7 +898,7 @@ export default function DashboardPage() {
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Average Ticket Resolution</span>
               </div>
               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--success-text)', fontSize: '13px' }}>
-                {supportAvgResHrs > 0 ? `${supportAvgResHrs.toFixed(1)} hrs` : '< 2.5 hrs'}
+                {Number(supportAvgResHrs) > 0 ? `${Number(supportAvgResHrs).toFixed(1)} hrs` : '< 2.5 hrs'}
               </span>
             </div>
           </div>

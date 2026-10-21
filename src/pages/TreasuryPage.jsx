@@ -256,7 +256,10 @@ function ChainSummaryRow({ chain, onSelect }) {
   const totalUsd = Number(chain.total_usd ?? chain.totalUsd) || (hotUsd + poolUsd + coldUsd);
 
   const barW = (v) => totalUsd > 0 ? `${(v / totalUsd * 100).toFixed(1)}%` : '0%';
-  const fmt  = (v) => v >= 1e6 ? `$${(v / 1e6).toFixed(2)}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${v.toFixed(0)}`;
+  const fmt  = (v) => {
+    const n = Number(v) || 0;
+    return n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(0)}K` : `$${n.toFixed(0)}`;
+  };
 
   const chainSegments = [
     { value: coldUsd, color: 'var(--accent-sky)' },
