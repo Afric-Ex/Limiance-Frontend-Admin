@@ -166,7 +166,7 @@ export default function OrderbookPage() {
   const [wsStatus, setWsStatus] = useState('connecting'); // 'connected' | 'connecting' | 'disconnected'
   const [viewMode, setViewMode] = useState('both'); // 'both' | 'bids' | 'asks'
   const [depthLimit, setDepthLimit] = useState(15);
-  const [precision, setPrecision] = useState(2);
+  const [precision, setPrecision] = useState('auto');
 
   // Live orderbook state
   const [bids, setBids] = useState([]);
@@ -470,8 +470,19 @@ export default function OrderbookPage() {
   const bestBid = bids[0]?.price || null;
   const bestAsk = asks[0]?.price || null;
   const spread = bestAsk && bestBid ? bestAsk - bestBid : 0;
-  const spreadPct = bestAsk && spread > 0 ? (spread / bestAsk) * 100 : 0;
   const midPrice = bestAsk && bestBid ? (bestAsk + bestBid) / 2 : lastPrice || 0;
+  const spreadPct = midPrice > 0 && spread > 0 ? (spread / midPrice) * 100 : 0;
+  const autoPrecision = useMemo(() => {
+    const prices = [bestBid, bestAsk, lastPrice, spread, midPrice];
+    const required = prices.reduce((digits, price) => {
+      if (!Number.isFinite(price)) return digits;
+      const normalized = Math.abs(price).toFixed(12).replace(/0+$/, '');
+      const decimals = normalized.split('.')[1]?.length || 0;
+      return Math.max(digits, decimals);
+    }, 2);
+    return Math.min(required, 10);
+  }, [bestBid, bestAsk, lastPrice, spread, midPrice]);
+  const displayPrecision = precision === 'auto' ? autoPrecision : precision;
 
   const priceDirection =
     lastPrice && prevPrice ? (lastPrice >= prevPrice ? 'up' : 'down') : 'neutral';
@@ -509,8 +520,8 @@ export default function OrderbookPage() {
   const formatPrice = (p) => {
     if (p === null || p === undefined) return '--';
     return Number(p).toLocaleString(undefined, {
-      minimumFractionDigits: precision,
-      maximumFractionDigits: precision,
+      minimumFractionDigits: displayPrecision,
+      maximumFractionDigits: displayPrecision,
     });
   };
 
@@ -714,12 +725,15 @@ export default function OrderbookPage() {
               <select
                 className="ob-view-btn"
                 value={precision}
-                onChange={(e) => setPrecision(Number(e.target.value))}
+                onChange={(e) => setPrecision(e.target.value === 'auto' ? 'auto' : Number(e.target.value))}
                 style={{ cursor: 'pointer' }}
               >
+                <option value="auto">Auto</option>
                 <option value={1}>0.1</option>
                 <option value={2}>0.01</option>
                 <option value={4}>0.0001</option>
+                <option value={6}>0.000001</option>
+                <option value={8}>0.00000001</option>
               </select>
 
               {/* Depth Rows */}
