@@ -58,7 +58,7 @@ export default function EarnPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await api('/earn/products?query=all');
+      const res = await api('/api/earn/products?query=all');
       if (res.data) {
         setProducts(res.data);
       } else if (Array.isArray(res)) {
@@ -72,7 +72,7 @@ export default function EarnPage() {
 
   const fetchPositions = async () => {
     try {
-      const res = await api('/earn/admin/positions');
+      const res = await api('/api/earn/positions');
       if (res.data) {
         setPositions(res.data);
       } else if (Array.isArray(res)) {
@@ -85,7 +85,7 @@ export default function EarnPage() {
 
   const fetchRewards = async () => {
     try {
-      const res = await api('/earn/admin/rewards');
+      const res = await api('/api/earn/rewards');
       setRewardsData(res);
     } catch (err) {
       console.error('Failed to load earn rewards:', err);
@@ -145,7 +145,7 @@ export default function EarnPage() {
 
       if (editingProduct) {
         // Update product
-        await api(`/earn/admin/products/${editingProduct.id}`, {
+        await api(`/api/earn/products/${editingProduct.id}`, {
           method: 'PUT',
           body: {
             id: editingProduct.id,
@@ -160,7 +160,7 @@ export default function EarnPage() {
         showToast('Earn product updated successfully');
       } else {
         // Create product
-        await api('/earn/admin/products', {
+        await api('/api/earn/products', {
           method: 'POST',
           body: {
             symbol: form.symbol.toUpperCase().trim(),
@@ -194,7 +194,7 @@ export default function EarnPage() {
     if (!isConfirmed) return;
 
     try {
-      await api(`/earn/admin/products/${p.id}`, { method: 'DELETE' });
+      await api(`/api/earn/products/${p.id}`, { method: 'DELETE' });
       showToast(`Product ${p.symbol} deactivated`);
       fetchProducts();
     } catch (err) {
