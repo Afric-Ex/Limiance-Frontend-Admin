@@ -37,6 +37,7 @@ import OrderbookPage from './pages/OrderbookPage';
 import TreasuryPage from './pages/TreasuryPage';
 import PricesPage from './pages/Prices';
 import PendingApprovalsPage from './pages/PendingApprovalsPage';
+import EarnPage from './pages/EarnPage';
 
 function App() {
   return (
@@ -244,6 +245,14 @@ function App() {
               />
 
               {/* Financial Rules */}
+              <Route
+                path="earn"
+                element={
+                  <ProtectedRoute requiredRoles={['config_admin', 'superadmin', 'support']}>
+                    <EarnPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="fee-tiers"
                 element={

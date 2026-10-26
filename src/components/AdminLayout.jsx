@@ -187,11 +187,11 @@ export default function AdminLayout() {
           )}
 
           {/* 5. FINANCIAL RULES (Dropdown) */}
-          {(hasRole('config_admin') || hasRole('superadmin')) && (
+          {(hasRole('config_admin') || hasRole('superadmin') || hasRole('support')) && (
             <div className="nav-group">
               <button
                 type="button"
-                className={`nav-group-header ${location.pathname.startsWith('/fee-tiers') || location.pathname.startsWith('/withdrawal-rules') ? 'active' : ''}`}
+                className={`nav-group-header ${location.pathname.startsWith('/earn') || location.pathname.startsWith('/fee-tiers') || location.pathname.startsWith('/withdrawal-rules') ? 'active' : ''}`}
                 onClick={() => toggleDropdown('financialRules')}
               >
                 <div className="nav-group-title">
@@ -201,12 +201,19 @@ export default function AdminLayout() {
               </button>
               {openDropdowns.financialRules && (
                 <div className="nav-sub-items">
-                  <NavLink to="/fee-tiers" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
-                    Fee Tiers & Limits
+                  <NavLink to="/earn" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                    Earn & Staking
                   </NavLink>
-                  <NavLink to="/withdrawal-rules" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
-                    Withdrawal Rules
-                  </NavLink>
+                  {(hasRole('config_admin') || hasRole('superadmin')) && (
+                    <NavLink to="/fee-tiers" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                      Fee Tiers & Limits
+                    </NavLink>
+                  )}
+                  {(hasRole('config_admin') || hasRole('superadmin')) && (
+                    <NavLink to="/withdrawal-rules" className={({ isActive }) => (isActive ? 'nav-sub-item active' : 'nav-sub-item')}>
+                      Withdrawal Rules
+                    </NavLink>
+                  )}
                 </div>
               )}
             </div>
