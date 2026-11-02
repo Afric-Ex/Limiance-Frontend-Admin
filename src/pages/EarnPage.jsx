@@ -56,14 +56,86 @@ export default function EarnPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
+  const normalizeProduct = (p) => {
+    if (!p) return p;
+    const lockPeriodDays = Number(p.lockPeriodDays ?? p.lock_period_days ?? 0);
+    const isFlexible = lockPeriodDays <= 0;
+    const rawApy = Number(p.apy ?? 0);
+    const apy = rawApy > 1 ? rawApy / 100 : rawApy;
+    return {
+      ...p,
+      symbol: p.symbol || 'USDT',
+      name: p.name || `${p.symbol || 'Asset'} ${isFlexible ? 'Flexible Savings' : `Staking (${lockPeriodDays}D)`}`,
+      apy,
+      lockPeriodDays,
+      isFlexible,
+      isActive: Boolean(p.isActive ?? p.is_active ?? true),
+      minAmount: Number(p.minAmount ?? p.min_amount ?? 0),
+      totalCapacity: Number(p.totalCapacity ?? p.total_capacity ?? 0),
+      totalSubscribed: Number(p.totalSubscribed ?? p.total_subscribed ?? 0),
+      maxPersonalLimit: Number(p.maxPersonalLimit ?? p.max_personal_limit ?? 0),
+    };
+  };
+
+  const normalizePosition = (pos) => {
+    if (!pos) return pos;
+    const product = pos.product ? normalizeProduct(pos.product) : null;
+    return {
+      ...pos,
+      userId: pos.userId ?? pos.user_id ?? '',
+      productId: pos.productId ?? pos.product_id ?? '',
+      asset: pos.asset || product?.symbol || 'USDT',
+      amount: Number(pos.amount ?? 0),
+      accruedRewards: Number(pos.accruedRewards ?? pos.cumulative_rewards ?? 0),
+      startDate: pos.startDate ?? pos.start_date ?? null,
+      endDate: pos.endDate ?? pos.maturity_date ?? null,
+      status: pos.status || 'ACTIVE',
+      product,
+    };
+  };
+
+  const normalizeRewards = (r) => {
+    if (!r) return null;
+    const rawHistory = Array.isArray(r.history) ? r.history : [];
+    const rawSummaries = Array.isArray(r.assetSummaries ?? r.asset_summaries)
+      ? (r.assetSummaries ?? r.asset_summaries)
+      : [];
+    return {
+      ...r,
+      totalStakedUsd: Number(r.totalStakedUsd ?? r.total_staked_usd ?? 0),
+      totalEarnedUsd: Number(r.totalEarnedUsd ?? r.total_earned_usd ?? 0),
+      yesterdayRewardsUsd: Number(r.yesterdayRewardsUsd ?? r.yesterday_rewards_usd ?? 0),
+      thirtyDayRewardsUsd: Number(r.thirtyDayRewardsUsd ?? r.thirty_day_rewards_usd ?? 0),
+      assetSummaries: rawSummaries.map((s) => ({
+        ...s,
+        asset: s.asset || 'USDT',
+        activeStaked: Number(s.activeStaked ?? s.active_staked ?? 0),
+        totalRewards: Number(s.totalRewards ?? s.total_rewards ?? 0),
+        yesterdayRewards: Number(s.yesterdayRewards ?? s.yesterday_rewards ?? 0),
+        thirtyDayRewards: Number(s.thirtyDayRewards ?? s.thirty_day_rewards ?? 0),
+      })),
+      history: rawHistory.map((h) => {
+        const rawApy = Number(h.apy ?? 0);
+        return {
+          ...h,
+          userId: h.userId ?? h.user_id ?? '',
+          positionId: h.positionId ?? h.position_id ?? '',
+          productId: h.productId ?? h.product_id ?? '',
+          asset: h.asset || 'USDT',
+          amount: Number(h.amount ?? 0),
+          apy: rawApy > 1 ? rawApy / 100 : rawApy,
+          type: h.type || 'DAILY_INTEREST',
+          distributionDate: h.distributionDate ?? h.distribution_date ?? h.created_at ?? null,
+        };
+      }),
+    };
+  };
+
   const fetchProducts = async () => {
     try {
       const res = await api('/api/earn/products?query=all');
-      if (res.data) {
-        setProducts(res.data);
-      } else if (Array.isArray(res)) {
-        setProducts(res);
-      }
+      const rawList = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setProducts(rawList.map(normalizeProduct));
     } catch (err) {
       console.error('Failed to load earn products:', err);
       showToast(err.message || 'Failed to fetch products', 'error');
@@ -73,11 +145,8 @@ export default function EarnPage() {
   const fetchPositions = async () => {
     try {
       const res = await api('/api/earn/positions');
-      if (res.data) {
-        setPositions(res.data);
-      } else if (Array.isArray(res)) {
-        setPositions(res);
-      }
+      const rawList = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+      setPositions(rawList.map(normalizePosition));
     } catch (err) {
       console.error('Failed to load earn positions:', err);
     }
@@ -86,7 +155,7 @@ export default function EarnPage() {
   const fetchRewards = async () => {
     try {
       const res = await api('/api/earn/rewards');
-      setRewardsData(res);
+      setRewardsData(normalizeRewards(res));
     } catch (err) {
       console.error('Failed to load earn rewards:', err);
     }
@@ -149,9 +218,12 @@ export default function EarnPage() {
           method: 'PUT',
           body: {
             id: editingProduct.id,
-            name: form.name,
+            symbol: form.symbol.toUpperCase().trim(),
+            name: form.name.trim(),
             apy: apyDecimal,
             minAmount: minAmt,
+            lockPeriodDays: lockDays,
+            isFlexible: lockDays === 0,
             isActive: form.isActive,
             totalCapacity: totalCap,
             maxPersonalLimit: maxLimit,
@@ -890,7 +962,6 @@ export default function EarnPage() {
                     Lock Term Days
                   </label>
                   <select
-                    disabled={!!editingProduct}
                     value={form.lockPeriodDays}
                     onChange={(e) => {
                       const days = e.target.value;
@@ -903,11 +974,17 @@ export default function EarnPage() {
                     style={{ width: '100%', padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
                   >
                     <option value="0">0 Days &mdash; Simple Earn (Flexible)</option>
+                    <option value="7">7 Days &mdash; Fixed Staking</option>
                     <option value="15">15 Days &mdash; Fixed Staking</option>
                     <option value="30">30 Days &mdash; Fixed Staking</option>
                     <option value="60">60 Days &mdash; Fixed Staking</option>
                     <option value="90">90 Days &mdash; Fixed Staking</option>
                     <option value="120">120 Days &mdash; Fixed Staking</option>
+                    {!['0', '7', '15', '30', '60', '90', '120'].includes(String(form.lockPeriodDays)) && (
+                      <option value={String(form.lockPeriodDays)}>
+                        {form.lockPeriodDays} Days &mdash; Fixed Staking
+                      </option>
+                    )}
                   </select>
                 </div>
               </div>
