@@ -36,6 +36,7 @@ export default function TokensPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [syncing, setSyncing] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingToken, setEditingToken] = useState(null);
   const [toast, setToast] = useState(null);
@@ -160,6 +161,62 @@ export default function TokensPage() {
       showToast(err.message || 'Failed to sync contracts to Redis', 'error');
     } finally {
       setSyncing(false);
+    }
+  };
+
+  // Scan token rows whose contract address is unusable (slugs, "0x...",
+  // zero address, or EVM addresses with no on-chain bytecode), report them,
+  // and offer the two-step deletion + Redis resync.
+  const handleCleanupContracts = async () => {
+    const ok = await confirm({
+      title: 'Scan Invalid Contracts',
+      message: 'Scan all listed tokens for unusable contract addresses (invalid format or no on-chain code)? Nothing is deleted yet — you will review the findings first.',
+      confirmText: 'Scan Now',
+      variant: 'primary',
+    });
+    if (!ok) return;
+
+    setCleaning(true);
+    try {
+      const res = await api('/api/tokens/contracts/cleanup', {
+        method: 'POST',
+        body: { verifyOnChain: true, dryRun: true },
+      });
+      const report = res.report || {};
+      const issues = report.issues || [];
+      const removable = issues.filter((i) => i.removable).length;
+      const preview = issues
+        .filter((i) => i.removable)
+        .slice(0, 4)
+        .map((i) => `${i.symbol} @ ${i.blockchain} (${String(i.reason || '').slice(0, 80)})`)
+        .join(' | ');
+      showToast(
+        `Scan complete: ${report.scanned ?? 0} rows checked, ${removable} flagged invalid, ${report.warned ?? 0} warnings.` +
+          (preview ? ` e.g. ${preview}` : ''),
+      );
+
+      if (removable === 0) return;
+
+      const proceed = await confirm({
+        title: 'Delete Invalid Rows',
+        message: `${removable} token row(s) are unusable and must be removed with a Redis watcher-cache resync afterwards. Delete them?`,
+        confirmText: 'Delete Invalid Rows',
+        variant: 'danger',
+      });
+      if (!proceed) return;
+
+      const res2 = await api('/api/tokens/contracts/cleanup', {
+        method: 'POST',
+        body: { verifyOnChain: true, dryRun: false },
+      });
+      showToast(
+        `Cleanup complete: ${res2?.report?.removed ?? 0} invalid token rows removed, Redis watcher cache resynced.`,
+      );
+      fetchTokens();
+    } catch (err) {
+      showToast(err.message || 'Failed to cleanup token rows', 'error');
+    } finally {
+      setCleaning(false);
     }
   };
 
@@ -363,6 +420,26 @@ export default function TokensPage() {
             }}
           >
             <Database size={15} /> {syncing ? 'Purging & Syncing...' : 'Resync Redis Watcher Cache'}
+          </button>
+          <button
+            onClick={handleCleanupContracts}
+            disabled={cleaning}
+            style={{
+              padding: '9px 18px',
+              borderRadius: '8px',
+              background: 'rgba(245, 158, 11, 0.15)',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              color: 'rgb(245, 158, 11)',
+              fontWeight: 600,
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: cleaning ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <ShieldAlert size={15} /> {cleaning ? 'Scanning & Cleaning...' : 'Cleanup Invalid Contracts'}
           </button>
           <button
             onClick={openAddModal}
