@@ -18,6 +18,8 @@ const TOKEN_COLOR = {
   CNGN: '#00BA77', NEAR: '#00C1A0', XTZ: '#A8E6CF', ADA: '#0033AD',
   DOT: '#E6007A',
 };
+const SWEEP_PAGE_SIZE = 20;
+const COLLECTION_TX_PAGE_SIZE = 50;
 const tokenColor = (sym) => TOKEN_COLOR[sym?.toUpperCase()] ?? '#6b7280';
 
 // ─── SVG Donut Chart ──────────────────────────────────────────────────────────
@@ -354,6 +356,9 @@ export default function TreasuryPage() {
   const [thresholds, setThresholds]     = useState(DEFAULT_POLICIES);
   const [policyForm, setPolicyForm]     = useState(DEFAULT_POLICIES);
   const [sweepHistory, setSweepHistory] = useState([]);
+  const [sweepPage, setSweepPage] = useState(1);
+  const [sweepTotalRecords, setSweepTotalRecords] = useState(0);
+  const [sweepLoading, setSweepLoading] = useState(false);
 
   // UI state
   const [sweepAmount, setSweepAmount]   = useState('');
@@ -375,6 +380,9 @@ export default function TreasuryPage() {
   const [collectionTransactions, setCollectionTransactions] = useState([]);
   const [collectionTxsLoading, setCollectionTxsLoading] = useState(false);
   const [collectionTxSymbol, setCollectionTxSymbol] = useState('');
+  const [collectionTxPage, setCollectionTxPage] = useState(1);
+  const [collectionTxTotalRecords, setCollectionTxTotalRecords] = useState(0);
+  const [collectionTxTotalPages, setCollectionTxTotalPages] = useState(1);
 
   const fetchCollectionAccounts = async () => {
     setCollectionLoading(true);
@@ -409,14 +417,22 @@ export default function TreasuryPage() {
     }
   };
 
-  const openCollectionTransactions = async (acc, symbol = '') => {
+  const openCollectionTransactions = async (acc, symbol = '', page = 1) => {
     setSelectedCollectionAcc(acc);
     setCollectionTxSymbol(symbol);
+    setCollectionTxPage(page);
     setCollectionTxsLoading(true);
     try {
-      const query = symbol ? `?symbol=${symbol}&page=1&page_size=50` : '?page=1&page_size=50';
+      const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(COLLECTION_TX_PAGE_SIZE),
+      });
+      if (symbol.trim()) params.set('symbol', symbol.trim());
+      const query = `?${params.toString()}`;
       const res = await api(`/api/collection-accounts/${acc.id}/transactions${query}`);
       setCollectionTransactions(res.transactions || []);
+      setCollectionTxTotalRecords(res.total_records ?? res.count ?? 0);
+      setCollectionTxTotalPages(res.total_pages ?? Math.max(1, Math.ceil((res.total_records ?? res.count ?? 0) / COLLECTION_TX_PAGE_SIZE)));
     } catch (err) {
       showToast(err.message || 'Failed to load account transactions', 'error');
     } finally {
@@ -440,10 +456,7 @@ export default function TreasuryPage() {
     else setLoading(true);
 
     try {
-      const [ovRes, sweepRes] = await Promise.all([
-        api('/api/treasury/overview'),
-        api('/api/treasury/sweeps?limit=50'),
-      ]);
+      const ovRes = await api('/api/treasury/overview');
 
       if (ovRes) {
         setOverview(ovRes);
@@ -455,9 +468,6 @@ export default function TreasuryPage() {
         }
       }
 
-      if (sweepRes?.sweeps) {
-        setSweepHistory(sweepRes.sweeps);
-      }
     } catch (err) {
       console.error('Failed to fetch treasury live data:', err);
       showToast(err.message || 'Failed to connect to treasury API', 'error');
@@ -467,10 +477,27 @@ export default function TreasuryPage() {
     }
   }, []);
 
+  const fetchSweepHistory = useCallback(async () => {
+    setSweepLoading(true);
+    try {
+      const res = await api(`/api/treasury/sweeps?page=${sweepPage}&limit=${SWEEP_PAGE_SIZE}`);
+      setSweepHistory(res.sweeps || []);
+      setSweepTotalRecords(res.total_records ?? (res.sweeps || []).length);
+    } catch (err) {
+      showToast(err.message || 'Failed to load treasury sweep history', 'error');
+    } finally {
+      setSweepLoading(false);
+    }
+  }, [sweepPage]);
+
   useEffect(() => {
     fetchData();
     fetchCollectionAccounts();
   }, [fetchData]);
+
+  useEffect(() => {
+    fetchSweepHistory();
+  }, [fetchSweepHistory]);
 
   // Totals calculated from live API
   const totals = useMemo(() => {
@@ -540,7 +567,7 @@ export default function TreasuryPage() {
       setSweepAmount('');
       setSweepDest('cold');
       setSweepNote('');
-      await fetchData(true);
+      await Promise.all([fetchData(true), fetchSweepHistory()]);
     } catch (err) {
       showToast(err.message || 'Failed to dispatch treasury sweep', 'error');
     } finally {
@@ -621,7 +648,10 @@ export default function TreasuryPage() {
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button
             type="button"
-            onClick={() => fetchData(true)}
+            onClick={() => {
+              fetchData(true);
+              fetchSweepHistory();
+            }}
             disabled={refreshing || loading}
             style={{
               padding: '8px 12px',
@@ -1077,6 +1107,29 @@ export default function TreasuryPage() {
               )}
             </tbody>
           </table>
+          {Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE) > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '12px' }}>
+              <button
+                type="button"
+                disabled={sweepLoading || sweepPage <= 1}
+                onClick={() => setSweepPage((page) => Math.max(1, page - 1))}
+                style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border-medium)', borderRadius: '6px', cursor: sweepLoading || sweepPage <= 1 ? 'not-allowed' : 'pointer', opacity: sweepLoading || sweepPage <= 1 ? 0.5 : 1 }}
+              >
+                Previous
+              </button>
+              <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
+                Page {sweepPage} of {Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE)} ({sweepTotalRecords.toLocaleString()} sweeps)
+              </span>
+              <button
+                type="button"
+                disabled={sweepLoading || sweepPage >= Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE)}
+                onClick={() => setSweepPage((page) => Math.min(Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE), page + 1))}
+                style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border-medium)', borderRadius: '6px', cursor: sweepLoading || sweepPage >= Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE) ? 'not-allowed' : 'pointer', opacity: sweepLoading || sweepPage >= Math.ceil(sweepTotalRecords / SWEEP_PAGE_SIZE) ? 0.5 : 1 }}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -1383,7 +1436,7 @@ export default function TreasuryPage() {
               />
               <button
                 type="button"
-                onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol)}
+                onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol, 1)}
                 style={{ padding: '6px 12px', background: 'var(--primary-solid)', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
               >
                 Filter
@@ -1435,6 +1488,30 @@ export default function TreasuryPage() {
                 </table>
               )}
             </div>
+
+            {collectionTxTotalPages > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '0.75rem' }}>
+                <button
+                  type="button"
+                  disabled={collectionTxsLoading || collectionTxPage <= 1}
+                  onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol, collectionTxPage - 1)}
+                  style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border-medium)', borderRadius: '6px', cursor: collectionTxsLoading || collectionTxPage <= 1 ? 'not-allowed' : 'pointer', opacity: collectionTxsLoading || collectionTxPage <= 1 ? 0.5 : 1 }}
+                >
+                  Previous
+                </button>
+                <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
+                  Page {collectionTxPage} of {collectionTxTotalPages} ({collectionTxTotalRecords.toLocaleString()} transactions)
+                </span>
+                <button
+                  type="button"
+                  disabled={collectionTxsLoading || collectionTxPage >= collectionTxTotalPages}
+                  onClick={() => openCollectionTransactions(selectedCollectionAcc, collectionTxSymbol, collectionTxPage + 1)}
+                  style={{ padding: '6px 12px', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border-medium)', borderRadius: '6px', cursor: collectionTxsLoading || collectionTxPage >= collectionTxTotalPages ? 'not-allowed' : 'pointer', opacity: collectionTxsLoading || collectionTxPage >= collectionTxTotalPages ? 0.5 : 1 }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
               <button
