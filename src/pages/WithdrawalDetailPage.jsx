@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useConfirm } from "../context/ConfirmContext";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { ShimmerDetailCard } from "../components/Shimmer";
 import "./WithdrawalsQueuePage.css";
 
@@ -11,10 +11,9 @@ export default function WithdrawalDetailPage() {
   const navigate = useNavigate();
   const confirm = useConfirm();
 
-  const [selected, setSelected] = useState(id);
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(true);
-  const [reason, setReason] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -26,15 +25,20 @@ export default function WithdrawalDetailPage() {
   const fetchDetail = async () => {
     setDetailLoading(true);
     try {
-      const res = await api("/api/withdrawals/pending");
-      const list = res.withdrawals || res.data || [];
-      const found = list.find((w) => String(w.id) === String(id));
-      if (found) {
-        setDetail(found);
-      } else {
-        const single = await api("/api/withdrawals/" + id);
-        setDetail(single.withdrawal || single.data || single);
-      }
+      const res = await api("/api/withdrawals/" + id);
+      const req = res.request || res.withdrawal || res.data || res;
+      setDetail({
+        approval_id: res.approval_id || id,
+        wallet_id: req.WalletID || req.wallet_id || req.walletId || '—',
+        user_id: req.UserID || req.user_id || req.userId || '—',
+        amount: req.Amount || req.amount || '0',
+        destination: req.DestinationAddress || req.destination_address || req.destinationAddress || req.to_address || '—',
+        chain: req.Chain || req.chain || '—',
+        asset: req.Asset || req.asset || '—',
+        token_address: req.TokenAddress || req.token_address || req.tokenAddress || '',
+        idempotency_key: req.IdempotencyKey || req.idempotency_key || req.idempotencyKey || '—',
+        raw: req,
+      });
     } catch (err) {
       showToast(err.message || "Failed to load withdrawal details", "error");
     } finally {
@@ -58,7 +62,7 @@ export default function WithdrawalDetailPage() {
     try {
       await api("/api/withdrawals/" + id + "/approve", {
         method: "POST",
-        body: JSON.stringify({ reason: reason.trim() || undefined }),
+        body: JSON.stringify({ reason: rejectReason.trim() || undefined }),
       });
       showToast("Withdrawal approved and queued for dispatch.");
       setTimeout(() => navigate("/withdrawals-queue"), 1000);
@@ -70,7 +74,7 @@ export default function WithdrawalDetailPage() {
   };
 
   const handleReject = async () => {
-    if (!reason.trim()) {
+    if (!rejectReason.trim()) {
       showToast("A rejection reason is strictly required.", "error");
       return;
     }
@@ -85,7 +89,7 @@ export default function WithdrawalDetailPage() {
     try {
       await api("/api/withdrawals/" + id + "/reject", {
         method: "POST",
-        body: JSON.stringify({ reason: reason.trim() }),
+        body: JSON.stringify({ reason: rejectReason.trim() }),
       });
       showToast("Withdrawal rejected and customer notified.");
       setTimeout(() => navigate("/withdrawals-queue"), 1000);
@@ -173,7 +177,7 @@ export default function WithdrawalDetailPage() {
             <div className="wq-modal-header">
               <div>
                 <h2 className="wq-modal-title">Withdrawal Decision Review</h2>
-                <span className="wq-modal-id">{selected}</span>
+                <span className="wq-modal-id">{id}</span>
               </div>
               <button className="wq-modal-close" onClick={() => navigate("/withdrawals-queue")}>
                 ✕

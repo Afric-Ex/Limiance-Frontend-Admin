@@ -46,52 +46,41 @@ export default function TransactionsPage() {
     showToast('Copied to clipboard!');
   };
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (signal) => {
     setLoading(true);
     try {
-      // If filtering deposits specifically or ALL
-      const statusParam = statusFilter === 'ALL' ? '' : `&status=${statusFilter.toLowerCase()}`;
-      
-      // Note: Backend has /api/deposits (which lists deposits) and /api/withdrawals/pending
-      // We query /api/deposits with pagination
-      const res = await api(`/api/deposits?page=${currentPage}&limit=25${statusParam}`);
-      let list = res.transactions || res.data || [];
-      
-      if (typeFilter !== 'ALL') {
-        list = list.filter((t) => (t.type || '').toLowerCase() === typeFilter.toLowerCase());
-      }
-      if (searchId.trim()) {
-        const q = searchId.trim().toLowerCase();
-        list = list.filter(
-          (t) =>
-            (t.id || '').toLowerCase().includes(q) ||
-            (t.tx_hash || t.txHash || '').toLowerCase().includes(q) ||
-            (t.user_id || '').toLowerCase().includes(q) ||
-            (t.address || '').toLowerCase().includes(q)
-        );
-      }
+      const params = new URLSearchParams({ page: String(currentPage), limit: '25' });
+      if (typeFilter !== 'ALL') params.set('type', typeFilter.toLowerCase());
+      if (statusFilter !== 'ALL') params.set('status', statusFilter.toLowerCase());
+      if (searchId.trim()) params.set('search', searchId.trim());
 
+      const res = await api(`/api/transactions?${params.toString()}`, { signal });
+      const list = Array.isArray(res.transactions) ? res.transactions : [];
       setTransactions(list);
-      setTotalPages(res.total_pages || 1);
-      setTotalRecords(res.total_records || list.length);
+      setTotalPages(res.total_pages ?? 1);
+      setTotalRecords(res.total_records ?? list.length);
     } catch (err) {
-      console.error('Failed to load transactions', err);
-      showToast(err.message || 'Failed to load transactions', 'error');
+      if (err.name !== 'AbortError') {
+        console.error('Failed to load transactions', err);
+        showToast(err.message || 'Failed to load transactions', 'error');
+      }
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTransactions();
-  }, [currentPage, statusFilter, typeFilter]);
+    const controller = new AbortController();
+    fetchTransactions(controller.signal);
+    return () => controller.abort();
+  }, [currentPage, statusFilter, typeFilter, searchId]);
 
   const openTransactionDetail = async (txn) => {
     setSelectedTxn(txn);
     setDetailLoading(true);
     try {
       // Fetch fresh transaction row by ID
-      const res = await api(`/api/deposits/${txn.id}`);
+      const res = await api(`/api/transactions/${txn.id}`);
       setSelectedTxn(res.transaction || res);
     } catch (err) {
       console.warn('Could not fetch single transaction details', err);
@@ -167,7 +156,7 @@ export default function TransactionsPage() {
         </div>
 
         <button
-          onClick={fetchTransactions}
+          onClick={() => fetchTransactions()}
           style={{
             padding: '8px 16px',
             background: 'var(--bg-surface-2)',
@@ -216,7 +205,10 @@ export default function TransactionsPage() {
               type="text"
               placeholder="Search by TxID, TxHash, User UUID or Address..."
               value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
+              onChange={(e) => {
+                setSearchId(e.target.value);
+                setCurrentPage(1);
+              }}
               style={{
                 width: '100%',
                 padding: '8px 12px 8px 36px',
@@ -319,6 +311,10 @@ export default function TransactionsPage() {
               transactions.map((tx) => {
                 const badge = getStatusBadge(tx.status);
                 const isDeposit = (tx.type || '').toLowerCase() === 'deposit';
+                const userId = tx.user_id || tx.from_user_id || tx.to_user_id || 'N/A';
+                const net = getBlockchainNetwork(tx, tx.address || tx.to_address || tx.toAddress || tx.wallet_id);
+                const assetSymbol = tx.asset || tx.currency || tx.symbol || net.symbol || 'TOKEN';
+                const destination = tx.address || tx.to_address || tx.toAddress || tx.wallet_id || '—';
                 return (
                   <tr key={tx.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                     <td style={{ padding: '14px 18px' }}>
@@ -349,10 +345,10 @@ export default function TransactionsPage() {
                     <td style={{ padding: '14px 18px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--info-text)' }}>
-                          {(tx.user_id || 'N/A').slice(0, 10)}...
+                          {(userId || 'N/A').slice(0, 10)}...
                         </span>
                         <button
-                          onClick={() => copyToClipboard(tx.user_id)}
+                          onClick={() => copyToClipboard(userId)}
                           style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
                         >
                           <Copy size={11} />
@@ -361,20 +357,14 @@ export default function TransactionsPage() {
                     </td>
 
                     <td style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>
-                      {(() => {
-                        const net = getBlockchainNetwork(tx, tx.address || tx.to_address);
-                        const assetSymbol = tx.asset || tx.currency || tx.symbol || net.code;
-                        return (
-                          <>
-                            <span style={{ padding: '2px 6px', background: 'rgba(99,102,241,0.15)', color: 'var(--info-text)', borderRadius: '4px', marginRight: '6px' }}>
-                              {assetSymbol}
-                            </span>
-                            <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
-                              {tx.network || net.name}
-                            </span>
-                          </>
-                        );
-                      })()}
+                      <>
+                        <span style={{ padding: '2px 6px', background: 'rgba(99,102,241,0.15)', color: 'var(--info-text)', borderRadius: '4px', marginRight: '6px' }}>
+                          {assetSymbol}
+                        </span>
+                        <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
+                          {tx.network || tx.chain || net.name}
+                        </span>
+                      </>
                     </td>
 
                     <td style={{ padding: '14px 18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -384,11 +374,11 @@ export default function TransactionsPage() {
                     <td style={{ padding: '14px 18px', maxWidth: '240px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {tx.address || tx.to_address || '—'}
+                          {destination}
                         </span>
-                        {tx.address && (
+                        {destination !== '—' && (
                           <button
-                            onClick={() => copyToClipboard(tx.address)}
+                            onClick={() => copyToClipboard(destination)}
                             style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
                           >
                             <Copy size={11} />

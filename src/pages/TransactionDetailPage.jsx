@@ -26,17 +26,11 @@ export default function TransactionDetailPage() {
   const fetchDetail = async () => {
     setLoading(true);
     try {
-      const res = await api("/api/deposits/" + id);
+      const res = await api("/api/transactions/" + id);
       const data = res.transaction || res.data || res;
       setSelectedTxn(data);
     } catch (err) {
-      try {
-        const res2 = await api("/api/withdrawals/" + id);
-        const data2 = res2.withdrawal || res2.data || res2;
-        setSelectedTxn(data2);
-      } catch (err2) {
-        showToast(err.message || "Failed to load transaction details", "error");
-      }
+      showToast(err.message || "Failed to load transaction details", "error");
     } finally {
       setLoading(false);
     }
@@ -76,8 +70,11 @@ export default function TransactionDetailPage() {
     );
   }
 
-  const net = getBlockchainNetwork(selectedTxn, selectedTxn.address || selectedTxn.to_address);
-  const assetSymbol = selectedTxn.asset || selectedTxn.currency || selectedTxn.symbol || net.code;
+  const txHash = selectedTxn.hash || selectedTxn.tx_hash || selectedTxn.txHash;
+  const userId = selectedTxn.user_id || selectedTxn.from_user_id || selectedTxn.to_user_id || 'N/A';
+  const destination = selectedTxn.address || selectedTxn.to_address || selectedTxn.toAddress || selectedTxn.wallet_id || '—';
+  const net = getBlockchainNetwork(selectedTxn, destination);
+  const assetSymbol = selectedTxn.asset || selectedTxn.currency || selectedTxn.symbol || net.symbol || 'TOKEN';
 
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
@@ -163,7 +160,7 @@ export default function TransactionDetailPage() {
             <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
               <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Network & Blockchain</div>
               <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--info-text)", marginTop: "6px" }}>
-                {selectedTxn.network || net.name} ({net.symbol})
+                {selectedTxn.network || selectedTxn.chain || net.name} ({selectedTxn.chain || net.symbol})
               </div>
             </div>
           </div>
@@ -181,12 +178,12 @@ export default function TransactionDetailPage() {
           <div style={{ background: "var(--bg-surface)", padding: "16px 20px", borderRadius: "10px" }}>
             <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>User Account ID</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
-              <span style={{ fontSize: "14px", color: "var(--info-text)", fontFamily: "var(--font-mono)" }}>{selectedTxn.user_id}</span>
-              <button onClick={() => copyToClipboard(selectedTxn.user_id)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
+              <span style={{ fontSize: "14px", color: "var(--info-text)", fontFamily: "var(--font-mono)" }}>{userId}</span>
+              <button onClick={() => copyToClipboard(userId)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                 <Copy size={13} />
               </button>
               <button
-                onClick={() => navigate("/users/" + selectedTxn.user_id)}
+                onClick={() => navigate("/users/" + userId)}
                 style={{
                   background: "rgba(99, 102, 241, 0.15)",
                   border: "1px solid var(--info-border)",
@@ -207,10 +204,10 @@ export default function TransactionDetailPage() {
             <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>On-Chain Transaction Hash (TxHash)</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
               <span style={{ fontSize: "13px", color: "var(--success-text)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
-                {selectedTxn.tx_hash || selectedTxn.txHash || "Internal off-chain settlement"}
+                {txHash || "Internal off-chain settlement"}
               </span>
-              {(selectedTxn.tx_hash || selectedTxn.txHash) && (
-                <button onClick={() => copyToClipboard(selectedTxn.tx_hash || selectedTxn.txHash)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
+              {txHash && (
+                <button onClick={() => copyToClipboard(txHash)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                   <Copy size={13} />
                 </button>
               )}
@@ -221,10 +218,10 @@ export default function TransactionDetailPage() {
             <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Destination / Recipient Address</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
               <span style={{ fontSize: "13px", color: "var(--text-primary)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>
-                {selectedTxn.address || selectedTxn.to_address || "—"}
+                {destination}
               </span>
-              {(selectedTxn.address || selectedTxn.to_address) && (
-                <button onClick={() => copyToClipboard(selectedTxn.address || selectedTxn.to_address)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
+              {destination !== "—" && (
+                <button onClick={() => copyToClipboard(destination)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
                   <Copy size={13} />
                 </button>
               )}
