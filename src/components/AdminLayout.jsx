@@ -145,6 +145,11 @@ export default function AdminLayout() {
                   </NavLink>
                 </div>
               )}
+              {hasRole('risk') && (
+                <NavLink to="/markets/orderbook" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
+                  <Coins size={18} /> Orderbook
+                </NavLink>
+              )}
             </div>
           )}
 

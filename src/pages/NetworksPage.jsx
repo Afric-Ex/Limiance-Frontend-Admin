@@ -70,7 +70,9 @@ export default function NetworksPage() {
     confirmations: 12,
     isActive: true,
     endpoints: '{"http": "https://eth.llamarpc.com"}',
+    aliases: '',
   });
+  const [editingRpcName, setEditingRpcName] = useState(null);
 
   // Language Form
   const [languageForm, setLanguageForm] = useState({
@@ -245,25 +247,49 @@ export default function NetworksPage() {
         return;
       }
 
-      await api('/api/rpcs', {
-        method: 'POST',
-        body: {
-          canonicalName: rpcForm.canonicalName,
-          chainId: Number(rpcForm.chainId),
-          kind: rpcForm.kind,
-          nativeSymbol: rpcForm.nativeSymbol,
-          decimals: Number(rpcForm.decimals),
-          confirmations: Number(rpcForm.confirmations),
-          isActive: rpcForm.isActive,
-          endpoints: parsedEndpoints,
-        },
+      const payload = {
+        canonicalName: rpcForm.canonicalName,
+        chainId: Number(rpcForm.chainId),
+        kind: rpcForm.kind,
+        nativeSymbol: rpcForm.nativeSymbol,
+        decimals: Number(rpcForm.decimals),
+        confirmations: Number(rpcForm.confirmations),
+        isActive: rpcForm.isActive,
+        endpoints: parsedEndpoints,
+        aliases: rpcForm.aliases
+          .split(',')
+          .map((alias) => alias.trim())
+          .filter(Boolean),
+      };
+      await api(editingRpcName
+        ? `/api/rpcs/${encodeURIComponent(editingRpcName)}`
+        : '/api/rpcs', {
+        method: editingRpcName ? 'PATCH' : 'POST',
+        body: payload,
       });
-      showToast(`Saved RPC configuration for ${rpcForm.canonicalName}`);
+      showToast(`${editingRpcName ? 'Updated' : 'Saved'} RPC configuration for ${rpcForm.canonicalName}`);
       setRpcModalOpen(false);
+      setEditingRpcName(null);
       fetchAll();
     } catch (err) {
-      showToast(err.message || 'Failed to save RPC', 'error');
+      showToast(err.message || `Failed to ${editingRpcName ? 'update' : 'save'} RPC`, 'error');
     }
+  };
+
+  const handleEditRpc = (rpc) => {
+    setEditingRpcName(rpc.canonicalName);
+    setRpcForm({
+      canonicalName: rpc.canonicalName || '',
+      chainId: rpc.chainId ?? '',
+      kind: rpc.kind || 'evm',
+      nativeSymbol: rpc.nativeSymbol || '',
+      decimals: rpc.decimals ?? 18,
+      confirmations: rpc.confirmations ?? 12,
+      isActive: rpc.isActive !== false,
+      endpoints: JSON.stringify(rpc.endpoints || {}, null, 2),
+      aliases: Array.isArray(rpc.aliases) ? rpc.aliases.join(', ') : '',
+    });
+    setRpcModalOpen(true);
   };
 
   const handleDeleteRpc = async (canonicalName) => {
@@ -508,6 +534,7 @@ export default function NetworksPage() {
             <button
               onClick={() => {
                 setEditingItem(null);
+                setEditingRpcName(null);
                 setRpcForm({
                   canonicalName: '',
                   chainId: 1,
@@ -517,6 +544,7 @@ export default function NetworksPage() {
                   confirmations: 12,
                   isActive: true,
                   endpoints: '{"http": "https://rpc.ankr.com/eth"}',
+                  aliases: '',
                 });
                 setRpcModalOpen(true);
               }}
@@ -1044,7 +1072,24 @@ export default function NetworksPage() {
                     <td style={{ padding: '14px 18px', textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                         <button
+                          onClick={() => handleEditRpc(rpc)}
+                          title={`Edit ${rpc.canonicalName}`}
+                          aria-label={`Edit ${rpc.canonicalName}`}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            background: 'var(--overlay-2)',
+                            border: '1px solid var(--border-medium)',
+                            color: 'var(--text-primary)',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <Edit size={13} />
+                        </button>
+                        <button
                           onClick={() => handleDeleteRpc(rpc.canonicalName)}
+                          title={`Delete ${rpc.canonicalName}`}
+                          aria-label={`Delete ${rpc.canonicalName}`}
                           style={{
                             padding: '6px 10px',
                             borderRadius: '6px',
@@ -1500,7 +1545,7 @@ export default function NetworksPage() {
             }}
           >
             <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontSize: '18px' }}>
-              Configure Blockchain RPC Node
+              {editingRpcName ? `Edit RPC Node: ${editingRpcName}` : 'Configure Blockchain RPC Node'}
             </h3>
             <form onSubmit={handleSaveRpc}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
@@ -1510,9 +1555,10 @@ export default function NetworksPage() {
                     type="text"
                     required
                     value={rpcForm.canonicalName}
+                    readOnly={Boolean(editingRpcName)}
                     onChange={(e) => setRpcForm({ ...rpcForm, canonicalName: e.target.value })}
                     placeholder="e.g. eth-mainnet"
-                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                    style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none', opacity: editingRpcName ? 0.7 : 1 }}
                   />
                 </div>
                 <div>
@@ -1582,6 +1628,16 @@ export default function NetworksPage() {
                   style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--info-text)', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
                 />
               </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Aliases (comma-separated)</label>
+                <input
+                  type="text"
+                  value={rpcForm.aliases}
+                  onChange={(e) => setRpcForm({ ...rpcForm, aliases: e.target.value })}
+                  placeholder="e.g. ethereum, eth"
+                  style={{ width: '100%', padding: '10px', background: 'var(--bg-surface)', border: '1px solid var(--border-medium)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                />
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                 <input
                   type="checkbox"
@@ -1594,7 +1650,10 @@ export default function NetworksPage() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
                 <button
                   type="button"
-                  onClick={() => setRpcModalOpen(false)}
+                  onClick={() => {
+                    setRpcModalOpen(false);
+                    setEditingRpcName(null);
+                  }}
                   style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border-light)', borderRadius: '8px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                 >
                   Cancel
@@ -1603,7 +1662,7 @@ export default function NetworksPage() {
                   type="submit"
                   style={{ padding: '8px 20px', background: 'var(--primary-solid)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}
                 >
-                  Save RPC
+                  {editingRpcName ? 'Update RPC' : 'Save RPC'}
                 </button>
               </div>
             </form>

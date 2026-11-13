@@ -202,7 +202,7 @@ function App() {
               <Route
                 path="markets/orderbook"
                 element={
-                  <ProtectedRoute requiredRoles={['config_admin', 'support', 'superadmin']}>
+                  <ProtectedRoute requiredRoles={['config_admin', 'support', 'risk', 'superadmin']}>
                     <OrderbookPage />
                   </ProtectedRoute>
                 }

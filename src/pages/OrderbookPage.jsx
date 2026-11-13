@@ -10,9 +10,15 @@ import {
   TrendingUp,
   ShieldAlert,
   Search,
+  ChevronLeft,
+  ChevronRight,
+  Edit2,
+  XCircle,
 } from 'lucide-react';
 
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { useConfirm } from '../context/ConfirmContext';
 import './OrderbookPage.css';
 
 /* -------------------------------------------------------------------------- */
@@ -157,6 +163,9 @@ function sendSubscription(socket, pair, mode) {
 /* -------------------------------------------------------------------------- */
 
 export default function OrderbookPage() {
+  const { hasRole } = useAuth();
+  const confirm = useConfirm();
+  const canManagePositions = hasRole(['support', 'risk', 'superadmin']);
   const [pairs, setPairs] = useState([]);
   const [selectedPair, setSelectedPair] = useState('');
   const [pairsLoading, setPairsLoading] = useState(true);
@@ -183,11 +192,24 @@ export default function OrderbookPage() {
   const [positions, setPositions] = useState([]);
   const [positionsLoading, setPositionsLoading] = useState(false);
   const [positionsSearch, setPositionsSearch] = useState('');
+  const [positionsError, setPositionsError] = useState('');
+  const [positionsPage, setPositionsPage] = useState(1);
+  const [positionsTotalPages, setPositionsTotalPages] = useState(1);
+  const [positionsTotalRecords, setPositionsTotalRecords] = useState(0);
+  const [positionsRefreshKey, setPositionsRefreshKey] = useState(0);
+  const [positionActionBusy, setPositionActionBusy] = useState('');
+  const [positionsToast, setPositionsToast] = useState(null);
+
+  const showPositionsToast = (message, type = 'success') => {
+    setPositionsToast({ message, type });
+    setTimeout(() => setPositionsToast(null), 5000);
+  };
 
   /* ------------------- Load Futures / Margin Positions -------------------- */
   useEffect(() => {
     if (marketType === 'spot') {
       setPositions([]);
+      setPositionsTotalRecords(0);
       return;
     }
 
@@ -196,12 +218,21 @@ export default function OrderbookPage() {
       setPositionsLoading(true);
       try {
         const endpoint = marketType === 'futures' ? '/api/futures/positions' : '/api/margin/positions';
-        const q = selectedPair ? `?symbol=${encodeURIComponent(selectedPair)}` : '';
+        const query = new URLSearchParams({ page: String(positionsPage), limit: '25' });
+        if (selectedPair) query.set('symbol', selectedPair);
+        if (positionsSearch.trim()) query.set('search', positionsSearch.trim());
+        const q = `?${query.toString()}`;
         const res = await api(`${endpoint}${q}`);
         if (!isMounted) return;
         setPositions(res.positions || []);
+        setPositionsTotalRecords(Number(res.total_records || 0));
+        const totalPages = Math.max(1, Number(res.total_pages || 1));
+        setPositionsTotalPages(totalPages);
+        if (positionsPage > totalPages) setPositionsPage(totalPages);
+        setPositionsError('');
       } catch (err) {
         console.warn(`[orderbook] failed to load ${marketType} positions:`, err);
+        if (isMounted) setPositionsError(err.message || 'Failed to load positions.');
       } finally {
         if (isMounted) setPositionsLoading(false);
       }
@@ -213,6 +244,144 @@ export default function OrderbookPage() {
       isMounted = false;
       clearInterval(interval);
     };
+  }, [marketType, selectedPair, positionsPage, positionsSearch, positionsRefreshKey]);
+
+  const submitPositionAction = async (positionKey, requestPath, body, successMessage) => {
+    setPositionActionBusy(positionKey);
+    try {
+      await api(requestPath, { method: 'POST', body });
+      showPositionsToast(successMessage);
+      setPositionsRefreshKey((key) => key + 1);
+    } catch (err) {
+      showPositionsToast(err.message || 'Position action failed.', 'error');
+    } finally {
+      setPositionActionBusy('');
+    }
+  };
+
+  const closeFuturesPosition = async (position) => {
+    const confirmed = await confirm({
+      title: 'Close futures position',
+      message: `Close the full ${position.symbol} position for user ${position.user_id}? This submits a market close.`,
+      confirmText: 'Close position',
+      variant: 'danger',
+    });
+    if (!confirmed) return;
+    await submitPositionAction(
+      position.id,
+      `/api/futures/positions/${encodeURIComponent(position.id)}/close`,
+      { user_id: position.user_id },
+      'Futures position close submitted.'
+    );
+  };
+
+  const partiallyCloseFuturesPosition = async (position) => {
+    const quantity = await confirm({
+      title: 'Reduce futures position',
+      message: `Enter a close quantity less than the current size (${position.size} ${position.symbol}).`,
+      confirmText: 'Continue',
+      prompt: true,
+      promptPlaceholder: 'Quantity to close',
+      promptRequired: true,
+      variant: 'warning',
+    });
+    if (typeof quantity !== 'string') return;
+    const parsed = Number(quantity);
+    if (!Number.isFinite(parsed) || parsed <= 0 || parsed >= Number(position.size)) {
+      showPositionsToast('Close quantity must be greater than zero and less than the position size.', 'error');
+      return;
+    }
+    await submitPositionAction(
+      position.id,
+      `/api/futures/positions/${encodeURIComponent(position.id)}/partial-close`,
+      { user_id: position.user_id, close_quantity: quantity },
+      'Partial futures close submitted.'
+    );
+  };
+
+  const modifyFuturesPosition = async (position) => {
+    const takeProfit = await confirm({
+      title: 'Modify futures take-profit',
+      message: 'Enter a new take-profit price, or leave blank to keep the current value.',
+      confirmText: 'Next',
+      prompt: true,
+      promptPlaceholder: 'Take-profit price (optional)',
+      promptDefault: position.take_profit_price || '',
+      variant: 'primary',
+    });
+    if (typeof takeProfit !== 'string') return;
+    const stopLoss = await confirm({
+      title: 'Modify futures stop-loss',
+      message: 'Enter a new stop-loss price, or leave blank to keep the current value.',
+      confirmText: 'Update TP/SL',
+      prompt: true,
+      promptPlaceholder: 'Stop-loss price (optional)',
+      promptDefault: position.stop_loss_price || '',
+      variant: 'primary',
+    });
+    if (typeof stopLoss !== 'string') return;
+    if (!takeProfit.trim() && !stopLoss.trim()) {
+      showPositionsToast('Enter a take-profit or stop-loss price to modify.', 'error');
+      return;
+    }
+    const prices = [takeProfit, stopLoss].filter((value) => value.trim());
+    if (prices.some((value) => !Number.isFinite(Number(value)) || Number(value) <= 0)) {
+      showPositionsToast('TP/SL prices must be positive numbers.', 'error');
+      return;
+    }
+    await submitPositionAction(
+      position.id,
+      `/api/futures/positions/${encodeURIComponent(position.id)}/modify`,
+      {
+        user_id: position.user_id,
+        take_profit_price: takeProfit.trim(),
+        stop_loss_price: stopLoss.trim(),
+      },
+      'Futures TP/SL settings updated.'
+    );
+  };
+
+  const repayMarginPosition = async (position) => {
+    if (!selectedPair) {
+      showPositionsToast('Select a market pair first to scope this margin repayment safely.', 'error');
+      return;
+    }
+    const amount = await confirm({
+      title: 'Repay margin borrowing',
+      message: `Enter the amount of ${position.symbol} to repay. Repayment uses the user’s available margin balance.`,
+      confirmText: 'Repay',
+      prompt: true,
+      promptPlaceholder: `Amount (borrowed: ${position.borrowed_amount})`,
+      promptDefault: String(position.borrowed_amount),
+      promptRequired: true,
+      variant: 'danger',
+    });
+    if (typeof amount !== 'string') return;
+    if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+      showPositionsToast('Repayment amount must be a positive number.', 'error');
+      return;
+    }
+    const idempotencyKey = globalThis.crypto?.randomUUID?.();
+    if (!idempotencyKey) {
+      showPositionsToast('This browser cannot create a secure repayment request key.', 'error');
+      return;
+    }
+    await submitPositionAction(
+      `${position.user_id}:${position.symbol}`,
+      '/api/margin/positions/repay',
+      {
+        user_id: position.user_id,
+        asset: position.symbol,
+        symbol: selectedPair,
+        amount,
+        idempotency_key: idempotencyKey,
+      },
+      'Margin repayment submitted.'
+    );
+  };
+
+  useEffect(() => {
+    setPositionsPage(1);
   }, [marketType, selectedPair]);
 
 
@@ -968,7 +1137,10 @@ export default function OrderbookPage() {
                   type="text"
                   placeholder="Filter user or symbol..."
                   value={positionsSearch}
-                  onChange={(e) => setPositionsSearch(e.target.value)}
+                  onChange={(e) => {
+                    setPositionsSearch(e.target.value);
+                    setPositionsPage(1);
+                  }}
                   style={{
                     background: 'var(--bg-surface)',
                     border: '1px solid var(--border-medium)',
@@ -982,10 +1154,21 @@ export default function OrderbookPage() {
               </div>
 
               <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '6px', background: 'var(--overlay-2)', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                {positions.length} active position{positions.length !== 1 ? 's' : ''}
+                {positionsTotalRecords} active position{positionsTotalRecords !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
+
+          {positionsToast && (
+            <div role="status" style={{ marginBottom: '12px', padding: '10px 12px', borderRadius: '6px', color: positionsToast.type === 'error' ? 'var(--danger-text)' : 'var(--success-text)', background: positionsToast.type === 'error' ? 'rgba(248,113,113,0.12)' : 'rgba(52,211,153,0.12)' }}>
+              {positionsToast.message}
+            </div>
+          )}
+          {positionsError && (
+            <div role="alert" style={{ marginBottom: '12px', color: 'var(--danger-text)', fontSize: '0.85rem' }}>
+              {positionsError}
+            </div>
+          )}
 
           <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
@@ -1003,6 +1186,7 @@ export default function OrderbookPage() {
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Leverage</th>
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Unrealized PnL</th>
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Liquidation Price</th>
+                      {canManagePositions && <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Actions</th>}
                     </>
                   ) : (
                     <>
@@ -1012,6 +1196,7 @@ export default function OrderbookPage() {
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Spot Collateral</th>
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Locked Balance</th>
                       <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Risk Status</th>
+                      {canManagePositions && <th style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontWeight: 700, fontSize: '0.75rem' }}>Actions</th>}
                     </>
                   )}
                 </tr>
@@ -1019,28 +1204,18 @@ export default function OrderbookPage() {
               <tbody>
                 {positionsLoading && positions.length === 0 ? (
                   <tr>
-                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <td colSpan={marketType === 'futures' ? (canManagePositions ? 11 : 10) : (canManagePositions ? 7 : 6)} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
                       Loading active {marketType} positions...
                     </td>
                   </tr>
                 ) : positions.length === 0 ? (
                   <tr>
-                    <td colSpan={10} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <td colSpan={marketType === 'futures' ? (canManagePositions ? 11 : 10) : (canManagePositions ? 7 : 6)} style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
                       No active open {marketType} positions found for {selectedPair || 'all markets'}.
                     </td>
                   </tr>
                 ) : (
-                  positions
-                    .filter((pos) => {
-                      if (!positionsSearch) return true;
-                      const term = positionsSearch.toLowerCase();
-                      return (
-                        (pos.id && pos.id.toLowerCase().includes(term)) ||
-                        (pos.user_id && pos.user_id.toLowerCase().includes(term)) ||
-                        (pos.symbol && pos.symbol.toLowerCase().includes(term))
-                      );
-                    })
-                    .map((pos, idx) => {
+                  positions.map((pos, idx) => {
                       if (marketType === 'futures') {
                         const pnl = Number(pos.unrealized_pnl ?? pos.pnl_percent ?? 0);
                         const isProfitable = pnl >= 0;
@@ -1076,11 +1251,22 @@ export default function OrderbookPage() {
                             <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', color: 'var(--danger-text)' }}>
                               ${Number(pos.liquidation_price).toLocaleString()}
                             </td>
+                            {canManagePositions && <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                              <button type="button" disabled={positionActionBusy === pos.id} onClick={() => closeFuturesPosition(pos)} title="Close the full position" style={{ marginRight: '6px', padding: '6px 8px', borderRadius: '5px', border: '1px solid var(--danger-text)', color: 'var(--danger-text)', background: 'transparent', cursor: 'pointer' }}>
+                                <XCircle size={14} /> Close
+                              </button>
+                              <button type="button" disabled={positionActionBusy === pos.id} onClick={() => partiallyCloseFuturesPosition(pos)} title="Reduce position size" style={{ marginRight: '6px', padding: '6px 8px', borderRadius: '5px', border: '1px solid var(--border-medium)', color: 'var(--text-primary)', background: 'transparent', cursor: 'pointer' }}>
+                                Reduce
+                              </button>
+                              <button type="button" disabled={positionActionBusy === pos.id} onClick={() => modifyFuturesPosition(pos)} title="Modify take-profit and stop-loss" style={{ padding: '6px 8px', borderRadius: '5px', border: '1px solid var(--border-medium)', color: 'var(--text-primary)', background: 'transparent', cursor: 'pointer' }}>
+                                <Edit2 size={14} /> Modify
+                              </button>
+                            </td>}
                           </tr>
                         );
                       } else {
                         return (
-                          <tr key={idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                          <tr key={`${pos.user_id}:${pos.symbol}`} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                             <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {pos.user_id ? `${pos.user_id.slice(0, 8)}...` : 'N/A'}
                             </td>
@@ -1099,6 +1285,11 @@ export default function OrderbookPage() {
                                 BORROWED
                               </span>
                             </td>
+                            {canManagePositions && <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                              <button type="button" disabled={positionActionBusy === `${pos.user_id}:${pos.symbol}`} onClick={() => repayMarginPosition(pos)} style={{ padding: '6px 8px', borderRadius: '5px', border: '1px solid var(--warning-text)', color: 'var(--warning-text)', background: 'transparent', cursor: 'pointer' }}>
+                                <Edit2 size={14} /> Modify / Repay
+                              </button>
+                            </td>}
                           </tr>
                         );
                       }
@@ -1106,6 +1297,19 @@ export default function OrderbookPage() {
                 )}
               </tbody>
             </table>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginTop: '14px' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
+              Page {positionsPage} of {positionsTotalPages} · {positionsTotalRecords} records
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button type="button" onClick={() => setPositionsPage((page) => Math.max(1, page - 1))} disabled={positionsPage <= 1 || positionsLoading} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border-medium)', color: 'var(--text-primary)', background: 'var(--bg-surface)', cursor: positionsPage <= 1 ? 'not-allowed' : 'pointer', opacity: positionsPage <= 1 ? 0.5 : 1 }}>
+                <ChevronLeft size={14} /> Previous
+              </button>
+              <button type="button" onClick={() => setPositionsPage((page) => Math.min(positionsTotalPages, page + 1))} disabled={positionsPage >= positionsTotalPages || positionsLoading} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border-medium)', color: 'var(--text-primary)', background: 'var(--bg-surface)', cursor: positionsPage >= positionsTotalPages ? 'not-allowed' : 'pointer', opacity: positionsPage >= positionsTotalPages ? 0.5 : 1 }}>
+                Next <ChevronRight size={14} />
+              </button>
+            </div>
           </div>
         </div>
       )}
