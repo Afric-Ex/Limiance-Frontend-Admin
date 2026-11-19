@@ -10,8 +10,6 @@ import {
   Search,
   CheckCircle,
   Database,
-  Copy,
-  Check,
   ExternalLink,
   ShieldAlert,
   ArrowDownCircle,
@@ -23,6 +21,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
+import CopyButton from '../components/CopyButton';
 
 export default function TokensPage() {
   const confirm = useConfirm();
@@ -40,7 +39,6 @@ export default function TokensPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingToken, setEditingToken] = useState(null);
   const [toast, setToast] = useState(null);
-  const [copiedAddress, setCopiedAddress] = useState(null);
   const [expandedTokens, setExpandedTokens] = useState(new Set());
 
   const toggleExpand = (key) => {
@@ -78,13 +76,6 @@ export default function TokensPage() {
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4500);
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text || text === 'N/A') return;
-    navigator.clipboard.writeText(text);
-    setCopiedAddress(text);
-    setTimeout(() => setCopiedAddress(null), 2000);
   };
 
   const fetchTokens = async (page = currentPage, limit = pageSize, search = searchQuery, chain = selectedChainFilter) => {
@@ -668,14 +659,13 @@ export default function TokensPage() {
                                   ? `${displayContract.slice(0, 8)}...${displayContract.slice(-6)}`
                                   : displayContract}
                               </span>
-                              <button
-                                type="button"
-                                onClick={() => copyToClipboard(displayContract)}
-                                style={{ background: 'none', border: 'none', color: copiedAddress === displayContract ? 'var(--success-text)' : 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
+                              <CopyButton
+                                text={displayContract}
+                                size={12}
                                 title="Copy Contract Address"
-                              >
-                                {copiedAddress === displayContract ? <Check size={12} /> : <Copy size={12} />}
-                              </button>
+                                onCopied={() => showToast('Contract address copied')}
+                                style={{ padding: '2px' }}
+                              />
                             </div>
                           ) : (
                             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Native / Non-contract</span>
@@ -804,9 +794,12 @@ export default function TokensPage() {
                                   <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                                     <span>{d.contract_address && d.contract_address !== 'N/A' ? `${d.contract_address.slice(0, 10)}...${d.contract_address.slice(-6)}` : 'Native'}</span>
                                     {d.contract_address && d.contract_address !== 'N/A' && (
-                                      <button type="button" onClick={() => copyToClipboard(d.contract_address)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedAddress === d.contract_address ? 'var(--success-text)' : 'var(--text-muted)', padding: 0 }}>
-                                        {copiedAddress === d.contract_address ? <Check size={11} /> : <Copy size={11} />}
-                                      </button>
+                                      <CopyButton
+                                        text={d.contract_address}
+                                        size={11}
+                                        title="Copy Contract Address"
+                                        onCopied={() => showToast('Contract address copied')}
+                                      />
                                     )}
                                   </div>
                                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '12px' }}>

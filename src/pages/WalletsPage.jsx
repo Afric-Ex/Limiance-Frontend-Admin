@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 import { useConfirm } from '../context/ConfirmContext';
 import { getBlockchainNetwork } from '../utils/chain';
-import { Wallet, Search, RefreshCw, Copy, ChevronLeft, ChevronRight, ShieldAlert } from 'lucide-react';
+import { Wallet, Search, RefreshCw, ChevronLeft, ChevronRight, ShieldAlert } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
+import CopyButton from '../components/CopyButton';
 
 export default function WalletsPage() {
   const confirm = useConfirm();
@@ -82,12 +83,6 @@ export default function WalletsPage() {
     } catch (err) {
       showToast(err.message || `Failed to ${label} wallet`, 'error');
     }
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(String(text));
-    showToast('Copied to clipboard');
   };
 
   return (
@@ -227,9 +222,7 @@ export default function WalletsPage() {
                           {w.address || 'Pending HD Derivation'}
                         </span>
                         {w.address && (
-                          <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                            <Copy size={12} />
-                          </button>
+                          <CopyButton text={w.address} size={12} title="Copy Address" onCopied={() => showToast('Copied to clipboard')} />
                         )}
                       </div>
                       {w.tag && (

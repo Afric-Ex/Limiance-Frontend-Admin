@@ -1584,6 +1584,7 @@ export default function NetworksPage() {
                     <option value="evm">EVM</option>
                     <option value="solana">Solana</option>
                     <option value="bitcoin">Bitcoin (UTXO)</option>
+                    <option value="tron">Tron</option>
                     <option value="cosmos">Cosmos</option>
                   </select>
                 </div>

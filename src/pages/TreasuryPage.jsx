@@ -2,13 +2,14 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useConfirm } from '../context/ConfirmContext';
 import { api } from '../api/client';
 import {
-  Landmark, ArrowRightLeft, Sliders, RefreshCw, Copy, ExternalLink,
+  Landmark, ArrowRightLeft, Sliders, RefreshCw, ExternalLink,
   CheckCircle2, AlertTriangle, Flame, Snowflake, Droplets, Layers,
   Scale, SlidersHorizontal, Clock, Info, ChevronRight,
   TrendingUp, Send, Shield, KeyRound, Cpu,
   Plus, X, Search
 } from 'lucide-react';
 import { Shimmer, ShimmerTableRows } from '../components/Shimmer';
+import CopyButton from '../components/CopyButton';
 
 // ─── Token brand colours ───────────────────────────────────────────────────────
 const TOKEN_COLOR = {
@@ -160,9 +161,7 @@ function WalletCard({ type, wallet, chainName, chainId, onSweep }) {
             {wallet.address ? `${wallet.address.slice(0, 8)}...${wallet.address.slice(-6)}` : 'Configured on chain'}
           </span>
           {wallet.address && (
-            <button type="button" onClick={() => navigator.clipboard.writeText(wallet.address)} style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0, display: 'flex' }}>
-              <Copy size={11} />
-            </button>
+            <CopyButton text={wallet.address} size={11} color="var(--text-faint)" title="Copy Address" />
           )}
         </div>
         <SignerBadge type={type} signerType={wallet.signer_type} />
@@ -1092,7 +1091,7 @@ export default function TreasuryPage() {
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-tertiary)' }}>
                           {row.tx_hash ? `${row.tx_hash.slice(0, 10)}...${row.tx_hash.slice(-6)}` : row.hash}
                         </span>
-                        <button type="button" onClick={() => navigator.clipboard.writeText(row.tx_hash ?? row.hash)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-faint)', padding: 0, display: 'flex' }}><Copy size={11} /></button>
+                        <CopyButton text={row.tx_hash ?? row.hash} size={11} color="var(--text-faint)" title="Copy Transaction Hash" />
                       </div>
                     </td>
                     <td style={{ padding: '13px 16px', fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -1247,14 +1246,13 @@ export default function TreasuryPage() {
                             <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-tertiary)' }}>
                               ID: {acc.id ? `${acc.id.slice(0, 12)}...` : '—'}
                             </span>
-                            <button
-                              type="button"
-                              onClick={() => { navigator.clipboard.writeText(acc.id); showToast('Account ID copied'); }}
-                              style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
+                            <CopyButton
+                              text={acc.id}
+                              size={11}
+                              color="var(--text-faint)"
                               title="Copy ID"
-                            >
-                              <Copy size={11} />
-                            </button>
+                              onCopied={() => showToast('Account ID copied')}
+                            />
                           </div>
                         </div>
 

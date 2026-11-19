@@ -20,12 +20,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  Copy,
   ArrowLeft,
   Sliders,
   Bell,
   Save,
 } from "lucide-react";
+import CopyButton from "../components/CopyButton";
 
 export default function UserDetailPage() {
   const { id } = useParams();
@@ -71,12 +71,6 @@ export default function UserDetailPage() {
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(String(text));
-    showToast("Copied to clipboard");
   };
 
   const fetchFullUser = async () => {
@@ -466,9 +460,7 @@ export default function UserDetailPage() {
                   <code style={{ color: 'var(--info-text)', background: 'var(--overlay-2)', padding: '1px 6px', borderRadius: '4px' }}>
                     {selectedUser.id}
                   </code>
-                  <button onClick={() => copyToClipboard(selectedUser.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}>
-                    <Copy size={12} />
-                  </button>
+                  <CopyButton text={selectedUser.id} size={12} title="Copy User ID" onCopied={() => showToast("Copied to clipboard")} />
                   {selectedUser.created_at && (
                     <span>• Registered: {new Date(selectedUser.created_at).toLocaleDateString()}</span>
                   )}
@@ -846,9 +838,7 @@ export default function UserDetailPage() {
                                       {w.address || 'Pending HD Derivation'}
                                     </span>
                                     {w.address && (
-                                      <button onClick={() => copyToClipboard(w.address)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                                        <Copy size={12} />
-                                      </button>
+                                      <CopyButton text={w.address} size={12} title="Copy Address" onCopied={() => showToast("Copied to clipboard")} />
                                     )}
                                   </div>
                                   {w.tag && (

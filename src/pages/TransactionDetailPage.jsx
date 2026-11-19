@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { getBlockchainNetwork } from "../utils/chain";
-import { ArrowLeft, Copy, RefreshCw, CheckCircle, Clock, XCircle } from "lucide-react";
+import { ArrowLeft, RefreshCw, CheckCircle, Clock, XCircle } from "lucide-react";
 import { ShimmerDetailCard } from "../components/Shimmer";
+import CopyButton from "../components/CopyButton";
 
 export default function TransactionDetailPage() {
   const { id } = useParams();
@@ -15,12 +16,6 @@ export default function TransactionDetailPage() {
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(String(text));
-    showToast("Copied to clipboard!");
   };
 
   const fetchDetail = async () => {
@@ -179,9 +174,7 @@ export default function TransactionDetailPage() {
             <div style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>User Account ID</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
               <span style={{ fontSize: "14px", color: "var(--info-text)", fontFamily: "var(--font-mono)" }}>{userId}</span>
-              <button onClick={() => copyToClipboard(userId)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
-                <Copy size={13} />
-              </button>
+              <CopyButton text={userId} size={13} title="Copy User ID" onCopied={() => showToast("Copied to clipboard!")} />
               <button
                 onClick={() => navigate("/users/" + userId)}
                 style={{
@@ -207,9 +200,7 @@ export default function TransactionDetailPage() {
                 {txHash || "Internal off-chain settlement"}
               </span>
               {txHash && (
-                <button onClick={() => copyToClipboard(txHash)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
-                  <Copy size={13} />
-                </button>
+                <CopyButton text={txHash} size={13} title="Copy Transaction Hash" onCopied={() => showToast("Copied to clipboard!")} />
               )}
             </div>
           </div>
@@ -221,9 +212,7 @@ export default function TransactionDetailPage() {
                 {destination}
               </span>
               {destination !== "—" && (
-                <button onClick={() => copyToClipboard(destination)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
-                  <Copy size={13} />
-                </button>
+                <CopyButton text={destination} size={13} title="Copy Destination Address" onCopied={() => showToast("Copied to clipboard!")} />
               )}
             </div>
           </div>

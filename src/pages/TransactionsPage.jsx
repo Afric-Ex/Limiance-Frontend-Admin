@@ -10,7 +10,6 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  Copy,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 import { getBlockchainNetwork } from '../utils/chain';
 import { ShimmerTableRows } from '../components/Shimmer';
+import CopyButton from '../components/CopyButton';
 
 export default function TransactionsPage() {
   const navigate = useNavigate();
@@ -39,11 +39,6 @@ export default function TransactionsPage() {
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard!');
   };
 
   const fetchTransactions = async (signal) => {
@@ -347,12 +342,13 @@ export default function TransactionsPage() {
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--info-text)' }}>
                           {(userId || 'N/A').slice(0, 10)}...
                         </span>
-                        <button
-                          onClick={() => copyToClipboard(userId)}
-                          style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
-                        >
-                          <Copy size={11} />
-                        </button>
+                        <CopyButton
+                          text={userId}
+                          size={11}
+                          color="var(--text-faint)"
+                          title="Copy User ID"
+                          onCopied={() => showToast('Copied to clipboard!')}
+                        />
                       </div>
                     </td>
 
@@ -377,12 +373,13 @@ export default function TransactionsPage() {
                           {destination}
                         </span>
                         {destination !== '—' && (
-                          <button
-                            onClick={() => copyToClipboard(destination)}
-                            style={{ background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
-                          >
-                            <Copy size={11} />
-                          </button>
+                          <CopyButton
+                            text={destination}
+                            size={11}
+                            color="var(--text-faint)"
+                            title="Copy Destination Address"
+                            onCopied={() => showToast('Copied to clipboard!')}
+                          />
                         )}
                       </div>
                     </td>

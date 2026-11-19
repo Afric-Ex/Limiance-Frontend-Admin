@@ -8,13 +8,13 @@ import {
   XCircle,
   Clock,
   RefreshCw,
-  Copy,
   Eye,
   AlertTriangle,
   FileText,
   X,
 } from 'lucide-react';
 import { ShimmerTableRows } from '../components/Shimmer';
+import CopyButton from '../components/CopyButton';
 
 export default function PendingApprovalsPage() {
   const { user } = useAuth();
@@ -31,19 +31,10 @@ export default function PendingApprovalsPage() {
   const [rejecting, setRejecting] = useState(false);
 
   const [payloadModalItem, setPayloadModalItem] = useState(null);
-  const [copiedId, setCopiedId] = useState(null);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(String(text));
-    setCopiedId(text);
-    showToast('Copied to clipboard');
-    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const fetchApprovals = async (status = statusFilter) => {
@@ -295,13 +286,13 @@ export default function PendingApprovalsPage() {
                           <span style={{ fontFamily: 'monospace', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                             {item.id ? `${item.id.slice(0, 10)}...` : '—'}
                           </span>
-                          <button
-                            onClick={() => copyToClipboard(item.id)}
-                            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
+                          <CopyButton
+                            text={item.id}
+                            size={12}
                             title="Copy ID"
-                          >
-                            <Copy size={12} style={{ color: copiedId === item.id ? 'var(--success-text)' : undefined }} />
-                          </button>
+                            onCopied={() => showToast('Copied to clipboard')}
+                            style={{ padding: '2px' }}
+                          />
                         </div>
                       </td>
 
@@ -653,24 +644,21 @@ export default function PendingApprovalsPage() {
             </pre>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <button
-                type="button"
-                onClick={() => copyToClipboard(payloadModalItem.payload_json)}
+              <CopyButton
+                text={payloadModalItem.payload_json}
+                size={12}
+                color="var(--text-primary)"
+                label="Copy Raw JSON"
+                copiedLabel="Copied Raw JSON"
+                onCopied={() => showToast('Copied to clipboard')}
                 style={{
                   padding: '6px 12px',
                   borderRadius: '6px',
                   background: 'var(--overlay-2)',
                   border: '1px solid var(--border-medium)',
-                  color: 'var(--text-primary)',
                   fontSize: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
                 }}
-              >
-                <Copy size={12} /> Copy Raw JSON
-              </button>
+              />
 
               <button
                 type="button"

@@ -10,10 +10,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  Copy,
   UserCheck,
 } from "lucide-react";
 import { ShimmerTableRows } from "../components/Shimmer";
+import CopyButton from "../components/CopyButton";
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -29,12 +29,6 @@ export default function UsersPage() {
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
-  };
-
-  const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(String(text));
-    showToast("Copied to clipboard");
   };
 
   const fetchUsers = async (page = 1) => {
@@ -262,15 +256,14 @@ export default function UsersPage() {
                           <span style={{ fontFamily: "monospace", fontSize: "12px", color: "var(--info-text)" }}>
                             {shortId}
                           </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              copyToClipboard(u.id);
-                            }}
-                            style={{ background: "none", border: "none", color: "var(--text-faint)", cursor: "pointer", padding: 0 }}
-                          >
-                            <Copy size={11} />
-                          </button>
+                          <CopyButton
+                            text={u.id}
+                            size={11}
+                            color="var(--text-faint)"
+                            title="Copy User ID"
+                            stopPropagation
+                            onCopied={() => showToast("Copied to clipboard")}
+                          />
                         </div>
                       </div>
                     </td>
