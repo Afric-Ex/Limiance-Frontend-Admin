@@ -23,6 +23,17 @@ const SWEEP_PAGE_SIZE = 20;
 const COLLECTION_TX_PAGE_SIZE = 50;
 const tokenColor = (sym) => TOKEN_COLOR[sym?.toUpperCase()] ?? '#6b7280';
 
+function createRequestId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 // ─── SVG Donut Chart ──────────────────────────────────────────────────────────
 function DonutChart({ segments = [], size = 108, label, sublabel }) {
   const r = 36;
@@ -543,8 +554,9 @@ export default function TreasuryPage() {
     if (!ok) return;
 
     setActionLoading(true);
+    showToast(`Dispatching ${amt} ${sweepTarget.asset.symbol} sweep on ${sweepTarget.chainName}...`, 'info');
     try {
-      const requestID = sweepRequestID || crypto.randomUUID();
+      const requestID = sweepRequestID || createRequestId();
       if (!sweepRequestID) setSweepRequestID(requestID);
       const res = await api('/api/treasury/sweep', {
         method: 'POST',
@@ -560,15 +572,17 @@ export default function TreasuryPage() {
         },
       });
 
-      showToast(res.message || `Sweep of ${amt} ${sweepTarget.asset.symbol} dispatched successfully`);
+      showToast(res.message || `Sweep of ${amt} ${sweepTarget.asset.symbol} dispatched successfully`, 'success');
       setSweepTarget(null);
       setSweepRequestID(null);
       setSweepAmount('');
       setSweepDest('cold');
       setSweepNote('');
-      await Promise.all([fetchData(true), fetchSweepHistory()]);
+      Promise.all([fetchData(true), fetchSweepHistory()]).catch(() => {});
     } catch (err) {
       showToast(err.message || 'Failed to dispatch treasury sweep', 'error');
+      // Rotate idempotency key after a terminal error so the user can retry cleanly
+      setSweepRequestID(createRequestId());
     } finally {
       setActionLoading(false);
     }
@@ -617,8 +631,36 @@ export default function TreasuryPage() {
 
       {/* Toast Notification */}
       {toast && (
-        <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999, padding: '11px 18px', borderRadius: '8px', background: toast.type === 'error' ? 'var(--danger-solid)' : 'var(--success-solid)', color: '#fff', fontWeight: 600, boxShadow: 'var(--shadow-md)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {toast.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
+        <div
+          style={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            zIndex: 9999,
+            padding: '11px 18px',
+            borderRadius: '8px',
+            background:
+              toast.type === 'error'
+                ? 'var(--danger-solid)'
+                : toast.type === 'info'
+                ? 'var(--primary-solid)'
+                : 'var(--success-solid)',
+            color: '#fff',
+            fontWeight: 600,
+            boxShadow: 'var(--shadow-md)',
+            fontSize: '13px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {toast.type === 'error' ? (
+            <AlertTriangle size={16} />
+          ) : toast.type === 'info' ? (
+            <RefreshCw size={16} className="animate-spin" />
+          ) : (
+            <CheckCircle2 size={16} />
+          )}
           {toast.msg}
         </div>
       )}
@@ -893,7 +935,7 @@ export default function TreasuryPage() {
                     wallet={chainObj[type]}
                     chainId={chainObj.id}
                     chainName={chainObj.name}
-                    onSweep={(t) => { setSweepTarget(t); setSweepRequestID(crypto.randomUUID()); setSweepAmount(''); setSweepDest('cold'); setSweepNote(''); }}
+                    onSweep={(t) => { setSweepTarget(t); setSweepRequestID(createRequestId()); setSweepAmount(''); setSweepDest('cold'); setSweepNote(''); }}
                   />
                 ))}
               </div>
@@ -1635,8 +1677,33 @@ export default function TreasuryPage() {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
-                  <button type="button" onClick={() => { setSweepTarget(null); setSweepRequestID(null); }} style={{ padding: '8px 16px', background: 'none', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer' }}>Cancel</button>
-                  <button type="submit" disabled={actionLoading} style={{ padding: '8px 20px', background: 'linear-gradient(135deg, var(--primary-solid), var(--accent-sky))', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: actionLoading ? 'not-allowed' : 'pointer' }}>
+                  <button
+                    type="button"
+                    disabled={actionLoading}
+                    onClick={() => { setSweepTarget(null); setSweepRequestID(null); }}
+                    style={{ padding: '8px 16px', background: 'none', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '13px', cursor: actionLoading ? 'not-allowed' : 'pointer', opacity: actionLoading ? 0.5 : 1 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={actionLoading}
+                    style={{
+                      padding: '8px 20px',
+                      background: 'linear-gradient(135deg, var(--primary-solid), var(--accent-sky))',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: actionLoading ? 'not-allowed' : 'pointer',
+                      opacity: actionLoading ? 0.8 : 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '7px',
+                    }}
+                  >
+                    {actionLoading && <RefreshCw size={14} className="animate-spin" />}
                     {actionLoading ? 'Dispatching...' : 'Confirm & Dispatch'}
                   </button>
                 </div>
