@@ -11,6 +11,8 @@ export default function WithdrawalsQueuePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [stuckWithdrawals, setStuckWithdrawals] = useState([]);
+  const [retryingId, setRetryingId] = useState(null);
   const [toast, setToast] = useState(null);
 
   const showToast = (msg, type = 'success') => {
@@ -44,6 +46,13 @@ export default function WithdrawalsQueuePage() {
         const pages = Math.max(1, res.total_pages ?? 1);
         setTotalPages(pages);
         if (currentPage > pages) setCurrentPage(pages);
+
+        try {
+          const stuckRes = await api('/api/withdrawals/stuck?page=1&limit=50', { signal: controller.signal });
+          setStuckWithdrawals(stuckRes.transactions || stuckRes.data || []);
+        } catch {
+          // non-fatal if stuck endpoint fails
+        }
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.error('Failed to fetch pending withdrawals', err);
@@ -61,6 +70,19 @@ export default function WithdrawalsQueuePage() {
       clearInterval(interval);
     };
   }, [currentPage]);
+
+  const handleRetryBroadcast = async (id) => {
+    setRetryingId(id);
+    try {
+      const res = await api(`/api/withdrawals/${encodeURIComponent(id)}/retry`, { method: 'POST' });
+      showToast(`Rebroadcast succeeded (txHash: ${res.txHash})`, 'success');
+      setStuckWithdrawals((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      showToast(err.message || 'Retry broadcast failed', 'error');
+    } finally {
+      setRetryingId(null);
+    }
+  };
 
   return (
     <div className="wq-page">
@@ -149,6 +171,70 @@ export default function WithdrawalsQueuePage() {
           </button>
         </div>
       )}
+
+      <div className="wq-header" style={{ marginTop: '32px' }}>
+        <div>
+          <h2 className="wq-title" style={{ fontSize: '1.25rem' }}>Stuck Withdrawals (Broadcast Pending)</h2>
+          <p className="wq-subtitle">
+            Withdrawals that encountered a 5xx/timeout during broadcast. Retry rebroadcasting once the chain/node issue is resolved.
+          </p>
+        </div>
+        <div className="wq-count-badge">{stuckWithdrawals.length} Stuck</div>
+      </div>
+
+      <div className="wq-table-wrap">
+        <table className="wq-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>User ID</th>
+              <th>Asset / Chain</th>
+              <th>Amount</th>
+              <th>Destination Address</th>
+              <th>Created At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stuckWithdrawals.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="wq-empty">
+                  <div className="wq-empty-icon">✓</div>
+                  No stuck broadcast_pending withdrawals.
+                </td>
+              </tr>
+            ) : (
+              stuckWithdrawals.map((w) => (
+                <tr key={w.id} className="wq-row">
+                  <td className="wq-mono">{w.id}</td>
+                  <td className="wq-mono">{w.user_id}</td>
+                  <td>
+                    <span className="wq-asset-badge">{w.asset}</span>
+                    <span className="wq-network">{w.chain}</span>
+                  </td>
+                  <td className="wq-amount">
+                    {w.amount} {w.asset}
+                  </td>
+                  <td className="wq-mono-sm wq-truncate" title={w.to_address || w.to_balance} style={{ maxWidth: '200px' }}>
+                    {w.to_address || w.to_balance || '—'}
+                  </td>
+                  <td className="wq-mono-sm">{w.created_at ? new Date(w.created_at).toLocaleString() : '—'}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="wq-btn-review"
+                      disabled={retryingId === w.id}
+                      onClick={() => handleRetryBroadcast(w.id)}
+                    >
+                      {retryingId === w.id ? 'Retrying…' : 'Retry Broadcast'}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
