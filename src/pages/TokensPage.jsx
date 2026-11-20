@@ -505,7 +505,7 @@ export default function TokensPage() {
           >
             <option value="">All Blockchains</option>
             {availableNetworks.map((net, nIdx) => (
-              <option key={nIdx} value={net.name || net.blockchain || net.symbol}>
+              <option key={nIdx} value={net.blockchain || net.name || net.symbol}>
                 {net.name || net.blockchain || net.symbol}
               </option>
             ))}

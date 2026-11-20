@@ -1586,8 +1586,12 @@ export default function NetworksPage() {
                     <option value="bitcoin">Bitcoin (UTXO)</option>
                     <option value="tron">Tron</option>
                     <option value="xrp">XRP Ledger</option>
+                    <option value="aptos">Aptos</option>
+                    <option value="sui">Sui</option>
+                    <option value="stellar">Stellar</option>
                     <option value="polkadot">Polkadot</option>
                     <option value="ton">TON</option>
+                    <option value="near">NEAR</option>
                     <option value="cosmos">Cosmos</option>
                   </select>
                 </div>
